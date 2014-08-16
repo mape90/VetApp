@@ -117,15 +117,13 @@ class Vet(Base):
         self.vet_number = data[5]
         self.bank_name = data[6]
         self.IBAN = data[7]
-        #self.SWIF = data[8] TODO:implement
-        print("Data len="+str(len(data)))
-        for i in range(0, len(data)):
-            print("data["+ str(i) +"]="+str(data[i]))
+        self.SWIF = data[8] #TODO:implement
         if len(self.customertexts) >= 3:
             self.customertexts[0].update(newText=data[9][0])
             self.customertexts[1].update(newText=data[9][1])
             self.customertexts[2].update(newText=data[9][2])
         
+        #TODO: implement
         #for info in data[9]:
         #    self.contactinfos.append(info)
 

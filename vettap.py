@@ -70,21 +70,23 @@ def main():
         SqlHandler.addItems(session, [koira, kissa, hevonen])
     
         item_list = []
+        dogs_file_name = "koirarodut.txt"
+        cats_file_name = "kissarodut.txt"
         try:
-            f = open("koirarodut.txt", "r", encoding="utf-8")
+            f = open(dogs_file_name, "r", encoding="utf-8")
             for race_name in f.readlines():
                 item_list.append(SqlHandler.Race(race_name.strip(),koira.id)) 
             f.close()
         except IOError:
-            print("Error 1")
+            print("Can not find file named: " + dogs_file_name)
             pass
         try:
-            f = open("kissarodut.txt", "r", encoding="utf-8")
+            f = open(cats_file_name, "r", encoding="utf-8")
             for race_name in f.readlines():
                 item_list.append(SqlHandler.Race(race_name.strip(),kissa.id)) 
             f.close()
         except IOError:
-            print("Error 2")
+            print("Can not find file named: "+ cats_file_name)
             pass
         
         SqlHandler.addItems(session,item_list)

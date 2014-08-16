@@ -62,7 +62,7 @@ class PrintFileCreator(object):
             self.change("vet_postaddress", bill.visit.vet.post_office.name)
         else:
             self.change("vet_postaddress","")
-        self.change("alv_number", bill.visit.vet.alv_number)#alv_number
+        #self.change("alv_number", bill.visit.vet.alv_number)#alv_number
         self.change("owner_name", bill.visit.owner.name)
         self.change("owner_address", bill.visit.owner.address)
         if(not bill.visit.owner.post_office == None):
