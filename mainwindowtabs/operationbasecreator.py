@@ -40,8 +40,8 @@ class OperationBaseCreator(QDialog):
             self.item = SqlHandler.makeCopy(self.session, self.item)
         else:
             self.item = None
-            
-            
+
+
         from models.operation import SurgeryBaseItem
         self.itemTreeWidget =  ItemTreeWidget(session = self.session, parent=self, creator=SurgeryBaseItem)
         self.itemTreeWidget.setTitle("Leikkauksen tavarat")
@@ -68,9 +68,7 @@ class OperationBaseCreator(QDialog):
             creator = ItemCreatorDialog(parent=self.itemSearchEdit,item=current_item)
             creator.show()
         else:
-            box = QMessageBox()
-            box.setText('Lääkettä ei ole valittu!')
-            box.exec() 
+            self.errorMessage('Lääkettä ei ole valittu!')
         
     def getMedicineDuration(self):
         current_item = self.itemSearchEdit.getCurrentItem()
@@ -78,13 +76,10 @@ class OperationBaseCreator(QDialog):
             if current_item.getType() == 'Vaccine':
                 self.ui.durationspinBox.setValue(current_item.duration.days if current_item.duration != None else 0)
             else:
-                box = QMessageBox()
-                box.setText('Valittu tuote ei ole lääke!')
-                box.exec()
+                self.errorMessage('Valittu tuote ei ole lääke!')
+
         else:
-            box = QMessageBox()
-            box.setText('Lääkettä ei ole valittu!')
-            box.exec() 
+            self.errorMessage('Lääkettä ei ole valittu!')
         
     def showHideResistRelative(self, state):
         self.ui.label_6.setEnabled(True if state>0 else False)
@@ -106,7 +101,7 @@ class OperationBaseCreator(QDialog):
             self.parent().addAskedItem(self.item)
             self.closeCreator()
         else:
-            self.errorMessage()
+            self.errorMessage('Operaatiopohjaa ei voida tallentaa sillä sen nimeä ei ole asetettu.')
                 
             
     def updateItem(self):
@@ -146,29 +141,33 @@ class OperationBaseCreator(QDialog):
             #TODO: add items to their places
     
     def setTypes(self):
-        for item in SqlHandler.OperationBaseTypes():
-            self.ui.typeComboBox.addItem(item.getName(), item)
-        
+        from models.operation import OperationBase,VaccinationBase,SurgeryBase,MedicationBase,LabBase,LamenessBase,XrayBase,UltrasonicBase,EndoscopyBase,DentalexaminationBase
+        for item in [OperationBase,VaccinationBase,SurgeryBase,MedicationBase,LabBase,LamenessBase,XrayBase,UltrasonicBase,EndoscopyBase,DentalexaminationBase]:
+            self.ui.typeComboBox.addItem(item.getName(item), item)
+
+
     def setSpecialInfo(self, index):
-        operationType = SqlHandler.getOperationBaseType(self.ui.typeComboBox.itemData(index))
-        if operationType is 'VaccinationBase':
+        from models.operation import VaccinationBase, MedicationBase, SurgeryBase
+
+        operationType = self.ui.typeComboBox.itemData(index).__name__ #get baseObject name
+        if operationType is VaccinationBase.__name__:
             self.ui.stackedWidget.setCurrentIndex(self.ui.stackedWidget.indexOf(self.ui.vaccinePage))
             self.ui.resitCheckBox.setDisabled(False)
             self.ui.durationspinBox.setDisabled(False)
-        
-        elif operationType is 'MedicationBase':
+
+        elif operationType is MedicationBase.__name__:
             self.ui.stackedWidget.setCurrentIndex(self.ui.stackedWidget.indexOf(self.ui.vaccinePage))
             self.ui.resitCheckBox.setDisabled(True)
             self.ui.durationspinBox.setDisabled(True)
             
-        elif operationType is 'SurgeryBase':
+        elif operationType is SurgeryBase.__name__:
             self.ui.stackedWidget.setCurrentIndex(self.ui.stackedWidget.indexOf(self.ui.itemPage))
 
         else:
             self.ui.stackedWidget.setCurrentIndex(self.ui.stackedWidget.indexOf(self.ui.emptyPage))
             
-    def errorMessage(self):
+    def errorMessage(self,msg):
         box = QMessageBox()
-        box.setText('Operaatiopohjaa ei voida tallentaa sillä sen nimeä ei ole asetettu.')
+        box.setText(msg)
         box.exec()         
         

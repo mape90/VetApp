@@ -332,9 +332,9 @@ class OperationTreeWidget(GenericTreeWidget):
     def makeTreeItem(self,item):
         if item.getType() != 'Operation':
             if item.hasList():
-                item = type(item).ObjectCreator()(item.price, item.description, base=item, items=item.items)
+                item = type(item).ObjectCreator(type(item))(item.price, item.description, base=item, items=item.items)
             else:
-                item = type(item).ObjectCreator()(item.price, item.description, base=item)
+                item = type(item).ObjectCreator(type(item))(item.price, item.description, base=item)
             self.session.add(item)
 
         treeItem = QTreeWidgetItem(self.ui.treeWidget, item.stringList())

@@ -33,6 +33,9 @@ import datetime
 #
 ##----------------------------------------------##
 
+
+g_operationbase_translation_dict = {"OperationBase":"Operaatio", "VaccinationBase":'Rokotus', "SurgeryBase":'Leikkaus', "MedicationBase":"Lääkitys", "LabBase":"Laboratoriotutkimus", "LamenessBase":'Ontumatutkimus', "XrayBase":'Röntkentutkimus', "UltrasonicBase":'Ultraäänitutkimus', "EndoscopyBase": "Endoskooppitutkimus" ,"DentalexaminationBase":"Hammashoito"}
+
 class OperationBase(Base):
     __tablename__='operationbases'
     id = Column(Integer, Sequence('operationbases_id_seq'), primary_key=True)
@@ -41,22 +44,41 @@ class OperationBase(Base):
     type = Column(String(50))
     description = Column(String(1000))
     __mapper_args__ = {'polymorphic_identity':'operationbases','polymorphic_on':type}
+
     def __init__(self, name, price, description):
         self.name = name
         self.price = price
-        self.description = description
-        
-    def getName(self=None):
-        return 'Operaatio'
+        #self.description = description
+
+        self.update_order = ["name","price", "description"]
+
+    def getName(self):
+        name = self.__class__.__name__
+        #TODO: find some better way to do this
+        if(name == "DeclarativeMeta"):
+            name = self.__name__
+
+        try:
+            return g_operationbase_translation_dict[name]
+        except:
+            #TODO: put error data to logger
+            print("ERROR: " + name + " wont have translation in g_operationbase_translation_dict")
+            return name
     
     def getType(self):
-        return 'OperationBase'
+        return self.__class__.__name__
     
     def stringList(self):
         return [str(self.id), self.name, self.getName(), str(self.price)]
     
     def ObjectCreator(self=None):
-        return Basic
+        name = self.__class__.__name__
+        #TODO: find some better way to do this
+        if(name == "DeclarativeMeta"):
+            name = self.__name__
+
+        g_operationbase_object_creator_dict = {"VaccinationBase":Vaccination, "SurgeryBase":Surgery, "MedicationBase":Medication, "LabBase":Lab, "LamenessBase":Lameness,"XrayBase":Xray, "OperationBase":Basic, "UltrasonicBase":Ultrasonic, "EndoscopyBase":Endoscopy, "DentalexaminationBase": Dentalexamination}
+        return g_operationbase_object_creator_dict[name]
     
     def hasList(self=None):
         return False
@@ -68,9 +90,13 @@ class OperationBase(Base):
         return False
     
     def update(self, data):
-        self.name = data[0]
-        self.price = data[1]
-        self.description = data[2]
+        count = 0
+        for item in data:
+            if(item != None):
+                vars(self)[self.update_order[count]] = data[count]
+            count += 1
+
+        return count
    
 class VaccinationBase(OperationBase):
     __tablename__='vaccinationbases'
@@ -85,25 +111,22 @@ class VaccinationBase(OperationBase):
         self.duration = duration
         self.need_resit = need_resit
         self.item= item
+
+        self.update_order += ["duration", "need_resit", "item"]
    
     def hasItem(self):
         return True
     
     def stringList(self):
         return [str(self.id), self.name, self.getName(), str(self.price+self.item.price) if self.item != None else str(self.price)]
-   
-    def getName(self=None):
-        return 'Rokotus'
-    
-    def ObjectCreator(self=None):
-        return Vaccination
-    
+
     def update(self, data):
-        OperationBase.update(self, data)
-        self.duration = data[3]
-        self.need_resit = data[4]
-        self.item = data[5]
-   
+        count = super().update(data)
+        for item in data:
+            if(item != None):
+                vars(self)[self.update_order[count]] = data[count]
+            count += 1
+
 
 class SurgeryBaseItem(Base):
     __tablename__='surgerybaseitems'
@@ -115,16 +138,24 @@ class SurgeryBaseItem(Base):
     def __init__(self,item,count=1):
         self.item = item
         self.count = count
-        
-    def getType(self=None):
-        return 'SurgeryBaseItem'
     
     def stringList(self):
         string_list = self.item.stringList()
-        string_list[3] = str(float(string_list[3])*self.count)
+
+        #Check data in case item string_list have been modified
+        if(len(string_list)>2):
+            try:
+                string_list[3] = str(float(string_list[3])*self.count)
+            except:
+                #TODO: put data to logger
+                print("ERROR: SurgeryBaseItem->stringList, can't edit string_list[3]. Item string_list modified?")
+                string_list[3] = "ERROR"
+
         string_list.append(str(self.count))
         return string_list
-    
+
+
+
 
 class SurgeryBase(OperationBase):
     __tablename__='surgerybases'
@@ -134,13 +165,8 @@ class SurgeryBase(OperationBase):
     def __init__(self,name, price, description, items=[]):
         super().__init__(name, price, description)
         self.items = items
-    
-    def getName(self=None):
-        return 'Leikkaus'
-    
-    def ObjectCreator(self=None):
-        return Surgery
-    
+        self.update_order += ["items"]
+
     def hasList(self=None):
         return True
     
@@ -152,8 +178,11 @@ class SurgeryBase(OperationBase):
         return [str(self.id), self.name, self.getName(), str(price)]
 
     def update(self, data):
-        OperationBase.update(self, data)
-        self.items = data[3]
+        count = super().update(data)
+        for item in data:
+            if(item != None):
+                vars(self)[self.update_order[count]] = data[count]
+            count += 1
 
 class MedicationBase(OperationBase):
     __tablename__='medicationbases'
@@ -164,12 +193,8 @@ class MedicationBase(OperationBase):
     def __init__(self, name, price, description, item):
         super().__init__(name, price, description)
         self.item = item
-    
-    def getName(self=None):
-        return 'Lääkitys'
-    
-    def ObjectCreator(self=None):
-        return Medication
+
+        self.update_order += ["item"]
     
     def hasItem(self):
         return True
@@ -178,20 +203,19 @@ class MedicationBase(OperationBase):
         return [str(self.id), self.name, self.getName(), str(self.price+self.item.price) if self.item != None else str(self.price)]
 
     def update(self, data):
-        OperationBase.update(self, data)
-        self.item = data[3]
-       
+        count = super().update(data)
+        for item in data:
+            if(item != None):
+                vars(self)[self.update_order[count]] = data[count]
+            count += 1
+
+
 class LabBase(OperationBase):
     __tablename__='labbases'
     id = Column(Integer, ForeignKey('operationbases.id'), primary_key=True)
     def __init__(self, name, price, description):
         super().__init__(name, price, description)
-    
-    def getName(self=None):
-        return 'Laboratoriotutkimus'
 
-    def ObjectCreator(self=None):
-        return Lab
 '''
 
 '''
@@ -201,12 +225,8 @@ class LamenessBase(OperationBase):
     __mapper_args__ = {'polymorphic_identity':'lamenessbases',}
     def __init__(self, name, price, description):
         super().__init__(name, price, description)
-        
-    def getName(self=None):
-        return 'Ontumatutkimus'
 
-    def ObjectCreator(self=None):
-        return Lameness
+
 '''
 
 '''
@@ -217,12 +237,6 @@ class XrayBase(OperationBase):
     def __init__(self, name, price, description):
         super().__init__(name, price, description)
     
-    def getName(self=None):
-        return 'Röntkentutkimus'
-    
-    def ObjectCreator(self=None):
-        return Xray
-
 '''
     
 '''
@@ -232,12 +246,6 @@ class UltrasonicBase(OperationBase):
     __mapper_args__ = {'polymorphic_identity':'ultrasonicbases',}
     def __init__(self, name, price, description):
         super().__init__(name, price, description)
-    
-    def getName(self=None):
-        return 'Ultraäänitutkimus'
-    
-    def ObjectCreator(self=None):
-        return Ultrasonic
 
 '''
     
@@ -249,12 +257,6 @@ class EndoscopyBase(OperationBase):
     def __init__(self, name, price, description):
         super().__init__(name, price, description)
 
-    def getName(self=None):
-        return 'Endoskooppitutkimus'
-    
-    def ObjectCreator(self=None):
-        return Endoscopy
-    
 '''
     
 '''
@@ -264,12 +266,7 @@ class DentalexaminationBase(OperationBase):
     __mapper_args__ = {'polymorphic_identity':'dentalexaminationbases',}
     def __init__(self, name, price, description):
         super().__init__(name, price, description)
-    
-    def getName(self=None):
-        return 'Hammashoito'
 
-    def ObjectCreator(self=None):
-        return Dentalexamination
 #----------------------------------------------
 #
 #                Operations
@@ -291,26 +288,33 @@ class Operation(Base):
     def __init__(self, price, description, base=None, count=1):
         self.price = price
         self.description = description
-        
-        if isinstance(count, int):
-            self.count = count
-        else:
-            self.count = 1
-    
+        self.base = base
+
+        #Handle weird data
+        try:
+            self.count = int(count)
+        except ValueError:
+            try:
+                self.count = float(count)
+            except ValueError:
+                self.count = 1
+
+        self.update_order = ["price", "description","base","count"]
+
+
     def update(self, data):
-        self.price = data[0]
-        self.description = data[1]
-        if(len(data)>2):
-            self.base = data[2]
-        if(len(data)>3):
-            self.count = data[3]
-        
-    def getType(self):
-        return 'Operation'
-    
+        count = super().update(data)
+        for item in data:
+            if(item != None):
+                vars(self)[self.update_order[count]] = data[count]
+            count += 1
+
+    def getType(self=None):
+        return self.__class__.__name__
+
     def hasList(self=None):
         return False
-    
+
     def stringList(self):
         return [str(self.id), self.base.getName(), self.base.name, str(self.price)]
 #TODO: check that medicines is valid table name and you can call id for it
@@ -326,11 +330,9 @@ class Basic(Operation):
         self.base_id = base.id
         self.base = base
 
-
-
 '''
 
-'''   
+'''
 class Vaccination(Operation):
     __tablename__='vaccinations'
     id = Column(Integer, ForeignKey('operations.id'), primary_key=True)
@@ -359,10 +361,10 @@ class SurgeryItem(Base):
     def __init__(self,item,count=1):
         self.item = item
         self.count = count
-        
+
     def getType(self=None):
-        return 'SurgeryItem'
-    
+        return self.__class__.__name__
+
     def stringList(self):
         string_list = self.item.stringList()
         string_list[3] = str(float(string_list[3]) * self.count)
@@ -381,18 +383,21 @@ class Surgery(Operation):
         self.base_id = base.id
         self.base = base
         self.items = []
-        
+
         for item in items:
             if item.getType() == SurgeryItem.getType():
                 self.items.append(item)
             else:
                 self.items.append(SurgeryItem(item=item.item,count=item.count))
-                
-    
+
+
     def update(self, data):
-        super(Surgery,self).update(data)#TODO check
-        self.items = data[3]
-        
+        count = super().update(data)
+        for item in data:
+            if(item != None):
+                vars(self)[self.update_order[count]] = data[count]
+            count += 1
+
     def hasList(self=None):
         return True
 
@@ -405,7 +410,7 @@ class Surgery(Operation):
 '''
 
 '''
-           
+
 class Lab(Operation):
     __tablename__='labs'
     id = Column(Integer, ForeignKey('operations.id'), primary_key=True)
@@ -418,10 +423,13 @@ class Lab(Operation):
         self.base_id = base.id
         self.base = base
         self.path = path
-        
+
     def update(self, data):
-        super(Lab,self).update(data)
-        self.path = data[3]
+        count = super().update(data)
+        for item in data:
+            if(item != None):
+                vars(self)[self.update_order[count]] = data[count]
+            count += 1
 
 '''
 
@@ -455,8 +463,11 @@ class Lameness(Operation):
         self.base = base
 
     def update(self, data):
-        super(Lameness,self).update(data)
-        #self.pictures = data[3]
+        count = super().update(data)
+        for item in data:
+            if(item != None):
+                vars(self)[self.update_order[count]] = data[count]
+            count += 1
 '''
 
 '''
@@ -473,11 +484,14 @@ class Xray(Operation):
         self.base = base
 
     def update(self, data):
-        super(Xray,self).update(data)
-        #self.pictures = data[3]
+        count = super().update(data)
+        for item in data:
+            if(item != None):
+                vars(self)[self.update_order[count]] = data[count]
+            count += 1
 
 '''
-    
+
 '''
 class Ultrasonic(Operation):
     __tablename__='ultrasonics'
@@ -492,11 +506,14 @@ class Ultrasonic(Operation):
         self.base = base
 
     def update(self, data):
-        super(Ultrasonic,self).update(data)
-        #self.pictures = data[3]
+        count = super().update(data)
+        for item in data:
+            if(item != None):
+                vars(self)[self.update_order[count]] = data[count]
+            count += 1
 
 '''
-    
+
 '''
 class Endoscopy(Operation):
     __tablename__='endoscopys'
@@ -511,11 +528,14 @@ class Endoscopy(Operation):
         self.base = base
 
     def update(self, data):
-        super(Endoscopy,self).update(data)
-        #self.pictures = data[3]
+        count = super().update(data)
+        for item in data:
+            if(item != None):
+                vars(self)[self.update_order[count]] = data[count]
+            count += 1
 
 '''
-    
+
 '''
 class Dentalexamination(Operation):
     __tablename__='dentalexaminations'
@@ -530,8 +550,11 @@ class Dentalexamination(Operation):
         self.base = base
 
     def update(self, data):
-        super(Dentalexamination,self).update(data)
-        #self.pictures = data[3]
+        count = super().update(data)
+        for item in data:
+            if(item != None):
+                vars(self)[self.update_order[count]] = data[count]
+            count += 1
 
 
 
@@ -541,16 +564,21 @@ class RecipieMedicine(Base):
     medicine_id = Column(Integer, ForeignKey('items.id'))
     medicine = relationship("Item")
     count = Column(Integer)
-    
+
     def __init__(self, medicine, count=1):
         self.medicine = medicine
         self.medicine_id = medicine.id
         self.count = count
-    
+        self.update_order = ["medicine","count"]
+
+
     def update(self, data):
-        self.medicine = data[0]
         self.medicine_id = data[0].id
-        self.count = data[1]
+        count = 0
+        for item in data:
+            if(item != None):
+                vars(self)[self.update_order[count]] = data[count]
+            count += 1
 
     def stringList(self):
         return [str(self.id), self.medicine.name, str(self.count)]
@@ -566,20 +594,23 @@ class PhoneRecipie(Base):
     animal = relationship("Animal")
     made_time = Column(Date)
     call_time = Column(Date)
-    
+
     recipiemedicines = relationship("RecipieMedicine", secondary = recipie_medicine_table)
     def __init__(self, animal,recipiemedicines=[]):
         self.animal = animal
         self.animal_id = animal.id
         self.made_time = datetime.datetime.now()
         self.recipiemedicines = recipiemedicines
-        
+
+        self.update_order = ["animal","made_time","call_time","recipiemedicines"]
+
     def update(self, data):
-        self.animal = data[0]
-        self.made_time = data[1]
-        self.call_time = data[2]
-        self.recipiemedicines = data[3]
-        
+        count = 0
+        for item in data:
+            if(item != None):
+                vars(self)[self.update_order[count]] = data[count]
+            count += 1
+
     def stringList(self):
         temp = [str(self.id),str(self.made_time), str(self.call_time) if self.call_time != None else '']
         temp2 = ''
@@ -588,3 +619,4 @@ class PhoneRecipie(Base):
         temp2 = temp2.strip()
         temp.append(temp2)
         return temp
+

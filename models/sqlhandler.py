@@ -223,21 +223,6 @@ class SQLHandler(object):
     def VaccinationBase(self, name, price, description, duration, need_resit, item):
         return VaccinationBase(name, price, description, duration, need_resit, item)
 
-    def OperationBaseTypes(self):
-        return [OperationBase,VaccinationBase,SurgeryBase,MedicationBase,LabBase,
-                LamenessBase,XrayBase,UltrasonicBase,EndoscopyBase,DentalexaminationBase]
-    
-    #if you change this cahange also OperationCreator setSpecieInfo
-    def getOperationBaseType(self, operationBase):
-        if operationBase.getName() == VaccinationBase.getName():
-            return 'VaccinationBase'
-        elif operationBase.getName() == MedicationBase.getName():
-            return 'MedicationBase'
-        elif operationBase.getName() == SurgeryBase.getName():
-            return 'SurgeryBase'
-        else:
-            return None
-        
     
     #------ANIMAL RELATED-----------#
     def Animal(self, name, official_name, race_id, specie_id, sex_id, 
