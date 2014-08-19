@@ -66,24 +66,30 @@ class TabManager(object):
                  
         else:
             if newItem != None:
-                if not tabType + str(newItem.id) in self.tabslist:
-                    newTab = tabCreator(parent=self.tabwidget, item=newItem)
-                    if tabCreator.getType() == 'Bill':
-                        print("Bill tab found")
-                        self.tabwidget.addTab(newTab, self.billText())
-                        if newTab.item == None:
-                            tabType = 'new' + tabType
-                    elif newItem.getType() == 'Visit':
-                        self.tabwidget.addTab(newTab, self.visitText())
+                if(newItem.__class__.__name__ != 'dict'):
+                    if not tabType + str(newItem.id) in self.tabslist:
+                        newTab = tabCreator(parent=self.tabwidget, item=newItem)
+                        if tabCreator.getType() == 'Bill':
+                            print("Bill tab found")
+                            self.tabwidget.addTab(newTab, self.billText())
+                            if newTab.item == None:
+                                tabType = 'new' + tabType
+                        elif newItem.getType() == 'Visit':
+                            self.tabwidget.addTab(newTab, self.visitText())
+                        else:
+                            self.tabwidget.addTab(newTab, newItem.name)
+
+                        self.tabslist[tabType + str(newItem.id)] = newTab
+                        self.returnList[newTab] = returnTab
                     else:
-                        self.tabwidget.addTab(newTab, newItem.name)
-                    
-                    self.tabslist[tabType + str(newItem.id)] = newTab
-                    self.returnList[newTab] = returnTab
+                        print("Tab is open!")
+                    self.setCurrentTab(self.tabslist[tabType+ str(newItem.id)])
                 else:
-                    print("Tab is open!")
-                self.setCurrentTab(self.tabslist[tabType+ str(newItem.id)])
-                    
+                    newTab = tabCreator(parent=self.tabwidget, item=newItem)
+                    self.tabwidget.addTab(newTab, self.new_text + self.translate[tabType] + self.findNextNewIndex('new'+tabType))
+                    self.tabslist['new' + tabType + self.findNextNewIndex('new'+tabType)] = newTab
+                    self.setCurrentTab(newTab)
+                    self.returnList[newTab] = returnTab
             
             else:
                 newTab = tabCreator(parent=self.tabwidget)

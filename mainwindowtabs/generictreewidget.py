@@ -127,6 +127,15 @@ class GenericTreeWidget(QWidget):
         for item in itemList:
             self.addItemToTree(item)
     
+
+    #this function will return first selected item
+    #So only one item is returned
+    def getSelectedItem(self):
+        if len(self.ui.treeWidget.selectedItems()) > 0:
+            return self.ui.treeWidget.selectedItems()[0].data(0,0)
+        else:
+            return None
+
     def getItemsFromList(self):
         index=0
         itemList = []

@@ -93,8 +93,16 @@ class OwnerTab(GenericTab):
     
     def openNewVisit(self):
         from mainwindowtabs.visittab import VisitTab
-        Tabmanager.openTab(tabCreator=VisitTab, returnTab=self)
-        
+        owner = None
+        animal = None
+        if(self.item != None):
+            owner = self.item
+            animal = self.animalTreeWidget.getSelectedItem()
+        if(owner != None):
+            Tabmanager.openTab(tabCreator=VisitTab,newItem={"owner":owner ,"animal":animal}, returnTab=self)
+        else:
+            Tabmanager.openTab(tabCreator=VisitTab,newItem=None, returnTab=self)
+
     def createConnections(self):
         self.ui.addPostOfficeButton.clicked.connect(self.openAddNewPostOffice)
         self.ui.addPostNumberButton.clicked.connect(self.openAddNewPostNumber)
@@ -223,7 +231,7 @@ class OwnerTab(GenericTab):
         return len(self.ui.nameEdit.text()) > 0
     
     def hasChanged(self):
-        #print('--------hasChanged---------')
+
         if self.item != None:
             post_office = self.ui.postOfficeComboBox.itemData(self.ui.postOfficeComboBox.currentIndex())
             post_number = self.ui.postNumberComboBox.itemData(self.ui.postNumberComboBox.currentIndex())

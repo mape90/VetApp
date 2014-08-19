@@ -59,6 +59,17 @@ from mainwindowtabs.generictreewidget import GenericTreeWidget, ButtonType, Visi
 
 class VisitTab(GenericTab):
     def __init__(self, parent=None, item=None):
+
+        #check special case if item is dictionary
+        owner = None
+        animal = None
+        if(item != None and item.__class__.__name__ == 'dict'):
+            if("owner" in item):
+                owner = item["owner"]
+            if("animal" in item):
+                animal = item["animal"]
+            item = None
+
         GenericTab.__init__(self, parent=parent, item=item)
         self.ui = Ui_Visit()
         self.ui.setupUi(self)
@@ -68,9 +79,14 @@ class VisitTab(GenericTab):
         self.currentOperation = None
         
         self.configure()
-           
         self.createConnections()
+
         self.setBasicInfo()
+        if(owner != None):
+            self.ownerserachline.setCurrentItem(owner)
+            if(animal != None):
+                self.animalTreeWidget.addAskedItem(animal) #TODO find finction to add animal
+            self.disableAnimalTree(False)
     
     def setBasicInfo(self):
         self.disableAnimalTree(True)
