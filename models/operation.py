@@ -91,7 +91,7 @@ class OperationBase(Base):
     
     def update(self, data):
         count = 0
-        for item in data:
+        for item in data[count:]:
             if(item != None):
                 vars(self)[self.update_order[count]] = data[count]
             count += 1
@@ -122,7 +122,7 @@ class VaccinationBase(OperationBase):
 
     def update(self, data):
         count = super().update(data)
-        for item in data:
+        for item in data[count:]:
             if(item != None):
                 vars(self)[self.update_order[count]] = data[count]
             count += 1
@@ -153,7 +153,9 @@ class SurgeryBaseItem(Base):
 
         string_list.append(str(self.count))
         return string_list
-
+    
+    def getType(self=None):
+      return "SurgeryBaseItem"
 
 
 
@@ -179,7 +181,7 @@ class SurgeryBase(OperationBase):
 
     def update(self, data):
         count = super().update(data)
-        for item in data:
+        for item in data[count:]:
             if(item != None):
                 vars(self)[self.update_order[count]] = data[count]
             count += 1
@@ -204,7 +206,7 @@ class MedicationBase(OperationBase):
 
     def update(self, data):
         count = super().update(data)
-        for item in data:
+        for item in data[count:]:
             if(item != None):
                 vars(self)[self.update_order[count]] = data[count]
             count += 1
@@ -303,12 +305,13 @@ class Operation(Base):
 
 
     def update(self, data):
-        count = super().update(data)
-        for item in data:
+        count = 0
+        for item in data[count:]:
             if(item != None):
                 vars(self)[self.update_order[count]] = data[count]
             count += 1
-
+        return count
+        
     def getType(self=None):
         return self.__class__.__name__
 
@@ -393,7 +396,7 @@ class Surgery(Operation):
 
     def update(self, data):
         count = super().update(data)
-        for item in data:
+        for item in data[count:]:
             if(item != None):
                 vars(self)[self.update_order[count]] = data[count]
             count += 1
@@ -426,7 +429,7 @@ class Lab(Operation):
 
     def update(self, data):
         count = super().update(data)
-        for item in data:
+        for item in data[count:]:
             if(item != None):
                 vars(self)[self.update_order[count]] = data[count]
             count += 1
@@ -464,7 +467,7 @@ class Lameness(Operation):
 
     def update(self, data):
         count = super().update(data)
-        for item in data:
+        for item in data[count:]:
             if(item != None):
                 vars(self)[self.update_order[count]] = data[count]
             count += 1
@@ -485,7 +488,7 @@ class Xray(Operation):
 
     def update(self, data):
         count = super().update(data)
-        for item in data:
+        for item in data[count:]:
             if(item != None):
                 vars(self)[self.update_order[count]] = data[count]
             count += 1
@@ -507,7 +510,7 @@ class Ultrasonic(Operation):
 
     def update(self, data):
         count = super().update(data)
-        for item in data:
+        for item in data[count:]:
             if(item != None):
                 vars(self)[self.update_order[count]] = data[count]
             count += 1
@@ -529,7 +532,7 @@ class Endoscopy(Operation):
 
     def update(self, data):
         count = super().update(data)
-        for item in data:
+        for item in data[count:]:
             if(item != None):
                 vars(self)[self.update_order[count]] = data[count]
             count += 1
@@ -551,7 +554,7 @@ class Dentalexamination(Operation):
 
     def update(self, data):
         count = super().update(data)
-        for item in data:
+        for item in data[count:]:
             if(item != None):
                 vars(self)[self.update_order[count]] = data[count]
             count += 1
@@ -575,7 +578,7 @@ class RecipieMedicine(Base):
     def update(self, data):
         self.medicine_id = data[0].id
         count = 0
-        for item in data:
+        for item in data[count:]:
             if(item != None):
                 vars(self)[self.update_order[count]] = data[count]
             count += 1
@@ -606,7 +609,7 @@ class PhoneRecipie(Base):
 
     def update(self, data):
         count = 0
-        for item in data:
+        for item in data[count:]:
             if(item != None):
                 vars(self)[self.update_order[count]] = data[count]
             count += 1

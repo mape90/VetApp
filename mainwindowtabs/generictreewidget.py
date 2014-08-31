@@ -339,7 +339,7 @@ class OperationTreeWidget(GenericTreeWidget):
                     self.session.delete(item)
 
     def makeTreeItem(self,item):
-        if item.getType() != 'Operation':
+        if 'Base' in item.getType():
             if item.hasList():
                 item = type(item).ObjectCreator(type(item))(item.price, item.description, base=item, items=item.items)
             else:
