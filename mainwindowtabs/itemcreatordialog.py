@@ -27,6 +27,8 @@ from mainwindowtabs.addNewDialog import AddNewSpecie
 from uipy.ui_itemcreator import Ui_ItemCreatorDialog
 from uipy.ui_ownerdescription import Ui_OwnerDescriptionDialog
 
+from models.translationtables import g_operationbase_to_item_translation_dict
+
 from models import SqlHandler
 import datetime
 
@@ -98,7 +100,7 @@ self.session.expunge()
 
 
 class ItemCreatorDialog(QDialog):
-    def __init__(self, parent=None, item=None):
+    def __init__(self, parent, item=None):
         QDialog.__init__(self,parent=parent)
         self.ui = Ui_ItemCreatorDialog()
         self.ui.setupUi(self)
@@ -113,26 +115,22 @@ class ItemCreatorDialog(QDialog):
         self.configureConnections()
         self.setBasicInfo()
         
-        #TODO: find some better way to do this
-        if( self.parent() != None and self.parent().parent() != None and
-            self.parent().parent().parent() != None and
-            self.parent().parent().parent().parent() != None and
-            hasattr(self.parent().parent().parent().parent(), 'ui') and
-            hasattr(self.parent().parent().parent().parent().ui, 'typeComboBox')):
-            operationName = self.parent().parent().parent().parent().ui.typeComboBox.itemData(
-                        self.parent().parent().parent().parent().ui.typeComboBox.currentIndex()
-                        ).getName()
-            if operationName == 'Rokotus':
-                self.ui.typeSelectComboBox.setCurrentIndex(
-                self.ui.typeSelectComboBox.findText('Rokote'))
-            elif operationName == 'Lääkitys':
-                self.ui.typeSelectComboBox.setCurrentIndex(
-                self.ui.typeSelectComboBox.findText('Lääke'))
-            else:
-                pass
+        self.selectCorrectItem()
+
         
-        
-        
+    def selectCorrectItem(self):
+        #find operation creator and select it ui and typeComboBox that has operation list
+        try:
+            parent_typeComboBox = self.parent().parent().parent().parent().ui.typeComboBox
+            operation = parent_typeComboBox.itemData(parent_typeComboBox.currentIndex())
+
+            #set correct item selected
+            if operation.__name__ in g_operationbase_to_item_translation_dict:
+                self.ui.typeSelectComboBox.setCurrentIndex(self.ui.typeSelectComboBox.findText(
+                    g_operationbase_to_item_translation_dict[operation.__name__]))
+        except:
+            print("ERROR: ItemCreatorDialog->selectCorrectItem(). error to find parent. something is changed in operationbase! FIX ME!")
+
 
     def configureConnections(self):
         self.ui.preSetDurationsComboBox.currentIndexChanged['int'].connect(self.updateDays)
@@ -226,22 +224,19 @@ class ItemCreatorDialog(QDialog):
 
     '''returns new object or updated old one'''
     def updateItem(self):
-        data = []
-        data.append(self.ui.nameEdit.text())
-        data.append(self.ui.priceSpinBox.value())
-        data.append(self.ui.stockPriceSpinBox.value())
-        data.append(self.ui.BarCodeEdit.text())
-        data.append(self.ui.plainTextEdit.toPlainText())
-        data.append(self.customerTreeWidget.getItemsFromList())
-        
+        data = {}
+        data["name"] = self.ui.nameEdit.text()
+        data["price"] = self.ui.priceSpinBox.value()
+        data["stock_price"] = self.ui.stockPriceSpinBox.value()
+        data["barcode"] = self.ui.BarCodeEdit.text()
+        data["description"] = self.ui.plainTextEdit.toPlainText()
+        data["customer_descriptions"] = self.customerTreeWidget.getItemsFromList()
+
         itemCreator = self.ui.typeSelectComboBox.itemData(self.ui.typeSelectComboBox.currentIndex())
         
         if itemCreator.hasDuration():
-            data.append(self.getDuration())
+            data["duration"] = self.getDuration()
         
-        print(itemCreator)
-        print(type(itemCreator))
-        print(data)
         if self.item != None:
             self.item.update(data)
         else:

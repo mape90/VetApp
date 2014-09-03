@@ -90,18 +90,26 @@ class OwnerTab(GenericTab):
         
         self.visitTreeWidget.setMaximumWidth(500)
         self.ui.animalvisitLayout.addWidget(self.visitTreeWidget)
-    
+
+
+
     def openNewVisit(self):
-        from mainwindowtabs.visittab import VisitTab
-        owner = None
-        animal = None
-        if(self.item != None):
+        #check that we can save owner
+        if self.saveAble():
+            #save it to its current state
+            self.saveTab()
+
             owner = self.item
             animal = self.animalTreeWidget.getSelectedItem()
-        if(owner != None):
+
+            from mainwindowtabs.visittab import VisitTab
             Tabmanager.openTab(tabCreator=VisitTab,newItem={"owner":owner ,"animal":animal}, returnTab=self)
+
         else:
-            Tabmanager.openTab(tabCreator=VisitTab,newItem=None, returnTab=self)
+            self.errorMessage('Can not save item! Because it is not valid')
+
+
+
 
     def createConnections(self):
         self.ui.addPostOfficeButton.clicked.connect(self.openAddNewPostOffice)

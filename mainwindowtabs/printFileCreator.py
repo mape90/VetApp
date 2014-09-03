@@ -111,27 +111,36 @@ class PrintFileCreator(object):
                         operation_rows += self.genItemTableRow(item)
                         operation_row_count += 1
                 elif(oper.base.hasItem()):
-                    operation_rows += self.genTableRowPrue(oper.base.item.name, 1, "kpl", oper.base.item.price, oper.base.item.getALVClass()) 
+                    from models.translationtables import g_item_alv_dict
+
+                    operation_rows += self.genTableRowPrue(oper.base.item.name, 1,
+                                                           "kpl", oper.base.item.price,
+                                                           g_item_alv_dict[oper.base.item.__class__.__name__])
                     operation_row_count += 1
                 else:
                     pass
         
-        #[operation_price, accesories_price, lab_price, medicine_price, diet_price]
-        list_visit_prices = bill.calcPricesFromVisit()
-        if(not list_visit_prices[0] == bill.operations_payment):
-            operation_rows += self.genTableRowPrue("Operaatioiden hintamuutos", 1, "", -list_visit_prices[0] + bill.operations_payment, 1)
+        #price_dict["operation_price"]
+        #price_dict["accesories_price"]
+        #price_dict["lab_price"]
+        #price_dict["medicine_price"]
+        #price_dict["diet_price"]
+
+        price_dict = bill.calcPricesFromVisit()
+        if(not price_dict["operation_price"] == bill.operations_payment):
+            operation_rows += self.genTableRowPrue("Operaatioiden hintamuutos", 1, "", -price_dict["operation_price"] + bill.operations_payment, 1)
             operation_row_count +=1
-        if(not list_visit_prices[1] == bill.accessories_payment):
-            operation_rows += self.genTableRowPrue("Tarvikkeiden hintamuutos", 1, "", -list_visit_prices[1] + bill.accessories_payment, 1)
+        if(not price_dict["accesories_price"] == bill.accessories_payment):
+            operation_rows += self.genTableRowPrue("Tarvikkeiden hintamuutos", 1, "", -price_dict["accesories_price"] + bill.accessories_payment, 1)
             operation_row_count +=1
-        if(not list_visit_prices[2] == bill.lab_payment):
-            operation_rows += self.genTableRowPrue("Laboratorio hintamuutos", 1, "", -list_visit_prices[2] + bill.lab_payment, 2)
+        if(not price_dict["lab_price"] == bill.lab_payment):
+            operation_rows += self.genTableRowPrue("Laboratorio hintamuutos", 1, "", -price_dict["lab_price"] + bill.lab_payment, 1)
             operation_row_count +=1
-        if(not list_visit_prices[3] == bill.medicines_payment):
-            operation_rows += self.genTableRowPrue("Lääkkeiden hintamuutos", 1, "", -list_visit_prices[3] + bill.medicines_payment, 2)
+        if(not price_dict["medicine_price"] == bill.medicines_payment):
+            operation_rows += self.genTableRowPrue("Lääkkeiden hintamuutos", 1, "", -price_dict["medicine_price"] + bill.medicines_payment, 2)
             operation_row_count +=1
-        if(not list_visit_prices[4] == bill.diet_payment):
-            operation_rows += self.genTableRowPrue("Rehujen hintamuutos", 1, "", -list_visit_prices[4] + bill.diet_payment, 3)
+        if(not price_dict["diet_price"] == bill.diet_payment):
+            operation_rows += self.genTableRowPrue("Rehujen hintamuutos", 1, "", -price_dict["diet_price"] + bill.diet_payment, 3)
             operation_row_count +=1
             
         if(not 0 == bill.extra_percent):
@@ -187,11 +196,13 @@ class PrintFileCreator(object):
         return temp
     
     def genItemTableRow(self,surgeryItem):
+        from models.translationtables import g_item_alv_dict
+
         return self.genTableRowPrue(name = surgeryItem.item.name, 
                                count = surgeryItem.count,
                                type_ ="kpl",
                                price = surgeryItem.item.price,
-                               alv  = surgeryItem.item.getALVClass())
+                               alv  = g_item_alv_dict[surgeryItem.item.__class__.__name__])
 
     
     def genTableRow(self, operation, alv = 1):

@@ -26,6 +26,7 @@ from models.item import *
 
 import datetime
 
+from models.translationtables import g_operationbase_translation_dict
 
 ##----------------------------------------------##
 #
@@ -34,7 +35,7 @@ import datetime
 ##----------------------------------------------##
 
 
-g_operationbase_translation_dict = {"OperationBase":"Operaatio", "VaccinationBase":'Rokotus', "SurgeryBase":'Leikkaus', "MedicationBase":"Lääkitys", "LabBase":"Laboratoriotutkimus", "LamenessBase":'Ontumatutkimus', "XrayBase":'Röntkentutkimus', "UltrasonicBase":'Ultraäänitutkimus', "EndoscopyBase": "Endoskooppitutkimus" ,"DentalexaminationBase":"Hammashoito"}
+
 
 class OperationBase(Base):
     __tablename__='operationbases'
@@ -48,9 +49,7 @@ class OperationBase(Base):
     def __init__(self, name, price, description):
         self.name = name
         self.price = price
-        #self.description = description
-
-        self.update_order = ["name","price", "description"]
+        self.description = description
 
     def getName(self):
         name = self.__class__.__name__
@@ -90,14 +89,26 @@ class OperationBase(Base):
         return False
     
     def update(self, data):
-        count = 0
-        for item in data[count:]:
-            if(item != None):
-                vars(self)[self.update_order[count]] = data[count]
-            count += 1
-
-        return count
+        try:
+            for key, item in data.items():
+                self.setVariable(key,item)
+        except:
+            print("DEBUG ERROR OperationBase->update(): wrong variable name: " + str(key))
    
+    def setVariable(self, name, value):
+        if name is "name":
+            self.name = value
+            return True
+        elif name is "price":
+            self.price = value
+            return True
+        elif name is "description":
+            self.description = value
+            return True
+        else:
+            print("DEBUG: OperationBase->setVariable() did not find variable", name,",", value)
+            return False
+
 class VaccinationBase(OperationBase):
     __tablename__='vaccinationbases'
     id = Column(Integer, ForeignKey('operationbases.id'), primary_key=True)
@@ -111,21 +122,23 @@ class VaccinationBase(OperationBase):
         self.duration = duration
         self.need_resit = need_resit
         self.item= item
-
-        self.update_order += ["duration", "need_resit", "item"]
    
+    def setVariable(self, name, value):
+        if not super().setVariable(name, value):
+            if name is "duration":
+                self.duration = value
+            elif name is "need_resit":
+                self.need_resit = value
+            elif name is "item":
+                self.item = value
+            else:
+                print("DEBUG: VaccinationBase->setVariable() did not find variable", name,",", value)
+
     def hasItem(self):
         return True
     
     def stringList(self):
         return [str(self.id), self.name, self.getName(), str(self.price+self.item.price) if self.item != None else str(self.price)]
-
-    def update(self, data):
-        count = super().update(data)
-        for item in data[count:]:
-            if(item != None):
-                vars(self)[self.update_order[count]] = data[count]
-            count += 1
 
 
 class SurgeryBaseItem(Base):
@@ -167,24 +180,23 @@ class SurgeryBase(OperationBase):
     def __init__(self,name, price, description, items=[]):
         super().__init__(name, price, description)
         self.items = items
-        self.update_order += ["items"]
 
     def hasList(self=None):
         return True
     
+    def setVariable(self, name, value):
+        if not super().setVariable(name, value):
+            if name is "items":
+                self.items = value
+            else:
+                print("DEBUG: SurgeryBase->setVariable() did not find variable", name,",", value)
+
     def stringList(self):
         price = 0.0
         for i in self.items:
             price += float(i.item.price) * i.count
         price += self.price
         return [str(self.id), self.name, self.getName(), str(price)]
-
-    def update(self, data):
-        count = super().update(data)
-        for item in data[count:]:
-            if(item != None):
-                vars(self)[self.update_order[count]] = data[count]
-            count += 1
 
 class MedicationBase(OperationBase):
     __tablename__='medicationbases'
@@ -195,21 +207,19 @@ class MedicationBase(OperationBase):
     def __init__(self, name, price, description, item):
         super().__init__(name, price, description)
         self.item = item
-
-        self.update_order += ["item"]
     
+    def setVariable(self, name, value):
+        if not super().setVariable(name, value):
+            if name is "item":
+                self.item = value
+            else:
+                print("DEBUG: MedicationBase->setVariable() did not find variable", name,",", value)
+
     def hasItem(self):
         return True
        
     def stringList(self):
         return [str(self.id), self.name, self.getName(), str(self.price+self.item.price) if self.item != None else str(self.price)]
-
-    def update(self, data):
-        count = super().update(data)
-        for item in data[count:]:
-            if(item != None):
-                vars(self)[self.update_order[count]] = data[count]
-            count += 1
 
 
 class LabBase(OperationBase):
@@ -301,17 +311,32 @@ class Operation(Base):
             except ValueError:
                 self.count = 1
 
-        self.update_order = ["price", "description","base","count"]
 
 
     def update(self, data):
-        count = 0
-        for item in data[count:]:
-            if(item != None):
-                vars(self)[self.update_order[count]] = data[count]
-            count += 1
-        return count
-        
+        try:
+            for key, item in data.items():
+                self.setVariable(key,item)
+        except:
+            print("DEBUG ERROR Operation->update(): wrong variable name: " + str(key))
+
+    def setVariable(self, name, value):
+        if name is "base":
+            self.base = value
+            return True
+        elif name is "price":
+            self.price = value
+            return True
+        elif name is "description":
+            self.description = value
+            return True
+        elif name is "count":
+            self.count = value
+            return True
+        else:
+            print("DEBUG: OperationBase->setVariable() did not find variable", name,",", value)
+            return False
+
     def getType(self=None):
         return self.__class__.__name__
 
@@ -330,7 +355,6 @@ class Basic(Operation):
     __mapper_args__ = {'polymorphic_identity':'basics',}
     def __init__(self,price, description, base):
         super().__init__(price, description)
-        self.base_id = base.id
         self.base = base
 
 '''
@@ -344,7 +368,6 @@ class Vaccination(Operation):
     __mapper_args__ = {'polymorphic_identity':'vaccinations',}
     def __init__(self,price, description, base):
         super().__init__(price, description)
-        self.base_id = base.id
         self.base = base
 
     def stringList(self):
@@ -374,6 +397,7 @@ class SurgeryItem(Base):
         string_list.append(str(self.count))
         return string_list
 
+
 class Surgery(Operation):
     __tablename__='surgerys'
     id = Column(Integer, ForeignKey('operations.id'), primary_key=True)
@@ -383,7 +407,6 @@ class Surgery(Operation):
     __mapper_args__ = {'polymorphic_identity':'surgery',}
     def __init__(self,price, description, base, items):
         super().__init__(price, description)
-        self.base_id = base.id
         self.base = base
         self.items = []
 
@@ -393,13 +416,12 @@ class Surgery(Operation):
             else:
                 self.items.append(SurgeryItem(item=item.item,count=item.count))
 
-
-    def update(self, data):
-        count = super().update(data)
-        for item in data[count:]:
-            if(item != None):
-                vars(self)[self.update_order[count]] = data[count]
-            count += 1
+    def setVariable(self, name, value):
+        if not super().setVariable(name, value):
+            if name is "items":
+                self.items = value
+            else:
+                print("DEBUG: Surgery->setVariable() did not find variable", name,",", value)
 
     def hasList(self=None):
         return True
@@ -409,7 +431,8 @@ class Surgery(Operation):
         for i in self.items:
             price += float(i.item.price) * i.count
         price += self.price
-        return [str(self.id), self.base.name, self.base.getName(), str(price)]
+
+        return [str(self.id), self.base.getName(), self.base.name, str(price)]
 '''
 
 '''
@@ -423,17 +446,15 @@ class Lab(Operation):
     __mapper_args__ = {'polymorphic_identity':'lab',}
     def __init__(self,price, description, base, path=''):
         super().__init__(price, description)
-        self.base_id = base.id
         self.base = base
         self.path = path
 
-    def update(self, data):
-        count = super().update(data)
-        for item in data[count:]:
-            if(item != None):
-                vars(self)[self.update_order[count]] = data[count]
-            count += 1
-
+    def setVariable(self, name, value):
+        if not super().setVariable(name, value):
+            if name is "path":
+                self.path = value
+            else:
+                print("DEBUG: "+ self.__class__.__name__+"->setVariable() did not find variable", name,",", value)
 '''
 
 '''
@@ -445,7 +466,6 @@ class Medication(Operation):
     __mapper_args__ = {'polymorphic_identity':'medications',}
     def __init__(self, price, description, base):
         super().__init__(price, description)
-        self.base_id = base.id
         self.base = base
 
     def stringList(self):
@@ -462,15 +482,8 @@ class Lameness(Operation):
     __mapper_args__ = {'polymorphic_identity':'lameness',}
     def __init__(self, price, description, base):
         super().__init__(price, description)
-        self.base_id = base.id
         self.base = base
 
-    def update(self, data):
-        count = super().update(data)
-        for item in data[count:]:
-            if(item != None):
-                vars(self)[self.update_order[count]] = data[count]
-            count += 1
 '''
 
 '''
@@ -483,15 +496,7 @@ class Xray(Operation):
     __mapper_args__ = {'polymorphic_identity':'xray',}
     def __init__(self, price, description, base):
         super().__init__(price, description)
-        self.base_id = base.id
         self.base = base
-
-    def update(self, data):
-        count = super().update(data)
-        for item in data[count:]:
-            if(item != None):
-                vars(self)[self.update_order[count]] = data[count]
-            count += 1
 
 '''
 
@@ -505,15 +510,7 @@ class Ultrasonic(Operation):
     __mapper_args__ = {'polymorphic_identity':'ultrasonic',}
     def __init__(self, price, description, base):
         super().__init__(price, description)
-        self.base_id = base.id
         self.base = base
-
-    def update(self, data):
-        count = super().update(data)
-        for item in data[count:]:
-            if(item != None):
-                vars(self)[self.update_order[count]] = data[count]
-            count += 1
 
 '''
 
@@ -527,15 +524,7 @@ class Endoscopy(Operation):
     __mapper_args__ = {'polymorphic_identity':'endoscopy',}
     def __init__(self, price, description, base):
         super().__init__(price, description)
-        self.base_id = base.id
         self.base = base
-
-    def update(self, data):
-        count = super().update(data)
-        for item in data[count:]:
-            if(item != None):
-                vars(self)[self.update_order[count]] = data[count]
-            count += 1
 
 '''
 
@@ -549,15 +538,7 @@ class Dentalexamination(Operation):
     __mapper_args__ = {'polymorphic_identity':'dentalexamination',}
     def __init__(self, price, description, base):
         super().__init__(price, description)
-        self.base_id = base.id
         self.base = base
-
-    def update(self, data):
-        count = super().update(data)
-        for item in data[count:]:
-            if(item != None):
-                vars(self)[self.update_order[count]] = data[count]
-            count += 1
 
 
 
@@ -570,18 +551,16 @@ class RecipieMedicine(Base):
 
     def __init__(self, medicine, count=1):
         self.medicine = medicine
-        self.medicine_id = medicine.id
         self.count = count
-        self.update_order = ["medicine","count"]
 
 
     def update(self, data):
-        self.medicine_id = data[0].id
-        count = 0
-        for item in data[count:]:
-            if(item != None):
-                vars(self)[self.update_order[count]] = data[count]
-            count += 1
+        try:
+            self.medicine = data[0]
+            self.count = data[1]
+        except:
+            print("DEBUG: RecipieMedicine->update() cant update data. data is",data)
+
 
     def stringList(self):
         return [str(self.id), self.medicine.name, str(self.count)]
@@ -601,18 +580,17 @@ class PhoneRecipie(Base):
     recipiemedicines = relationship("RecipieMedicine", secondary = recipie_medicine_table)
     def __init__(self, animal,recipiemedicines=[]):
         self.animal = animal
-        self.animal_id = animal.id
         self.made_time = datetime.datetime.now()
         self.recipiemedicines = recipiemedicines
 
-        self.update_order = ["animal","made_time","call_time","recipiemedicines"]
-
     def update(self, data):
-        count = 0
-        for item in data[count:]:
-            if(item != None):
-                vars(self)[self.update_order[count]] = data[count]
-            count += 1
+        try:
+            self.animal = data[0]
+            self.made_time = data[1]
+            self.call_time = data[2]
+            self.recipiemedicines = data[3]
+        except:
+            print("DEBUG: RecipieMedicine->update() cant update data. data is",data)
 
     def stringList(self):
         temp = [str(self.id),str(self.made_time), str(self.call_time) if self.call_time != None else '']

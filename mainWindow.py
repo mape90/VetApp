@@ -37,7 +37,7 @@ class MainWindow(QMainWindow):
 
 
     def configureMainWindow(self):
-        self.setWindowTitle('VetApp 0.1 (Alfa)')
+        self.setWindowTitle('VetApp 0.11 (Alfa)')
         
     
     '''

@@ -83,9 +83,11 @@ class VisitTab(GenericTab):
 
         self.setBasicInfo()
         if(owner != None):
+            owner = SqlHandler.makeCopy(self.session,owner)
             self.ownerserachline.setCurrentItem(owner)
             if(animal != None):
-                self.animalTreeWidget.addAskedItem(animal) #TODO find finction to add animal
+                animal = SqlHandler.makeCopy(self.session,animal)
+                self.animalTreeWidget.addAskedItem(animal) #TODO find function to add animal
             self.disableAnimalTree(False)
     
     def setBasicInfo(self):
@@ -174,7 +176,7 @@ class VisitTab(GenericTab):
         self.closeOperation()
     
     def closeOperation(self):
-        print("visitTab closeOperation, ")
+        print("DEBUG: VisitTab->closeOperation, ")
         self.ui.operationNameLabel.setText('Nimi')
         self.ui.retailPriceLabel.setText('0.00')
         self.itemTreeWidget.clearTreeWidget()
@@ -185,11 +187,11 @@ class VisitTab(GenericTab):
         
     def updateCurerentOperation(self):
         if self.currentOperation != None:
-            data = []
-            data.append(self.ui.priceSpinBox.value())
-            data.append(self.ui.descriptionTextEdit.toPlainText())
+            data = {}
+            data["price"] = self.ui.priceSpinBox.value()
+            data["description"] = self.ui.descriptionTextEdit.toPlainText()
             if self.currentOperation.hasList():
-                data.append(self.itemTreeWidget.getItemsFromList())
+                data["items"] = self.itemTreeWidget.getItemsFromList()
             self.currentOperation.update(data)
 
     def setOperationData(self, operation=None):
@@ -210,8 +212,22 @@ class VisitTab(GenericTab):
             self.ui.stackedWidget.setCurrentIndex(0)
 
     
+    def isEndTimeChanged(self):
+        from models.translationtables import g_visit_end_time_start
+        time = self.qdateToPy(self.ui.endTimeEdit.dateTime()).date()
+        if datetime.datetime.strptime("1.1.2000", "%d.%m.%Y").date() == time:
+            return True
+        else:
+            return False
+
+    #this function sets end time to current time if it have not been changed yet
+    def setEndTime(self):
+        if self.isEndTimeChanged():
+            self.ui.endTimeEdit.setDateTime(datetime.datetime.now())
+
     def openBill(self):
         if self.saveAble():
+            self.setEndTime()
             self.saveTab()
             from mainwindowtabs.billTab import BillTab
             #TODO: add check if there is already bill so open it
@@ -281,8 +297,9 @@ class VisitTab(GenericTab):
     
     def ownerSet(self):
         if self.item == None:
-            self.item = self.makeItem()
-            self.session.add(self.item)
+            item_tmp = self.makeItem()
+            SqlHandler.addItem(self.session, item_tmp)
+            self.item = item_tmp
             self.disableAnimalTree(False)
             
     def disableAnimalTree(self, state):
@@ -322,20 +339,29 @@ class VisitTab(GenericTab):
     
    
     def getData(self):
-        data = []
-        data.append(self.qdateToPy(self.ui.startTimeEdit.dateTime()))#start_time
-        data.append(self.ownerserachline.getCurrentItem())#owner
-        data.append(self.ui.vetComboBox.itemData(self.ui.vetComboBox.currentIndex()))#vet
-        data.append(self.qdateToPy(self.ui.endTimeEdit.dateTime()) if self.item != None and self.item.end_time != None else datetime.datetime.now())#end_time
+        data = {}
+
+        data["start_time"] = self.qdateToPy(self.ui.startTimeEdit.dateTime())
+        data["owner"] = self.ownerserachline.getCurrentItem()
+        data["vet"] = self.ui.vetComboBox.itemData(self.ui.vetComboBox.currentIndex())
+
+        endTime = None
+        if self.isEndTimeChanged():
+            endTime = self.qdateToPy(self.ui.endTimeEdit.dateTime())
+
+        data["end_time"] = endTime
+
+        #update last animal data before saving all animals
         self.updateCurrentVisitAnimal()
-        data.append(self.animalTreeWidget.getItemsFromList())#visitAnimals
-        print(data)
+        data["visitanimals"] = self.animalTreeWidget.getItemsFromList()
+
         return data
 
     def makeItem(self):
         data = self.getData()
-        self.item = SqlHandler.Visit(data[0], data[1], data[2])        
-        return self.item
+        from models.visit import Visit
+        return Visit(data["start_time"], data["owner"], data["vet"],
+                          data["end_time"], data["visitanimals"])
 
     def saveAble(self): 
         if self.ownerserachline.getCurrentItem() != None:

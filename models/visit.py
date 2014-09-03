@@ -100,30 +100,43 @@ class Visit(Base):
     visitanimals = relationship("VisitAnimal", secondary = visit_animals_table)
     
   
-    def __init__(self, start_time, owner, vet, end_time=None):
-        self.start_time = self.setCurrentTime()
+    def __init__(self, start_time, owner, vet, end_time=None, visitanimals = []):
+        self.start_time = start_time
         self.owner = owner
-        self.owner_id = owner.id
         self.vet = vet
-        self.vet_id = vet.id
         self.end_time = end_time
-        self.visitanimals = []
+        self.visitanimals = visitanimals
    
     def setCurrentTime(self):
         self.endtime = datetime.datetime.now()
     
     def getType(self):
         return 'Visit'  
-      
-    def update(self, items):
-        self.start_time = items[0]
-        self.owner = items[1]
-        self.owner_id = items[1].id
-        self.vet = items[2]
-        self.vet_id = items[2].id
-        self.end_time = items[3]
-        self.visitanimals = items[4]
-        
+
+    def setVariable(self, name, value):
+        if name is "start_time":
+            self.start_time = value
+        elif name is "owner":
+            self.owner = value
+        elif name is "vet":
+            self.vet = value
+        elif name is "end_time":
+            self.end_time = value
+        elif name is "visitanimals":
+            self.visitanimals = value
+        else:
+            print("DEBUG: "+ self.__class__.__name__+"->setVariable() did not find variable", name,",", value)
+
+    def update(self, data):
+
+        print("REMOVE ME! DEBUG: Visit->update() data is",data, "its type is",str(type(data)))
+
+        try:
+            for key, item in data.items():
+                self.setVariable(key,item)
+        except:
+            print("DEBUG ERROR Visit->update(): wrong variable name: " + str(key))
+
         
     def stringList(self):
         return [str(self.id), self.owner.name, str(self.start_time)]

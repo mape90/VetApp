@@ -82,7 +82,7 @@ class TabManager(object):
                         self.tabslist[tabType + str(newItem.id)] = newTab
                         self.returnList[newTab] = returnTab
                     else:
-                        print("Tab is open!")
+                        print("DEBUG: Tabmanager: tab allready is open!")
                     self.setCurrentTab(self.tabslist[tabType+ str(newItem.id)])
                 else:
                     newTab = tabCreator(parent=self.tabwidget, item=newItem)

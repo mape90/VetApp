@@ -402,12 +402,19 @@ class SQLHandler(object):
     
     def addItem(self, session, item):
         if item != None:
+            print("DEBUG: SQLHandler->addItem(), item == " + str(item))
             session.add(item)
             session.commit()
+        else:
+            print("ERROR: SQLHandler->addItem(). Item is None: " + str(item))
     
     def addItems(self, session, itemlist):
-        session.add_all(itemlist)
-        session.commit()
+        if itemlist != None and len(itemlist) > 0:
+            print("DEBUG: SQLHandler->addItems(), itemlist == " + str(itemlist))
+            session.add_all(itemlist)
+            session.commit()
+        else:
+            print("ERROR: SQLHandler->addItems(). List is none or empty: " + str(itemlist))
     
     def removeItem(self, session, item):
         session.delete(item)
@@ -418,7 +425,7 @@ class SQLHandler(object):
     '''
     def newSession(self):
         session = self.Session()
-        print('SqlHandler,newSession: ',session)
+        print('SqlHandler->newSession() session is ',session)
         return session
     
     '''

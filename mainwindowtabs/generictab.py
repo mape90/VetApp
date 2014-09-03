@@ -126,7 +126,9 @@ class GenericTab(QWidget):
     def saveTab(self):
         print('GenericTab FUNCTIO: SaveTab')
         if self.saveAble():
-            print('saving tab')
+            #print("GenericTab->saveTab(), self.item == " + str(self.item))
+            #print(str(Tabmanager.session))
+            #print("GenericTab->saveTab(), item in session == " + str(self.item in self.session))
             if self.item == None:
                 self.item = self.makeItem()
                 SqlHandler.addItem(self.session, self.item)

@@ -123,15 +123,19 @@ class OperationBaseCreator(QDialog):
             else:
                 self.item = functio(name, price, description)
         else:
+            tmp_dict = {}
             if 'need_resit' in args:
-                self.item.update([name, price, description, duration, need_resit, item])
+                tmp_dict = {"name":name, "price":price, "description":description, "duration":duration,
+                            "need_resit":need_resit, "item":item}
             elif 'item' in args:
-                self.item.update([name, price, description, item])
+                tmp_dict = {"name":name, "price":price, "description":description, "item":item}
             elif 'items' in args:
-                self.item([name, price, description, self.itemTreeWidget.getItemsFromList()])
+                tmp_dict = {"name":name, "price":price, "description":description,
+                            "items":self.itemTreeWidget.getItemsFromList()}
             else:
-                self.item.update([name, price, description])
+                tmp_dict = {"name":name, "price":price, "description":description}
 
+            self.item.update(tmp_dict)
     
     def setBasicInfo(self):
         self.setTypes()
@@ -141,9 +145,11 @@ class OperationBaseCreator(QDialog):
             #TODO: add items to their places
     
     def setTypes(self):
-        from models.operation import OperationBase,VaccinationBase,SurgeryBase,MedicationBase,LabBase,LamenessBase,XrayBase,UltrasonicBase,EndoscopyBase,DentalexaminationBase
-        for item in [OperationBase,VaccinationBase,SurgeryBase,MedicationBase,LabBase,LamenessBase,XrayBase,UltrasonicBase,EndoscopyBase,DentalexaminationBase]:
-            self.ui.typeComboBox.addItem(item.getName(item), item)
+        from models.translationtables import g_operationbase_translation_dict
+
+        from models.operation import OperationBase,VaccinationBase,SurgeryBase,MedicationBase, LabBase,LamenessBase,XrayBase,UltrasonicBase,EndoscopyBase,DentalexaminationBase
+        for item in [OperationBase,VaccinationBase,SurgeryBase,MedicationBase, LabBase,LamenessBase,XrayBase,UltrasonicBase,EndoscopyBase,DentalexaminationBase]:
+            self.ui.typeComboBox.addItem(g_operationbase_translation_dict[item.__name__], item)
 
 
     def setSpecialInfo(self, index):

@@ -103,43 +103,52 @@ class Bill(Base):
         self.other_info = data[15]
         self.satus = data[16] 
 
+
     def calcPricesFromVisit(self):
-        temp_operation_price = 0.0
-        temp_accesories_price = 0.0
-        temp_lab_price = 0.0
-        temp_medicine_price = 0.0
-        temp_diet_price = 0.0
+        price_dict = {}
+        price_dict["operation_price"] = 0.0
+        price_dict["accesories_price"] = 0.0
+        price_dict["lab_price"] = 0.0
+        price_dict["medicine_price"] = 0.0
+        price_dict["diet_price"] = 0.0
         
         for visit_animal in self.visit.visitanimals:
             for operation in visit_animal.operations:
                 from models.operation import Lab
-                if isinstance(operation, Lab):
-                    temp_lab_price += operation.price
+                if operation.getType() is Lab.__name__:
+                    price_dict["lab_price"] += operation.price
                 else:
-                    temp_operation_price += operation.price
+                    price_dict["operation_price"] += operation.price
+
                 if operation.hasList():
                     for item in operation.items:
-                        if 1 == item.item.getALVClass():
-                            temp_accesories_price += item.item.price * item.count
-                        elif 2 == item.item.getALVClass(): 
-                            temp_medicine_price += item.item.price * item.count
-                        elif 3 == item.item.getALVClass():
-                            temp_diet_price += item.item.price * item.count
+                        from models.translationtables import g_item_alv_dict
+                        if g_item_alv_dict[item.item.__class__.__name__] == 1:
+                            price_dict["accesories_price"] += item.item.price * item.count
+                        elif g_item_alv_dict[item.item.__class__.__name__] == 2:
+                            price_dict["medicine_price"] += item.item.price * item.count
+                        elif g_item_alv_dict[item.item.__class__.__name__] == 3:
+                            price_dict["diet_price"] += item.item.price * item.count
                         else:
-                            pass#self.errorMessage('ERROR: BillTab.setPrices(): ALV is not valid!')    
+                            pass
+
                 if operation.base.hasItem():
                     if operation.base.item != None:
-                        if 1 == operation.base.item.getALVClass():
-                            temp_accesories_price += operation.base.item.price
-                        elif 2 == operation.base.item.getALVClass():
-                            temp_medicine_price += operation.base.item.price
-                        elif 3 == operation.base.item.getALVClass():
-                            temp_diet_price += operation.base.item.price
+                        from models.translationtables import g_item_alv_dict
+                        alv_class_num = g_item_alv_dict[operation.base.item.__class__.__name__]
+
+                        if alv_class_num == 1:
+                            price_dict["accesories_price"] = operation.base.item.price
+                        elif alv_class_num == 2:
+                            price_dict["medicine_price"] = operation.base.item.price
+                        elif alv_class_num == 3:
+                            price_dict["diet_price"] = operation.base.item.price
                         else:
-                            pass#self.errorMessage('ERROR: BillTab.setPrices(): ALV is not valid!')
+                            pass
                     else:
-                        pass#self.errorMessage('ERROR: BillTab.setPrices(): operation.hasItem() is true but item is None!')
-            return [temp_operation_price,temp_accesories_price, temp_lab_price, temp_medicine_price, temp_diet_price]
+                        pass
+
+            return price_dict
         
 
     def getALV0Price(self):

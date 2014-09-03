@@ -40,6 +40,7 @@ class ALV(Base):
 
 
 
+
 class Item(Base):
     __tablename__ = 'items'
     id = Column(Integer, Sequence('items_id_seq'), primary_key=True)
@@ -59,13 +60,36 @@ class Item(Base):
         self.barcode = barcode
         self.customer_descriptions=[]
  
-    def update(self, itemlist):
-        self.name = itemlist[0]
-        self.price = itemlist[1]
-        self.stock_price = itemlist[2]
-        self.barcode = itemlist[3]
-        self.description = itemlist[4]
-        self.customer_descriptions = itemlist[5]
+    def update(self, data):
+        try:
+            for key, item in data.items():
+                self.setVariable(key,item)
+        except:
+            print("DEBUG ERROR Item->update(): wrong variable name: " + str(key))
+
+    def setVariable(self, name, value):
+        if name is "name":
+            self.name = value
+            return True
+        elif name is "price":
+            self.price = value
+            return True
+        elif name is "description":
+            self.description = value
+            return True
+        elif name is "barcode":
+            self.barcode = value
+            return True
+        elif name is "customer_descriptions":
+            self.customer_descriptions = value
+            return True
+        elif name is "stock_price":
+            self.stock_price = value
+            return True
+        else:
+            #TODO: Remove this! after you have tested that all items are working correctly
+            print("DEBUG: Item->setVariable() did not find variable", name,",", value)
+            return False
     
     def stringList(self):
         return [str(self.id), self.name, self.typeName(), str(self.price)]
@@ -78,9 +102,6 @@ class Item(Base):
     
     def typeName(self=None):
         return 'Tuote'
-    
-    def getALVClass(self=None):
-        return 1
     
     def getALV(self=None):
         from models import SqlHandler
@@ -101,9 +122,12 @@ class Medicine(Item):
         super().__init__(name, description, stock_price, price, barcode)
         self.duration = duration
 
-    def update(self, itemlist):
-        Item.update(self,itemlist[:6])
-        self.duration = itemlist[6]
+    def setVariable(self, name, value):
+        if not super().setVariable(name, value):
+            if name is "duration":
+                self.duration = value
+            else:
+                print("DEBUG: "+ self.__class__.__name__+"->setVariable() did not find variable", name,",", value)
 
     def hasDuration(self=None):
         return True
@@ -113,10 +137,7 @@ class Medicine(Item):
 
     def typeName(self=None):
         return 'Lääke'
-    
-    def getALVClass(self=None):
-        return 2
-    
+
     def getALV(self=None):
         from models import SqlHandler
         return SqlHandler.getALV(2)
@@ -156,25 +177,11 @@ class Feed(Item):
 
     def typeName(self=None):
         return 'Rehu'
-    
-    def getALVClass(self=None):
-        return 3
-    
+
     def getALV(self=None):
         from models import SqlHandler
         return SqlHandler.getALV(3)
-'''
-    Item class for anthelmintics
-    
-    This class currently dosent add anything
-'''
-'''class Anthelmintic(Item):
-    __tablename__='anthelmintics'
-    id = Column(Integer, ForeignKey('items.id'), primary_key=True)
-    __mapper_args__ = {'polymorphic_identity':'anthelmintic',}
-    def __init__(self, name, description, stock_price, price, barcode='', image_path=''):
-        super().__init__(name, description, stock_price, price, barcode, image_path)
-'''
+
 
 '''
     This class is because for different species needs different 
@@ -191,8 +198,18 @@ class ItemDescription(Base):
     text = Column(String(1000))
     def __init__(self, specie, text):
         self.specie = specie
-        self.specie_id = specie.id
         self.text = text
-        
+
+    def update(self, data):
+        try:
+            for key, item in data.items():
+                if key is "text":
+                    self.text = item
+                elif key is "specie":
+                    #self.specie = item
+                    print("DEBUG: ItemDescription should not change specie. Remove this and make new one if specie need to be changed")
+        except:
+            print("DEBUG ERROR ItemDescription->update(): wrong variable name: " + str(key))
+
     def stringList(self):
         return [str(self.id), self.specie.name, self.text]
