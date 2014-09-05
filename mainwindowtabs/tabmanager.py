@@ -30,12 +30,7 @@ class TabManager(object):
         
         self.session = SqlHandler.newSession()
         self.previoustab = None
-        
-        self.unique = ['MainMenu', 'Warehouse', 'Appointment', 'Search', 'VetTab']
-        self.translate = {'Visit':'Käynti','Animal':'Eläin','Owner':'Omistaja',
-                          'Search':'Etsi', 'MainMenu':'Päävalikko', 
-                          'Warehouse':'Varasto', 'Appointment':'Ajanvaraus', 'VetTab':'Eläinlääkäri'}
-        
+
         self.new_text = 'Uusi '
         self.tabslist = {}
         
@@ -53,24 +48,115 @@ class TabManager(object):
         self.tabwidget.setMovable(True)
         self.createCOnnections()
     
-    def openTab(self, tabCreator, newItem=None, returnTab=None):
-        tabType = tabCreator.getType()
 
-        if tabCreator.isUnique():
+
+
+
+    def openTab(self, tabCreator, newItem=None, returnTab=None):
+        tabType = tabCreator.__name__
+        newTab = None
+        key = "UNDEFINED"
+        text = "UNDEFINED"
+
+
+        from models.translationtables import g_unique_tabs, g_tab_name_dict
+
+        if tabType in g_unique_tabs:
+            #check if tab is one of unique tabs
             if not tabType in self.tabslist:
-                newTab = tabCreator(parent=self.tabwidget)
-                self.tabwidget.addTab(newTab, self.translate[tabType])
-                self.tabslist[tabType] = newTab
-            self.setCurrentTab(self.tabslist[tabType])
-            #self.returnList[self.tabslist[tabType]] = returnTab
-                 
+                newTab = tabCreator(parent=self.tabwidget, item=newItem)
+                key = tabType
+                text = g_tab_name_dict[tabType]
+            else:
+                self.setCurrentTab(self.tabslist[tabType])
+                return
+        else:
+            if newItem != None and newItem.__class__.__name__ == "dict":
+                #check if item has allready tab
+                if not tabType + str(newItem.id) in self.tabslist:
+                    newTab = tabCreator(parent=self.tabwidget, item=newItem)
+                    if tabType is "BillTab":
+                        text = self.billText()
+                        if newTab.item == None:
+                            key = 'new' + tabType
+                        else:
+                            key = tabType + str(newTab.item.id)
+                    elif tabType is "VisitTab":
+                        text = self.visitText()
+                        key = tabType + str(newItem.id)
+                    elif tabType in ["OwnerTab","AnimalTab"]:
+                        text = newItem.name
+                        key = tabType + str(newItem.id)
+                    else:
+                        print("DEBUG: ERROR: TabManager->openTab() Wrong Tab Type: " + str(tabType))
+                        return
+
+                else:
+                    #item has allready tab so we just set it as curent tab and return
+                    self.setCurrentTab(self.tabslist[tabType + str(newItem.id)])
+                    return
+            else:
+                #Make new tab without item
+                newTab = tabCreator(parent=self.tabwidget, item=newItem)
+
+                index = self.findNextNewIndex('new'+tabType)
+                text = self.new_text + self.translate[tabType] + index
+                key = 'new' + tabType + index
+
+
+
+        self.tabwidget.addTab(newTab, text)
+        self.tabslist[key] = newTab
+        self.returnList[newTab] = returnTab
+        self.setCurrentTab(newTab)
+
+        //---------------------------------------
+
+        else:
+            if newItem != None:
+                newTab = tabCreator(parent=self.tabwidget, item=newItem)
+
+                if tabType is "BillTab":
+                    text = self.billText()
+                    if newTab.item == None:
+                        text = 'new' + tabType
+                    else:
+                        text = tabType
+                elif tabType is "VisitTab":
+                    if newItem.__class__.__name__ is "dict":
+                        pass
+                    else:
+                        pass
+                elif tabType is "OwnerTab":
+
+                elif tabType is "AnimalTab":
+
+                else:
+                    #check if there is tab opened for that object
+                    #dont make new tab if there is allready tab open
+                    if not tabType + str(newItem.id) in self.tabslist:
+
+
+                #add tab to to tabwidget (item, text_str)
+
+                temp_tab_name = tabType+ str(newItem.id)
+
+                temp_tab = self.tabslist[name]
+
+
+                self.tabwidget.addTab(newTab, text)
+                self.setCurrentTab(temp_tab)
+                self.returnList[newTab] = returnTab
+
+
         else:
             if newItem != None:
                 if(newItem.__class__.__name__ != 'dict'):
                     if not tabType + str(newItem.id) in self.tabslist:
+
                         newTab = tabCreator(parent=self.tabwidget, item=newItem)
+
                         if tabCreator.getType() == 'Bill':
-                            print("Bill tab found")
                             self.tabwidget.addTab(newTab, self.billText())
                             if newTab.item == None:
                                 tabType = 'new' + tabType
@@ -80,23 +166,21 @@ class TabManager(object):
                             self.tabwidget.addTab(newTab, newItem.name)
 
                         self.tabslist[tabType + str(newItem.id)] = newTab
+
                         self.returnList[newTab] = returnTab
                     else:
                         print("DEBUG: Tabmanager: tab allready is open!")
-                    self.setCurrentTab(self.tabslist[tabType+ str(newItem.id)])
+
                 else:
                     newTab = tabCreator(parent=self.tabwidget, item=newItem)
                     self.tabwidget.addTab(newTab, self.new_text + self.translate[tabType] + self.findNextNewIndex('new'+tabType))
                     self.tabslist['new' + tabType + self.findNextNewIndex('new'+tabType)] = newTab
                     self.setCurrentTab(newTab)
+
                     self.returnList[newTab] = returnTab
-            
+
             else:
-                newTab = tabCreator(parent=self.tabwidget)
-                self.tabwidget.addTab(newTab, self.new_text + self.translate[tabType] + self.findNextNewIndex('new'+tabType))
-                self.tabslist['new' + tabType + self.findNextNewIndex('new'+tabType)] = newTab
-                self.setCurrentTab(newTab)
-                self.returnList[newTab] = returnTab
+
     
     def askToCloseTab(self,index):
         tab = self.tabwidget.widget(index)

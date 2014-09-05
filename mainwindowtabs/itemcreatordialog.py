@@ -241,10 +241,10 @@ class ItemCreatorDialog(QDialog):
             self.item.update(data)
         else:
             if itemCreator.hasDuration():
-                self.item = itemCreator(name=data[0], price=data[1], stock_price=data[2], barcode=data[3], description=data[4], duration=data[6])
+                self.item = itemCreator(name=data["name"], price=data["price"], stock_price=data["stock_price"], barcode=data["barcode"], description=data["description"], duration=data["duration"])
             else:
-                self.item = itemCreator(name=data[0], price=data[1], stock_price=data[2], barcode=data[3], description=data[4])
-            self.item.customer_descriptions = data[5]
+                self.item = itemCreator(name=data["name"], price=data["price"], stock_price=data["stock_price"], barcode=data["barcode"], description=data["description"])
+            self.item.customer_descriptions = data["customer_descriptions"]
        
     def askuser(self):
         reply = QMessageBox.question(self,'Viesti','Haluatko tallentaa muutokset?', QMessageBox.Save, QMessageBox.Discard)
