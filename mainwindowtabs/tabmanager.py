@@ -110,7 +110,6 @@ class TabManager(object):
         self.returnList[newTab] = returnTab
         self.setCurrentTab(newTab)
 
-        //---------------------------------------
 
         else:
             if newItem != None:
