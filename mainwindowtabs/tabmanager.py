@@ -194,10 +194,37 @@ class TabManager(object):
         tabName is real text in tab, so it is need to be translated
     '''
     def closeTab(self, tabType=None, item=None, tab=None):
-        #print('Tabmanager is closing Tab')
-        #print('tabType:', tabType)
-        #print('item:', item)
-        #print('tab:', tab)
+        print("DEBUG: closeTab: ", (tabType, item, tab))
+        if not not tab:
+            print("DEBUG: closeTab: tab.__name__ is ",tab.__class__.__name__)
+            tabClassName = tab.__class__.__name__ 
+            if(tabClassName == "VetTab"):
+                pass
+            elif(tabClassName == "VisitTab"):
+                pass
+            elif(tabClassName == "SearchTab"):
+                pass
+            elif(tabClassName == "OwnerTab"):
+                pass
+            elif(tabClassName == "MainMenuTab"):
+                pass
+            elif(tabClassName == "BillTab"):
+                pass
+            elif(tabClassName == "AnimalTab"):
+                pass
+            else:
+                pass
+            pass
+        elif not not item:
+            print("DEBUG: closeTab: item.__name__ is ",item.__class__.__name__)
+            pass
+        elif not not tabType:
+            print("DEBUG: Not implement call! Tabmanager.closeTab param tabType")
+            pass
+        else:
+            print("DEBUG: TabManager closeTab,empty closetab call")
+            return
+
         digit=-1
         if tab != None:
             tabType = tab.getType()
@@ -243,8 +270,10 @@ class TabManager(object):
         if tabType != None:
             newName = 'new' + tabType + (str(digit) if digit > 0 else '')
         else:
-            newName = 'new' + item.getType() + (str(digit) if digit > 0 else '')
-        #print('closeTab newName: ', newName)
+			#TODO: fix this ugly code
+            newName = 'new' + item.getType()+ 'Tab' + (str(digit) if digit > 0 else '')
+        print('closeTab newName: ', newName)
+        print('closeTab self.tabslist: ', self.tabslist)
         if newName in self.tabslist:
             self.removeTab(self.tabslist[newName])
             if self.returnList[self.tabslist[newName]] != None:
@@ -253,7 +282,7 @@ class TabManager(object):
             del self.returnList[self.tabslist[newName]]
             del self.tabslist[newName]
         else:
-            print('Could not create tab as input is: tabType=%, item=%, digit=%, tab=%',
+            print('FATAL ERROR: Could not create tab as input is: tabType=%, item=%, digit=%, tab=%',
                   (tabType, item, digit, tab))
     '''
         This funcktion is called when new item is saved and it is not closed.

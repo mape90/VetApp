@@ -39,7 +39,7 @@ from mainwindowtabs.itemcreatordialog import ItemCreatorDialog
 import datetime
 
 class SearchTab(GenericTab):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, item=None):
         GenericTab.__init__(self, parent=parent)
         self.ui = Ui_SearchTab()
         self.ui.setupUi(self)

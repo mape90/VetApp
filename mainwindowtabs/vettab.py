@@ -29,7 +29,7 @@ from mainwindowtabs.addNewDialog  import AddNewPostOffice, AddNewPostNumber
 from uipy.ui_vettab import Ui_VetTab
 
 class VetTab(GenericTab):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None,item=None):
         GenericTab.__init__(self, parent=parent)
         self.ui = Ui_VetTab()
         self.ui.setupUi(self)
