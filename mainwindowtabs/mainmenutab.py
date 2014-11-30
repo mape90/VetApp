@@ -40,7 +40,7 @@ from mainwindowtabs.generictreewidget import GenericTreeWidget
 #from models import SqlHandler
 
 class MainMenuTab(GenericTab):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, item=None):
         GenericTab.__init__(self, parent=parent)
         self.ui = Ui_MainMenu()
         self.ui.setupUi(self)

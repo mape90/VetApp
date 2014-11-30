@@ -23,6 +23,7 @@
 
 import re
 from models import SqlHandler
+from models.translationtables import g_tab_name_dict
 
 class TabManager(object):
     def __init__(self, tabwidget=None):
@@ -32,6 +33,7 @@ class TabManager(object):
         self.previoustab = None
 
         self.new_text = 'Uusi '
+        self.translate = g_tab_name_dict
         self.tabslist = {}
         
         self.returnList = {}
