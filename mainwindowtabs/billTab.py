@@ -335,8 +335,7 @@ class BillTab(GenericTab):
         return data
     
     def makeItem(self):
-        self.item = SqlHandler.Bill(self.getData())
-        return self.item
+        return SqlHandler.Bill(self.getData())
     
     def saveAble(self):
         return True

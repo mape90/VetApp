@@ -135,7 +135,7 @@ class AnimalTab(GenericTab):
             self.phonerecipieTreeWidget.dialogitem = self.item
             self.phonerecipieTreeWidget.setInputMethod(PhoneRecipieDialog)
         else:
-            print('AnimalTab: initializeParameters: self.item was not set')
+            print('ERROR: AnimalTab: initializeParameters: self.item was not set')
    
     def updateListItems(self):
         if self.item != None:
@@ -368,7 +368,7 @@ class AnimalTab(GenericTab):
         if self.item != None:
             return True
             if (self.ui.nameLineEdit.text() != self.item.name or
-            self.ui.officialNamelineEdit.text() != self.item.official_name or
+            self.uimakeItem.officialNamelineEdit.text() != self.item.official_name or
             (race.id if race != None else None) != self.item.race_id or
             (specie.id if specie != None else None) != self.item.specie_id or
             (sex.id if sex != None else None) != self.item.sex_id or
@@ -418,11 +418,11 @@ class AnimalTab(GenericTab):
     
     def makeItem(self):
         data = self.getData()
-        self.item = Animal(data[0], data[1], data[2], data[3], data[4], 
+        return Animal(data[0], data[1], data[2], data[3], data[4], 
                  data[5], data[6], data[7], data[8], data[9], 
                  data[10], data[11], data[12])
-        self.initializeParameters()
-        return self.item
+        
+        #self.initializeParameters()
     
     def saveAble(self):
         return len(self.ui.nameLineEdit.text() + self.ui.officialNamelineEdit.text()) > 1

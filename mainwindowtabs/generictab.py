@@ -64,8 +64,15 @@ class GenericTab(QWidget):
         self.session = SqlHandler.newSession()
         
         self.item = SqlHandler.makeCopy(self.session, item) if item != None else None
-
         
+        self.number = ''
+
+    def setNumber(self, number):
+        self.number = number
+   
+    def getNumber(self):
+        return self.number
+   
     def getItem(self): 
         return self.item
     
@@ -97,8 +104,8 @@ class GenericTab(QWidget):
         if self.canCloseTab():
             Tabmanager.closeTab(tab=self)
     
+    #Functio makes popup to show error message
     def errorMessage(self, message):
-        print('GenericTab FUNCTION: errorMessage')
         box = QMessageBox()
         box.setText(message)
         box.exec()
@@ -107,9 +114,8 @@ class GenericTab(QWidget):
         print('GenericTab FUNCTIO: saveAndCloseTab')
         if self.saveAble():
             if self.item == None:
-                self.item = self.makeItem()
-                print(self.item)
-                SqlHandler.addItem(self.session, self.item)
+                #only save item to database
+                SqlHandler.addItem(self.session, self.makeItem())
             else:
                 print('saveAndCloseTab: Is tab changed?')
                 if self.hasChanged():
@@ -117,11 +123,11 @@ class GenericTab(QWidget):
                     self.item.update(self.getData())
                     SqlHandler.commitSession(self.session)
                 else:
-                    print('No')        
+                    print('No')     
+            Tabmanager.closeTab(tab=self)
         else:
-            self.errorMessage('Can not save item! Because it is not valid')
-            return #wont close tab
-        Tabmanager.closeTab(item=self.item)
+            from models.translationtables import g_save_error_message
+            self.errorMessage(g_save_error_message)       
     
     def saveTab(self):
         print('GenericTab FUNCTIO: SaveTab')
@@ -130,6 +136,7 @@ class GenericTab(QWidget):
             #print(str(Tabmanager.session))
             #print("GenericTab->saveTab(), item in session == " + str(self.item in self.session))
             if self.item == None:
+                #here self.item can be set because newToSaved will handle it
                 self.item = self.makeItem()
                 SqlHandler.addItem(self.session, self.item)
                 self.update()
@@ -138,7 +145,8 @@ class GenericTab(QWidget):
                 self.item.update(self.getData())
                 SqlHandler.commitSession(self.session)
         else:
-            self.errorMessage('Can not save item! Because it is not valid')
+            from models.translationtables import g_save_error_message
+            self.errorMessage(g_save_error_message)      
 
     
     def qdateToPy(self, date):
@@ -163,6 +171,7 @@ class GenericTab(QWidget):
     def addAskedItem(self, item):#Overload
         pass
     
+    #do not add made item to selt.item in overloaded function
     def makeItem(self): #Overload
         return None
             
