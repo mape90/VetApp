@@ -94,7 +94,7 @@ class Visit(Base):
     vet_id = Column(Integer, ForeignKey('vets.id'), nullable=False)
     vet = relationship("Vet")
     
-    owner_id = Column(Integer, ForeignKey('owners.id'))
+    owner_id = Column(Integer, ForeignKey('owners.id'), nullable=False)
     owner = relationship("Owner")
     
     visitanimals = relationship("VisitAnimal", secondary = visit_animals_table)

@@ -73,7 +73,6 @@ class GenericTab(QWidget):
         print('GenericTab FUNCTIO: askUserIfCanClose')
         reply = QMessageBox.question(self,'Viesti',self.getMessageBoxText(), QMessageBox.Save, QMessageBox.Cancel, QMessageBox.Discard)
         if reply == QMessageBox.Save:
-            print('Saving changes')
             self.saveTab()
             return True
         elif reply == QMessageBox.Discard:
@@ -105,30 +104,29 @@ class GenericTab(QWidget):
     
     def saveAndCloseTab(self):
         print('GenericTab FUNCTIO: saveAndCloseTab')
+        tmp_item = None
         if self.saveAble():
             if self.item == None:
-                self.item = self.makeItem()
-                print(self.item)
-                SqlHandler.addItem(self.session, self.item)
+                #make and save item to database
+                tmp_item = self.makeItem()
+                SqlHandler.addItem(self.session, tmp_item)
             else:
-                print('saveAndCloseTab: Is tab changed?')
                 if self.hasChanged():
-                    print('Yes')
+                    #update item if it has changes
                     self.item.update(self.getData())
                     SqlHandler.commitSession(self.session)
-                else:
-                    print('No')        
         else:
             self.errorMessage('Can not save item! Because it is not valid')
             return #wont close tab
-        Tabmanager.closeTab(item=self.item)
+        Tabmanager.closeTab(tab=self, item=tmp_item)
     
+
+
     def saveTab(self):
         print('GenericTab FUNCTIO: SaveTab')
+        #check if tab is valid
         if self.saveAble():
-            #print("GenericTab->saveTab(), self.item == " + str(self.item))
-            #print(str(Tabmanager.session))
-            #print("GenericTab->saveTab(), item in session == " + str(self.item in self.session))
+            #check if there is items
             if self.item == None:
                 self.item = self.makeItem()
                 SqlHandler.addItem(self.session, self.item)
@@ -177,5 +175,4 @@ class GenericTab(QWidget):
     
     def update(self):
         pass
-    
     

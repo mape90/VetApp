@@ -58,11 +58,14 @@ from mainwindowtabs.searchlineedit import SearchLineEdit
 from mainwindowtabs.generictreewidget import GenericTreeWidget, ButtonType, VisitAnimalTreeWidget, OperationTreeWidget, ItemTreeWidget
 
 class VisitTab(GenericTab):
+
     def __init__(self, parent=None, item=None):
 
         #check special case if item is dictionary
         owner = None
         animal = None
+
+        #check if item is dictionary. So it is called by ownerTab
         if(item != None and item.__class__.__name__ == 'dict'):
             if("owner" in item):
                 owner = item["owner"]
@@ -296,11 +299,12 @@ class VisitTab(GenericTab):
         self.operationTreeWidget.setItems(visitanimal.operations)
     
     def ownerSet(self):
-        if self.item == None:
-            item_tmp = self.makeItem()
-            SqlHandler.addItem(self.session, item_tmp)
-            self.item = item_tmp
-            self.disableAnimalTree(False)
+        self.disableAnimalTree(False)
+        #if self.item == None:
+            #item_tmp = self.makeItem()
+            #SqlHandler.addItem(self.session, item_tmp)
+            #self.item = item_tmp
+
             
     def disableAnimalTree(self, state):
         self.animalTreeWidget.setDisabled(state)

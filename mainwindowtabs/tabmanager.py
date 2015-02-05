@@ -73,18 +73,18 @@ class TabManager(object):
                 self.setCurrentTab(self.tabslist[tabType])
                 return
         else:
-            if newItem != None and newItem.__class__.__name__ == "dict":
+            if newItem != None and newItem.__class__.__name__ != "dict":
                 #check if item has allready tab
                 if not tabType + str(newItem.id) in self.tabslist:
                     newTab = tabCreator(parent=self.tabwidget, item=newItem)
                     if tabType is "BillTab":
-                        text = self.billText()
+                        text = self.findNextNewText(tabCreator)
                         if newTab.item == None:
-                            key = 'new' + tabType
+                            key = 'new' + tabType + self.findNextNewIndex('new'+tabType)
                         else:
                             key = tabType + str(newTab.item.id)
                     elif tabType is "VisitTab":
-                        text = self.visitText()
+                        text = self.findNextNewText(tabCreator)
                         key = tabType + str(newItem.id)
                     elif tabType in ["OwnerTab","AnimalTab"]:
                         text = newItem.name
@@ -98,7 +98,7 @@ class TabManager(object):
                     self.setCurrentTab(self.tabslist[tabType + str(newItem.id)])
                     return
             else:
-                #Make new tab without item
+                #Make new tab without item or item is dictionary
                 newTab = tabCreator(parent=self.tabwidget, item=newItem)
 
                 index = self.findNextNewIndex('new'+tabType)
@@ -112,76 +112,6 @@ class TabManager(object):
         self.returnList[newTab] = returnTab
         self.setCurrentTab(newTab)
 
-        #//---------------------------------------
-
-        #else:
-            #if newItem != None:
-                #newTab = tabCreator(parent=self.tabwidget, item=newItem)
-
-                #if tabType is "BillTab":
-                    #text = self.billText()
-                    #if newTab.item == None:
-                        #text = 'new' + tabType
-                    #else:
-                        #text = tabType
-                #elif tabType is "VisitTab":
-                    #if newItem.__class__.__name__ is "dict":
-                        #pass
-                    #else:
-                        #pass
-                #elif tabType is "OwnerTab":
-
-                #elif tabType is "AnimalTab":
-
-                #else:
-                    ##check if there is tab opened for that object
-                    ##dont make new tab if there is allready tab open
-                    #if not tabType + str(newItem.id) in self.tabslist:
-
-
-                ##add tab to to tabwidget (item, text_str)
-
-                #temp_tab_name = tabType+ str(newItem.id)
-
-                #temp_tab = self.tabslist[name]
-
-
-                #self.tabwidget.addTab(newTab, text)
-                #self.setCurrentTab(temp_tab)
-                #self.returnList[newTab] = returnTab
-
-
-        #else:
-            #if newItem != None:
-                #if(newItem.__class__.__name__ != 'dict'):
-                    #if not tabType + str(newItem.id) in self.tabslist:
-
-                        #newTab = tabCreator(parent=self.tabwidget, item=newItem)
-
-                        #if tabCreator.getType() == 'Bill':
-                            #self.tabwidget.addTab(newTab, self.billText())
-                            #if newTab.item == None:
-                                #tabType = 'new' + tabType
-                        #elif newItem.getType() == 'Visit':
-                            #self.tabwidget.addTab(newTab, self.visitText())
-                        #else:
-                            #self.tabwidget.addTab(newTab, newItem.name)
-
-                        #self.tabslist[tabType + str(newItem.id)] = newTab
-
-                        #self.returnList[newTab] = returnTab
-                    #else:
-                        #print("DEBUG: Tabmanager: tab allready is open!")
-
-                #else:
-                    #newTab = tabCreator(parent=self.tabwidget, item=newItem)
-                    #self.tabwidget.addTab(newTab, self.new_text + self.translate[tabType] + self.findNextNewIndex('new'+tabType))
-                    #self.tabslist['new' + tabType + self.findNextNewIndex('new'+tabType)] = newTab
-                    #self.setCurrentTab(newTab)
-
-                    #self.returnList[newTab] = returnTab
-
-            #else:
 
     
     def askToCloseTab(self,index):
@@ -193,135 +123,128 @@ class TabManager(object):
         item is Animal, Owner or Visit 
         tabName is real text in tab, so it is need to be translated
     '''
-    def closeTab(self, tabType=None, item=None, tab=None):
-        print("DEBUG: closeTab: ", (tabType, item, tab))
-        if not not tab:
-            print("DEBUG: closeTab: tab.__name__ is ",tab.__class__.__name__)
-            tabClassName = tab.__class__.__name__ 
-            if(tabClassName == "VetTab"):
-                pass
-            elif(tabClassName == "VisitTab"):
-                pass
-            elif(tabClassName == "SearchTab"):
-                pass
-            elif(tabClassName == "OwnerTab"):
-                pass
-            elif(tabClassName == "MainMenuTab"):
-                pass
-            elif(tabClassName == "BillTab"):
-                pass
-            elif(tabClassName == "AnimalTab"):
-                pass
+    def closeTab(self, tab=None, item=None):
+
+        if not not item:
+            print("DEBUG: closeTab: not not item is true")
+            #save and close is called when there is item
+            tabType = tab.__class__.__name__
+
+            if not not tab.getItem():
+                key = tabType + str(tab.getItem().id)
             else:
-                pass
-            pass
-        elif not not item:
-            print("DEBUG: closeTab: item.__name__ is ",item.__class__.__name__)
-            pass
-        elif not not tabType:
-            print("DEBUG: Not implement call! Tabmanager.closeTab param tabType")
-            pass
+                key = 'new' + tabType + self.getNameNumber(tab)
+
+            #give item to returnList tab
+            if not not self.returnList[tab]:
+                self.returnList[tab].addAskedItem(item)
+                self.returnList[tab] = None
+
+        elif not not tab:
+            print("DEBUG: closeTab: tab.__name__ is ",tab.__class__.__name__)
+
+            from models.translationtables import g_unique_tabs
+            tabType = tab.__class__.__name__
+
+            if(tabType in g_unique_tabs):
+                key = tabType
+            elif tabType is "VisitTab":
+                #check if tab has item
+
+                print("DEBUG: closeTab(), tab=",tab,"its item:", tab.getItem())
+
+                if not not tab.getItem():
+                    key = tabType + str(tab.getItem().id)
+                else:
+                    key = 'new' + tabType + self.getNameNumber(tab)
+
+            elif(tabType in ["AnimalTab","OwnerTab"]):
+                #visit tab will end visit so it just closes current session
+                tabItem = tab.getItem()
+
+                #check if tab has item
+                if not not tabItem:
+                    key = tabType + str(tabItem.id)
+
+                    #is some one wants this tabItem then give it
+                    returnTab = self.returnList[tab]
+                    if not not returnTab:
+                        self.returnList[tab].addAskedItem(tabItem)
+                        self.returnList[tab] = None
+                else:
+                    key = 'new' + tabType + self.getNameNumber(tab)
+
+            elif(tabType is "BillTab"):
+                #get bill item for checking if bill is saved
+                item = tab.getItem()
+                if not not item:
+                    key = tabType + str(item.id)
+                else:
+                    key = 'new' + tabType + str(tab.visit.id)
+            else:
+                #error this should not be seen in any time
+                print("FATAL ERROR: Tabmanager->closeTab() unknown tab type of ",tabType)
+                return
+
+
         else:
             print("DEBUG: TabManager closeTab,empty closetab call")
             return
 
-        digit=-1
-        if tab != None:
-            tabType = tab.getType()
-            item = tab.getItem()
-            digit = self.getNameNumber(tab)
-        
-        if tabType == 'Bill':
-            if item != None: #check if tab is saved
-                if tabType + str(item.id) in self.tabslist:
-                    self.removeTab(self.tabslist[tabType + str(item.id)])
-                    del self.tabslist[tabType + str(item.id)]
-                    del self.returnList[tab]
-            else:#tab is not saved
-                if 'new' + tabType + str(tab.visit.id) in self.tabslist:
-                    self.removeTab(self.tabslist['new' + tabType + str(tab.visit.id)])
-                    del self.tabslist['new' + tabType + str(tab.visit.id)]
-                    del self.returnList[tab]
-            return   
-                
-        
-        if tabType == 'VetTab':
-            self.removeTab(self.tabslist[tabType])
-            del self.tabslist[tabType]
+        #remove tab and set next tab
+        try:
+            self.removeTab(self.tabslist[key])
+        except:
+            print("Tablist is : ", self.tabslist)
+            print("Error key is: ", key)
             return
-        
-        if item != None:
-            if item.getType() == 'Vet':
-                self.removeTab(self.tabslist['VetTab'])
-                del self.tabslist['VetTab']
-                return
-            if item.getType() + str(item.id) in self.tabslist:
-                if self.returnList[self.tabslist[item.getType() + str(item.id)]] != None:
-                    self.returnList[self.tabslist[item.getType() + str(item.id)]].addAskedItem(item)
-                self.removeTab(self.tabslist[item.getType() + str(item.id)])
-                del self.tabslist[item.getType() + str(item.id)]
-                return
-        
-        if tabType in self.tabslist:
-            self.removeTab(self.tabslist[tabType])
-            del self.tabslist[tabType]
-            return
-        
-        if tabType != None:
-            newName = 'new' + tabType + (str(digit) if digit > 0 else '')
-        else:
-			#TODO: fix this ugly code
-            newName = 'new' + item.getType()+ 'Tab' + (str(digit) if digit > 0 else '')
-        print('closeTab newName: ', newName)
-        print('closeTab self.tabslist: ', self.tabslist)
-        if newName in self.tabslist:
-            self.removeTab(self.tabslist[newName])
-            if self.returnList[self.tabslist[newName]] != None:
-                if item != None:
-                    self.returnList[self.tabslist[newName]].addAskedItem(item)
-            del self.returnList[self.tabslist[newName]]
-            del self.tabslist[newName]
-        else:
-            print('FATAL ERROR: Could not create tab as input is: tabType=%, item=%, digit=%, tab=%',
-                  (tabType, item, digit, tab))
+
+        #clean tabs from dictionarys
+        del self.tabslist[key]
+        del self.returnList[tab]
+
+
     '''
         This funcktion is called when new item is saved and it is not closed.
         So it has item that is in data base so we start to protect it so
         that it can not be opened twice.
-        
-        TODO: Also it updates tabs that are related to this
     '''
     def newToSaved(self, tab):
-        if tab == None:
-            print('newToSaved: Tab can not be NoneType! Aborting!')
-            return
-        
-        tabType = tab.getType()
-        tabItem = tab.getItem()
-        digit = self.getNameNumber(tab)
-        
-        if tabType == 'Bill':
-            del self.tabslist['new' + tabType + str(tab.visit.id)]
+        print("DEBUG: Tabmanager.newToSaved() tab:",tab)
+        if not not tab:
+            tabType = tab.__class__.__name__
+            tabItem = tab.getItem()
+            digit = self.getNameNumber(tab)
+
+            key = ''
+            if tabType is 'BillTab' and ('new' + tabType + str(tab.visit.id) in self.tabslist):
+                key = 'new' + tabType + str(tab.visit.id)
+            elif 'new' + tabType + digit in self.tabslist:
+                key = 'new' + tabType + digit
+            else:
+                print("FATAL ERROR: TabManager.newToSaved(). Can not find the tab: ",tab)
+                return
+
+            #update tab with new name
+            del self.tabslist[key]
             self.tabslist[tabType + str(tabItem.id)] = tab
-            return
-        
-        #remove old key from list and add same tab with new key
-        if 'new' + tabType + (str(digit) if digit > 0 else '') in self.tabslist:
-            del self.tabslist['new' + tabType + (str(digit) if digit > 0 else '')]
-            self.tabslist[tabType + str(tabItem.id)] = tab
+
+            #check if item has tab in returnList
+            if self.returnList[tab] != None:
+                self.returnList[tab].addAskedItem(tabItem)
+                self.returnList[tab] = None
+
+            #update Tab text
+            if tabItem.getType() == 'Visit':
+                self.tabwidget.setTabText(self.tabwidget.indexOf(tab), self.findNextNewText(tab))
+            else:
+                self.tabwidget.setTabText(self.tabwidget.indexOf(tab), tabItem.name)
+
         else:
-            return
+            print('FATAL ERROR: Tabmanager->newToSaved: Tab can not be None!')
+
         
-        #give TabItem to returnTab if it exist
-        if self.returnList[tab] != None:
-            self.returnList[tab].addAskedItem(tabItem)
-            self.returnList[tab] = None
-        
-        #update Tab text
-        if tabItem.getType == 'Visit':
-            self.tabwidget.setTabText(self.tabwidget.indexOf(tab),self.visitText())
-        else:
-            self.tabwidget.setTabText(self.tabwidget.indexOf(tab),tabItem.name)
+
     
 
     '''--------------HELPER FUNCTIONS-------------------'''
@@ -340,29 +263,28 @@ class TabManager(object):
         if self.previoustab in self.tabslist.values():
             self.tabwidget.setCurrentIndex(self.tabwidget.indexOf(self.previoustab))
     
-    def visitText(self):
-        names = []
-        for index in range(0,self.tabwidget.count()):
-            names.append(self.tabwidget.tabText(index))
-        index = 2
-        if not 'Käynti' in names:
-            return 'Käynti'
-        else:
-            while 'Käynti ' + str(index) in names:
-                index += 1
-            return 'Käynti ' + str(index)
 
-    def billText(self):
+    def findNextNewText(self, tab):
+        #get transtalion table
+        from models.translationtables import g_tab_name_dict
+        try:
+            text = g_tab_name_dict[tab.__class__.__name__]
+        except:
+            text = g_tab_name_dict[tab.__name__]
+
         names = []
+        #get all table names
         for index in range(0,self.tabwidget.count()):
             names.append(self.tabwidget.tabText(index))
         index = 2
-        if not 'Lasku' in names:
-            return 'Lasku'
+
+        #find next free text
+        if not text in names:
+            return text
         else:
-            while 'Lasku ' + str(index) in names:
+            while text + ' ' + str(index) in names:
                 index += 1
-            return 'Lasku ' + str(index)
+            return text + ' '  + str(index)
 
     '''
         return '' if none object found whit this itemName
@@ -370,18 +292,21 @@ class TabManager(object):
     ''' 
     def findNextNewIndex(self, itemName):
         index = 2
-        if not itemName in self.tabslist:
+        if not (itemName in self.tabslist):
             return ''
         else:
             while itemName + str(index) in self.tabslist:
                 index += 1
             return str(index)
 
+    #this function will return number as string or empty string if there is no number in tab text
     def getNameNumber(self, tab):
-        print('getNameNumber input:',tab)
+
         name = self.tabwidget.tabText(self.tabwidget.indexOf(tab))
+
+        #select only digits
         temp = re.sub('[^0-9]', ' ', name.lower()).split()
         if len(temp) < 1:
-            return -1
+            return ''
         else:
-            return int(temp[len(temp)-1])
+            return str(temp[len(temp)-1])
