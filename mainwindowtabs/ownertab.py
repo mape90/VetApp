@@ -106,7 +106,8 @@ class OwnerTab(GenericTab):
             Tabmanager.openTab(tabCreator=VisitTab,newItem={"owner":owner ,"animal":animal}, returnTab=self)
 
         else:
-            self.errorMessage('Can not save item! Because it is not valid')
+            from models.translationtables import g_save_error_message
+            self.errorMessage(g_save_error_message)  
 
 
 

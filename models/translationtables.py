@@ -41,6 +41,7 @@ g_unique_tabs = ["MainMenuTab","VetTab","SearchTab", "WarehouseTab", "Appointmen
 
 g_tab_name_dict = {'VisitTab':'Käynti','AnimalTab':'Eläin', 'OwnerTab':'Omistaja', 'SearchTab':'Etsi', 'MainMenuTab':'Päävalikko', 'WarehouseTab':'Varasto',  'AppointmentTab':'Ajanvaraus', 'VetTab':'Eläinlääkäri',}
 
+g_save_error_message = "Ei voida tallentaa, tietoja puuttuu!"
 
 
 
