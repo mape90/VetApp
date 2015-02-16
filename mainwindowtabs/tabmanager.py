@@ -162,6 +162,11 @@ class TabManager(object):
                 item_id = str(tab.getItem().id)
                 
                 key = tabType + item_id
+
+                #if saveAndClose is called then we have item but name is still
+                #starting with new-word because it have not been updated
+                if not key in self.tabslist:
+                    key = 'new' + tabType + tab.getNumber()
                 
             else:
                 #so tab do not have saved item so it is new
@@ -170,6 +175,11 @@ class TabManager(object):
 
         #get tab object from list
         if key in self.tabslist:
+
+            #give item for return tab
+            if self.returnList[tab] != None:
+                self.returnList[tab].addAskedItem(tab.getItem())
+
             #remove tab and update current tab to correct one
             #previous or returnTab
             self.removeTab(tab)
@@ -188,21 +198,29 @@ class TabManager(object):
         that it can not be opened twice.
     '''
     def newToSaved(self, tab):
-        if tab == None or tab.getItem() == None: #check that our input is valid
-            print('FATAL ERROR: tabmanager->newToSaved() invalid tab or item', tab)
+        #check that our input is valid
+        if tab == None:
+            print('FATAL ERROR: tabmanager->newToSaved() tab is None!')
+            return
+        if tab.getItem() == None:
+            print('FATAL ERROR: tabmanager->newToSaved() Item in tab is None! tab is: ', tab)
             return
         
         tabType = tab.__class__.__name__
 
         #make old and new keys
         key = 'new' + tabType + tab.getNumber()
+
+        #make new key for tab
         new_key = tabType + str(tab.getItem().id)
 
         #update tab to match its new key
         if not key in self.tabslist:
-            print("FATAL ERROR: tabmanager->newToSaved(), invalid key:",key)
+            print("FATAL ERROR: tabmanager->newToSaved(), invalid key:",key,
+                  "key is in tablist, but is should be unique")
             return
-            
+
+        #change tab key
         del self.tabslist[key]
         self.tabslist[new_key] = tab
         

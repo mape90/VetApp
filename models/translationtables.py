@@ -22,7 +22,11 @@ Created on Apr 16, 2013
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-g_operationbase_translation_dict = {"OperationBase":"Operaatio", "VaccinationBase":'Rokotus', "SurgeryBase":'Leikkaus', "MedicationBase":"Lääkitys", "LabBase":"Laboratoriotutkimus", "LamenessBase":'Ontumatutkimus', "XrayBase":'Röntkentutkimus', "UltrasonicBase":'Ultraäänitutkimus', "EndoscopyBase": "Endoskooppitutkimus" ,"DentalexaminationBase":"Hammashoito"}
+g_operationbase_translation_dict = {"OperationBase":"Operaatio", "VaccinationBase":'Rokotus',
+                                    "SurgeryBase":'Leikkaus', "MedicationBase":"Lääkitys",
+                                    "LabBase":"Laboratoriotutkimus", "LamenessBase":'Ontumatutkimus',
+                                    "XrayBase":'Röntkentutkimus', "UltrasonicBase":'Ultraäänitutkimus',
+                                    "EndoscopyBase": "Endoskooppitutkimus" ,"DentalexaminationBase":"Hammashoito"}
 
 
 #ATTENTION these two list have to have same names Rokote == Rokote, Lääke==Lääke
@@ -39,7 +43,10 @@ g_item_name_dict = {"Item":"Tuote","Medicine":"Lääkeaine","Vaccine":"Rokote","
 
 g_unique_tabs = ["MainMenuTab","VetTab","SearchTab", "WarehouseTab", "AppointmentTab"]
 
-g_tab_name_dict = {'VisitTab':'Käynti','AnimalTab':'Eläin', 'OwnerTab':'Omistaja', 'SearchTab':'Etsi', 'MainMenuTab':'Päävalikko', 'WarehouseTab':'Varasto',  'AppointmentTab':'Ajanvaraus', 'VetTab':'Eläinlääkäri',}
+g_tab_name_dict = {'VisitTab':'Käynti','AnimalTab':'Eläin', 'OwnerTab':'Omistaja',
+                   'SearchTab':'Etsi', 'MainMenuTab':'Päävalikko', 'WarehouseTab':'Varasto',
+                   'AppointmentTab':'Ajanvaraus', 'VetTab':'Eläinlääkäri',
+                   'BillTab':'Lasku'}
 
 g_save_error_message = "Ei voida tallentaa, tietoja puuttuu!"
 

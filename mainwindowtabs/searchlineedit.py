@@ -103,7 +103,7 @@ class SearchLineEdit(QWidget):
         self.animal = animal
     
     def addAskedItem(self, item):
-        print("DEBUG: SearchLineEdit.addAskedItem() item: ", item)
+        print("DEBUG: SearchLineEdit: addAskedItem() item: ", item)
         if item != None:
             self.setCurrentItem(SqlHandler.makeCopy(self.session, item))
     

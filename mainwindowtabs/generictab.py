@@ -114,15 +114,15 @@ class GenericTab(QWidget):
         tmp_item = None
         if self.saveAble():
             if self.item == None:
-                #only save item to database
-                SqlHandler.addItem(self.session, self.makeItem())
+                self.item = self.makeItem()
+                SqlHandler.addItem(self.session, self.item)
             else:
                 if self.hasChanged():
                     #update item if it has changes
                     self.item.update(self.getData())
                     SqlHandler.commitSession(self.session)
                 else:
-                    print('No')     
+                    pass #print('No')
             Tabmanager.closeTab(tab=self)
         else:
             from models.translationtables import g_save_error_message
