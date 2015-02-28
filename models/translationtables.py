@@ -50,6 +50,7 @@ g_tab_name_dict = {'VisitTab':'Käynti','AnimalTab':'Eläin', 'OwnerTab':'Omista
 
 g_save_error_message = "Ei voida tallentaa, tietoja puuttuu!"
 
+g_treewidget_button_texts = {'add':'Lisää', 'remove':'Poista', 'open':'Avaa','check':'Tehty'}
 
 
 

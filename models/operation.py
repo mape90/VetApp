@@ -311,8 +311,6 @@ class Operation(Base):
             except ValueError:
                 self.count = 1
 
-
-
     def update(self, data):
         try:
             for key, item in data.items():
@@ -342,10 +340,20 @@ class Operation(Base):
 
     def hasList(self=None):
         return False
-
+    
+    def getAPrice(self):
+        return self.price
+    
+    def getTotalPrice(self):
+        return self.count * self.getAPrice()
+    
+    def getUpdateRange(self):
+        return range(3,6) #string list range for generictreewidget operationUpdate
+    
     def stringList(self):
-        return [str(self.id), self.base.getName(), self.base.name, str(self.price)]
-#TODO: check that medicines is valid table name and you can call id for it
+        return [str(self.id), self.base.getName(), self.base.name, 
+                "%.2f" % self.getAPrice(), str(self.count), "%.2f" % self.getTotalPrice()]
+
 
 class Basic(Operation):
     __tablename__='basics'
@@ -370,8 +378,11 @@ class Vaccination(Operation):
         super().__init__(price, description)
         self.base = base
 
-    def stringList(self):
-        return [str(self.id), self.base.getName(), self.base.name, str(self.price+self.base.item.price) if self.base.item != None else str(self.price)]
+    def getAPrice(self):
+        if self.base.item != None:
+            return self.price + self.base.item.price
+        else:
+            return self.price
 
 
 '''
@@ -426,13 +437,14 @@ class Surgery(Operation):
     def hasList(self=None):
         return True
 
-    def stringList(self):
+
+    def getAPrice(self):
         price = 0.0
         for i in self.items:
             price += float(i.item.price) * i.count
         price += self.price
+        return price
 
-        return [str(self.id), self.base.getName(), self.base.name, str(price)]
 '''
 
 '''
@@ -467,9 +479,10 @@ class Medication(Operation):
     def __init__(self, price, description, base):
         super().__init__(price, description)
         self.base = base
+    
+    def getAPrice(self):
+        return self.price if self.price > 0.001 else self.base.item.price
 
-    def stringList(self):
-        return [str(self.id), self.base.getName(), self.base.name, str(self.price+self.base.item.price) if self.base.item != None else str(self.price)]
 '''
 
 '''

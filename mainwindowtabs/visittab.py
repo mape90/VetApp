@@ -58,13 +58,9 @@ from mainwindowtabs.searchlineedit import SearchLineEdit
 from mainwindowtabs.generictreewidget import GenericTreeWidget, ButtonType, VisitAnimalTreeWidget, OperationTreeWidget, ItemTreeWidget
 
 class VisitTab(GenericTab):
-
     def __init__(self, parent=None, item=None):
-
-        #check special case if item is dictionary
         owner = None
         animal = None
-
         #check if item is dictionary. So it is called by ownerTab
         if(item != None and item.__class__.__name__ == 'dict'):
             if("owner" in item):
@@ -153,7 +149,14 @@ class VisitTab(GenericTab):
         self.ui.billButton.clicked.connect(self.openBill)
         self.ui.closeButton.clicked.connect(self.closeTab)
 
-        
+    
+    def updateOperation(self, line):
+        operation = line.data(0,0) #get operation
+        string_list = operation.stringList() #get string list
+        for i in operation.getUpdateRange():
+            line.setText(i,string_list[i])
+
+
     def operationChanged(self,current, previous):
         if current != None:
             '''Enable operation related if those arent enabled'''
@@ -164,12 +167,12 @@ class VisitTab(GenericTab):
                 if self.currentOperation != None:
                     self.updateCurerentOperation()
                     if previous != None:
-                        previous.setText(3, str(self.currentOperation.stringList()[3]))
+                        self.updateOperation(previous)
                 self.currentOperation = current.data(0,0)
                 self.setOperationData(current.data(0,0))
+
         else:
             '''If current is None then treeWidget is empty and all data will be removed'''
-            print('Current was None-----------------------')
             if self.ui.operationNameLabel.isEnabled():
                 self.clearOperationRelated()
                 self.disableOperationRelated(True)
@@ -179,11 +182,11 @@ class VisitTab(GenericTab):
         self.closeOperation()
     
     def closeOperation(self):
-        print("DEBUG: VisitTab->closeOperation, ")
         self.ui.operationNameLabel.setText('Nimi')
         self.ui.retailPriceLabel.setText('0.00')
         self.itemTreeWidget.clearTreeWidget()
         self.ui.priceSpinBox.setValue(0)
+        self.ui.countSpinBox.setValue(1)
         self.ui.descriptionTextEdit.setPlainText('')
         self.ui.stackedWidget.setCurrentIndex(0)
         
@@ -193,6 +196,7 @@ class VisitTab(GenericTab):
             data = {}
             data["price"] = self.ui.priceSpinBox.value()
             data["description"] = self.ui.descriptionTextEdit.toPlainText()
+            data["count"] = self.ui.countSpinBox.value()
             if self.currentOperation.hasList():
                 data["items"] = self.itemTreeWidget.getItemsFromList()
             self.currentOperation.update(data)
@@ -202,6 +206,7 @@ class VisitTab(GenericTab):
         self.ui.retailPriceLabel.setText(str(operation.base.price))
         self.ui.priceSpinBox.setValue(operation.price)
         self.ui.descriptionTextEdit.setPlainText(operation.description)
+        self.ui.countSpinBox.setValue(operation.count)
         
         if self.currentOperation.hasList():
             self.ui.stackedWidget.setCurrentIndex(2)
@@ -333,6 +338,8 @@ class VisitTab(GenericTab):
         self.ui.descriptionLabel.setDisabled(state)
         self.ui.descriptionTextEdit.setDisabled(state)
         self.ui.stackedWidget.setDisabled(state)
+        self.ui.countSpinBox.setDisabled(state)
+        self.ui.countLabel.setDisabled(state)
             
     '''-------------OVERLOADED FUNCTIONS-----------------'''
     def getType(self=None):

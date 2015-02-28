@@ -29,6 +29,8 @@ from mainwindowtabs.printFileCreator import PrintFileCreator
 from uipy.ui_bill import Ui_BillTab
 from models import SqlHandler
 
+from mainwindowtabs import Tabmanager
+
 import datetime
 from math import ceil
 
@@ -92,7 +94,13 @@ class BillTab(GenericTab):
         self.ui.roundButton05.clicked.connect(self.roundEndPrice05)
         self.ui.roundButton005.clicked.connect(self.roundEndPrice005)
         
-        #self.ui.savePushButton.clicked.connect(self.saveTab()) TODO: check how this should be done
+        self.ui.toVisitButton.clicked.connect(self.openVisit)
+        
+        self.ui.updateFromVisitButton.clicked.connect(self.getDataFromVisit)
+
+    
+    def getDataFromVisit(self):
+        self.setPrices(self.visit)
     
     def setBasicInfo(self):
         self.setPaymnetMethods()
@@ -128,10 +136,14 @@ class BillTab(GenericTab):
             else:
                 self.ui.ownerLabel.setText(self.item.owner.name)
                 self.ui.clinicPriceSpinBox.setValue(28.06) #TODO: take default clinicPrice from configServer
-                self.setPrices()
+                self.setPrices(self.item) #item is visit
             
         else:
             self.errorMessage("ERROR: BillTab: setBasicInfo: item is None")
+    
+    def openVisit(self):
+        from mainwindowtabs.visittab import VisitTab
+        Tabmanager.openTab(VisitTab, self.visit)
     
     def calcIndexNumber(self):
         base_number = self.visit.id+self.index_number_start+100  #TODO: take start point from configServer
@@ -147,13 +159,7 @@ class BillTab(GenericTab):
     def setDefaultClinicPrice(self):
         self.ui.clinicPriceSpinBox.setValue(28.06)  #TODO: take default clinicPrice from configServer
     
-    def setPrices(self):
-        temp_visit = None
-        if self.item.getType() == 'Visit':
-            temp_visit = self.item
-        else:
-            temp_visit = self.item.visit
-        
+    def setPrices(self, visit):
         price_dict = {}
         price_dict["operation_price"] = 0.0
         price_dict["accesories_price"] = 0.0
@@ -161,7 +167,7 @@ class BillTab(GenericTab):
         price_dict["medicine_price"] = 0.0
         price_dict["diet_price"] = 0.0
         
-        for visit_animal in temp_visit.visitanimals:
+        for visit_animal in visit.visitanimals:
             for operation in visit_animal.operations:
                 from models.operation import Lab
                 if operation.getType() is Lab.__name__:
@@ -202,11 +208,6 @@ class BillTab(GenericTab):
         self.ui.medicineSpinBox.setValue(price_dict["medicine_price"])
         self.ui.dietSpinBox.setValue(price_dict["diet_price"])
 
-    
-    def roundTo(value):
-        pass #TODO:
-        
-    
     def dueDateChanged(self,value):
         self.ui.DueDateEdit.setDate(datetime.datetime.now()+self.ui.DueDateTimeComboBox.itemData(self.ui.DueDateTimeComboBox.currentIndex()))
     

@@ -29,10 +29,11 @@ from uipy.ui_listwidget import Ui_GenericTreeWidget
 from datetime import datetime
 
 class ButtonType():
-    add = 'Lisää'
-    remove = 'Poista'
-    open = 'Avaa'
-    check = 'Tehty'
+    from models.translationtables import g_treewidget_button_texts as texts
+    add = texts['add']
+    remove = texts['remove']
+    open = texts['open']
+    check = texts['check']
     up = True
     down = False
 
@@ -326,7 +327,7 @@ class OperationTreeWidget(GenericTreeWidget):
         GenericTreeWidget.__init__(self, session, parent)
         self.setTitle("Eläimelle tehdyt operaatiot")
         self.setButtons([ButtonType.add,ButtonType.remove])
-        self.setHeader(headertexts=['id', 'Operaatiotyyppi', 'Nimi', 'Hinta'], hidecolumns=[0])
+        self.setHeader(headertexts=['id', 'Operaatiotyyppi', 'Nimi', 'a hinta','Määrä', 'Hinta' ], hidecolumns=[0])
         from mainwindowtabs.operationbasecreator import OperationBaseCreator
         self.setInputMethod(tabcreator=OperationBaseCreator, autoAdd=True, function=SqlHandler.searchOperationBase)
         
@@ -339,10 +340,6 @@ class OperationTreeWidget(GenericTreeWidget):
                     self.session.delete(item)
 
     def makeTreeItem(self,item):
-
-        print("OperationTreeWidget->makeTreeItem() item == " + str(item) + " type== " + str(item.getType()) +
-              " real type == " + str(type(item)) )
-
         if 'Base' in item.getType():
             if item.hasList():
                 item = type(item).ObjectCreator(type(item))(item.price, item.description, base=item, items=item.items)
@@ -493,10 +490,11 @@ class ItemTreeWidget(GenericTreeWidget):
 
 
 
-from uipy.ui_recipiemeicineDialog import Ui_RecipieMedicineDialog
+
 
 class RecipieMedicineDialog(QDialog):
     def __init__(self, parent=None, item=None):
+        from uipy.ui_recipiemeicineDialog import Ui_RecipieMedicineDialog
         QDialog.__init__(self, parent=parent)
         self.ui = Ui_RecipieMedicineDialog()
         self.ui.setupUi(self)
@@ -542,12 +540,10 @@ class RecipieMedicineDialog(QDialog):
     def setBasicInfo(self):
         if self.item != None:
             self.ui.spinBox.setValue(self.item.count)
-    
-
-from uipy.ui_phonerecipiedialog import Ui_PhoneRecipieDialog
 
 class PhoneRecipieDialog(QDialog):
     def __init__(self, parent=None, item=None, animal=None):
+        from uipy.ui_phonerecipiedialog import Ui_PhoneRecipieDialog
         QDialog.__init__(self, parent=parent)
         self.ui = Ui_PhoneRecipieDialog()
         self.ui.setupUi(self)
