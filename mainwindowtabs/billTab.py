@@ -88,6 +88,10 @@ class BillTab(GenericTab):
         self.ui.nowButton.clicked.connect(self.setToday)
         self.ui.all_pushButton.clicked.connect(self.fullPricePaid)
         
+        self.ui.roundButton1.clicked.connect(self.roundEndPrice1)
+        self.ui.roundButton05.clicked.connect(self.roundEndPrice05)
+        self.ui.roundButton005.clicked.connect(self.roundEndPrice005)
+        
         #self.ui.savePushButton.clicked.connect(self.saveTab()) TODO: check how this should be done
     
     def setBasicInfo(self):
@@ -199,6 +203,9 @@ class BillTab(GenericTab):
         self.ui.dietSpinBox.setValue(price_dict["diet_price"])
 
     
+    def roundTo(value):
+        pass #TODO:
+        
     
     def dueDateChanged(self,value):
         self.ui.DueDateEdit.setDate(datetime.datetime.now()+self.ui.DueDateTimeComboBox.itemData(self.ui.DueDateTimeComboBox.currentIndex()))
@@ -238,38 +245,68 @@ class BillTab(GenericTab):
     def changePercent(self, value):
         self.ui.extraPercentLabel.setText(str(value))
     
-    def updateEndPrice(self, value):
-        temp_ALV0 = 0.0
-        temp_ALV1 = 0.0
+       
+    
+        
+    def getALV1Price(self):
+        price_ALV1 = 0.0
         if not self.ui.clinic_radio_button.isChecked():
-            temp_ALV0 += self.ui.KmPriceSpinBox.value()
-            temp_ALV1 += self.ui.visitPriceSpinBox.value()
+            price_ALV1 += self.ui.KmPriceSpinBox.value()
+            price_ALV1 += self.ui.visitPriceSpinBox.value()
         else:
-            temp_ALV1 += self.ui.clinicPriceSpinBox.value()
+            price_ALV1 += self.ui.clinicPriceSpinBox.value()
         
-        temp_ALV1 += self.ui.operationSpinBox.value()
-        temp_ALV1 += self.ui.accessoriesSpinBox.value()
-        temp_ALV1 += self.ui.labSpinBox.value()
+        price_ALV1 += self.ui.operationSpinBox.value()
+        price_ALV1 += self.ui.accessoriesSpinBox.value()
+        price_ALV1 += self.ui.labSpinBox.value()
         
-        temp_ALV1 = temp_ALV1*(100 + self.ui.precentSlider.value())/100.0
+        return price_ALV1*(100 + self.ui.precentSlider.value())/100.0
         
-        temp_ALV2 = self.ui.medicineSpinBox.value()
-        temp_ALV3 = self.ui.dietSpinBox.value()
+    def getALV2Price(self):
+        return self.ui.medicineSpinBox.value()
+        
+    def getALV3Price(self):
+        return self.ui.dietSpinBox.value()
+      
+    def getTotal(self):
+        return self.getALV1Price() + self.getALV2Price() + self.getALV3Price()
+      
+    
+    def roundEndPrice1(self):
+        self.roundEndPrice(1.0)
+    
+    def roundEndPrice05(self):
+        self.roundEndPrice(0.5)
+    
+    def roundEndPrice005(self):
+        self.roundEndPrice(0.05)
+    
+    def roundEndPrice(self, precision):
+        total = self.getTotal()
+        correction = 0.5 if total >= 0 else -0.5
+        rounded = int( total/precision+correction ) * precision + precision
+        previous_value = self.ui.operationSpinBox.value()
+        self.ui.operationSpinBox.setValue(previous_value + rounded - total)
+          
+    def updateEndPrice(self, value):
+        price_ALV1 = self.getALV1Price()
+        price_ALV2 = self.getALV2Price()
+        price_ALV3 = self.getALV3Price()
         
         ALV1 = SqlHandler.getALV(1)
         ALV2 = SqlHandler.getALV(2)
         ALV3 = SqlHandler.getALV(3)
         
-        self.ui.price_ALV1_total_label.setText('%.2f' % temp_ALV1)
-        self.ui.ALV1_total.setText('%.2f' % (temp_ALV1 * (ALV1/(100.0+ALV1))))
+        self.ui.price_ALV1_total_label.setText('%.2f' % price_ALV1)
+        self.ui.ALV1_total.setText('%.2f' % (price_ALV1 * (ALV1/(100.0+ALV1))))
         
-        self.ui.price_ALV2_total_label.setText('%.2f' % temp_ALV2)
-        self.ui.ALV2_total.setText('%.2f' % (temp_ALV2 * (ALV2/(100.0+ALV2))))
+        self.ui.price_ALV2_total_label.setText('%.2f' % price_ALV2)
+        self.ui.ALV2_total.setText('%.2f' % (price_ALV2 * (ALV2/(100.0+ALV2))))
         
-        self.ui.price_ALV3_total_label.setText('%.2f' % temp_ALV3)
-        self.ui.ALV3_total.setText('%.2f' % (temp_ALV3 * (ALV3/(100.0+ALV3))))
+        self.ui.price_ALV3_total_label.setText('%.2f' % price_ALV3)
+        self.ui.ALV3_total.setText('%.2f' % (price_ALV3 * (ALV3/(100.0+ALV3))))
         
-        self.ui.endPriceLabel.setText('%.2f' % (temp_ALV0 + temp_ALV1 + temp_ALV2 + temp_ALV3))
+        self.ui.endPriceLabel.setText('%.2f' % self.getTotal())
       
     
     def setAlv1Names(self):
@@ -293,8 +330,7 @@ class BillTab(GenericTab):
         self.ui.ALV3_2.setText(alv3 + '%')
         
     def printBill(self):
-        #save before printing so that changes will be added to print
-        self.saveTab()
+        self.saveTab() #save before printing so that changes will be added to print
         
         html = self.creator.makePrintfile(self.item)
         document = QWebView()

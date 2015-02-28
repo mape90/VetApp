@@ -98,7 +98,7 @@ class PrintFileCreator(object):
             operation_row_count +=1
                 
         if(bill.km_payment > 0):
-            operation_rows += self.genTableRowPrue("Kilometrikorvaus " + str(bill.km) + "km", 1, "", bill.clinic_payment, 0)
+            operation_rows += self.genTableRowPrue("Kilometrikorvaus " + str(bill.km) + "km", 1, "", bill.clinic_payment, 1)
             operation_row_count +=1
               
         

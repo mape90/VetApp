@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'ui_bill.ui'
 #
-# Created: Sun Feb  9 22:13:54 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Sat Feb 28 14:31:08 2015
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_BillTab(object):
     def setupUi(self, BillTab):
         BillTab.setObjectName(_fromUtf8("BillTab"))
-        BillTab.resize(1026, 700)
+        BillTab.resize(959, 806)
         self.horizontalLayout_27 = QtGui.QHBoxLayout(BillTab)
         self.horizontalLayout_27.setObjectName(_fromUtf8("horizontalLayout_27"))
         self.verticalLayout = QtGui.QVBoxLayout()
@@ -438,6 +438,12 @@ class Ui_BillTab(object):
         self.savePushButton = QtGui.QPushButton(BillTab)
         self.savePushButton.setObjectName(_fromUtf8("savePushButton"))
         self.horizontalLayout_2.addWidget(self.savePushButton)
+        self.toVisitButton = QtGui.QPushButton(BillTab)
+        self.toVisitButton.setObjectName(_fromUtf8("toVisitButton"))
+        self.horizontalLayout_2.addWidget(self.toVisitButton)
+        self.updateFromVisitButton = QtGui.QPushButton(BillTab)
+        self.updateFromVisitButton.setObjectName(_fromUtf8("updateFromVisitButton"))
+        self.horizontalLayout_2.addWidget(self.updateFromVisitButton)
         spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem3)
         self.printButton = QtGui.QPushButton(BillTab)
@@ -570,6 +576,29 @@ class Ui_BillTab(object):
         self.verticalLayout_5.addWidget(self.line)
         self.horizontalLayout_25 = QtGui.QHBoxLayout()
         self.horizontalLayout_25.setObjectName(_fromUtf8("horizontalLayout_25"))
+        self.label_11 = QtGui.QLabel(BillTab)
+        self.label_11.setObjectName(_fromUtf8("label_11"))
+        self.horizontalLayout_25.addWidget(self.label_11)
+        self.roundButton1 = QtGui.QPushButton(BillTab)
+        self.roundButton1.setEnabled(True)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.roundButton1.sizePolicy().hasHeightForWidth())
+        self.roundButton1.setSizePolicy(sizePolicy)
+        self.roundButton1.setMaximumSize(QtCore.QSize(40, 16777215))
+        self.roundButton1.setObjectName(_fromUtf8("roundButton1"))
+        self.horizontalLayout_25.addWidget(self.roundButton1)
+        self.roundButton05 = QtGui.QPushButton(BillTab)
+        self.roundButton05.setMaximumSize(QtCore.QSize(40, 16777215))
+        self.roundButton05.setObjectName(_fromUtf8("roundButton05"))
+        self.horizontalLayout_25.addWidget(self.roundButton05)
+        self.roundButton005 = QtGui.QPushButton(BillTab)
+        self.roundButton005.setMaximumSize(QtCore.QSize(40, 16777215))
+        self.roundButton005.setObjectName(_fromUtf8("roundButton005"))
+        self.horizontalLayout_25.addWidget(self.roundButton005)
+        spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_25.addItem(spacerItem4)
         self.label_50 = QtGui.QLabel(BillTab)
         font = QtGui.QFont()
         font.setBold(True)
@@ -594,10 +623,10 @@ class Ui_BillTab(object):
         self.label_51.setFont(font)
         self.label_51.setObjectName(_fromUtf8("label_51"))
         self.horizontalLayout_25.addWidget(self.label_51)
-        self.horizontalLayout_25.setStretch(0, 1)
+        self.horizontalLayout_25.setStretch(5, 1)
         self.verticalLayout_5.addLayout(self.horizontalLayout_25)
-        spacerItem4 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_5.addItem(spacerItem4)
+        spacerItem5 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_5.addItem(spacerItem5)
         self.horizontalLayout_27.addLayout(self.verticalLayout_5)
 
         self.retranslateUi(BillTab)
@@ -652,6 +681,8 @@ class Ui_BillTab(object):
         self.nowButton.setText(_translate("BillTab", "Nyt", None))
         self.label_3.setText(_translate("BillTab", "Eräpäivä", None))
         self.savePushButton.setText(_translate("BillTab", "Tallenna", None))
+        self.toVisitButton.setText(_translate("BillTab", "Käyntiin", None))
+        self.updateFromVisitButton.setText(_translate("BillTab", "Hae tiedot", None))
         self.printButton.setText(_translate("BillTab", "Tulosta", None))
         self.label_40.setText(_translate("BillTab", "Hinta", None))
         self.ALV1_7.setText(_translate("BillTab", "ALV1", None))
@@ -674,6 +705,10 @@ class Ui_BillTab(object):
         self.label_48.setText(_translate("BillTab", "ALV:", None))
         self.ALV3_total.setText(_translate("BillTab", "0.00", None))
         self.label_49.setText(_translate("BillTab", "€", None))
+        self.label_11.setText(_translate("BillTab", "Pyöristä", None))
+        self.roundButton1.setText(_translate("BillTab", "1€", None))
+        self.roundButton05.setText(_translate("BillTab", "0.50€", None))
+        self.roundButton005.setText(_translate("BillTab", "0,05€", None))
         self.label_50.setText(_translate("BillTab", "Summa:", None))
         self.endPriceLabel.setText(_translate("BillTab", "0.00", None))
         self.label_51.setText(_translate("BillTab", "€", None))
