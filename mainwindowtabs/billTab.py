@@ -159,6 +159,60 @@ class BillTab(GenericTab):
     def setDefaultClinicPrice(self):
         self.ui.clinicPriceSpinBox.setValue(28.06)  #TODO: take default clinicPrice from configServer
     
+        
+    def updatePriceList(self, operation, old_prices):
+        _type = operation.getType()
+        
+        prices = {}
+        prices["operation_price"] = 0.0
+        prices["accesories_price"] = 0.0
+        prices["lab_price"] = 0.0
+        prices["medicine_price"] = 0.0
+        prices["diet_price"] = 0.0
+        
+        if _type is 'Basic':
+            prices["operation_price"] += operation.price
+        elif _type is 'Vaccination':
+            prices["operation_price"] += operation.price
+            if operation.base.item != None:
+                prices["medicine_price"] += operation.base.item.price
+            else:
+                self.errorMessage('ERROR: BillTab.setPrices(): operation.hasItem() is true but item is None!')
+        elif _type is 'Surgery':
+            for item in operation.items:
+                from models.translationtables import g_item_alv_dict
+                if g_item_alv_dict[item.item.__class__.__name__] == 1:
+                    prices["accesories_price"] += item.item.price * item.count
+                elif g_item_alv_dict[item.item.__class__.__name__] == 2:
+                    prices["medicine_price"] += item.item.price * item.count
+                elif g_item_alv_dict[item.item.__class__.__name__] == 3:
+                    prices["diet_price"] += item.item.price * item.count
+                else:
+                    self.errorMessage('ERROR: BillTab.setPrices(): ALV is not valid!') 
+        elif _type is 'Lab':
+            price_dict["lab_price"] += operation.price
+        elif _type is 'Medication':
+            if operation.price > 0.001:
+                prices["medicine_price"] += operation.price
+            else:
+                prices["medicine_price"] += operation.base.item.price
+        elif _type is 'Lameness':
+            prices["operation_price"] += operation.price
+        elif _type is 'Xray':
+            prices["operation_price"] += operation.price
+        elif _type is 'Ultrasonic':
+            prices["operation_price"] += operation.price
+        elif _type is 'Endoscopy':
+            prices["operation_price"] += operation.price
+        elif _type is 'Dentalexamination':
+            prices["operation_price"] += operation.price
+        else:
+            print("DEBUG: ERROR: cant solve operation type, type is ", _type)
+
+        for key in prices:
+            old_prices[key] += prices[key]*operation.count
+        return old_prices
+        
     def setPrices(self, visit):
         price_dict = {}
         price_dict["operation_price"] = 0.0
@@ -169,39 +223,8 @@ class BillTab(GenericTab):
         
         for visit_animal in visit.visitanimals:
             for operation in visit_animal.operations:
-                from models.operation import Lab
-                if operation.getType() is Lab.__name__:
-                    price_dict["lab_price"] += operation.price
-                else:
-                    price_dict["operation_price"] += operation.price
+                price_dict = self.updatePriceList(operation, price_dict)
 
-                if operation.hasList():
-                    for item in operation.items:
-                        from models.translationtables import g_item_alv_dict
-                        if g_item_alv_dict[item.item.__class__.__name__] == 1:
-                            price_dict["accesories_price"] += item.item.price * item.count
-                        elif g_item_alv_dict[item.item.__class__.__name__] == 2:
-                            price_dict["medicine_price"] += item.item.price * item.count
-                        elif g_item_alv_dict[item.item.__class__.__name__] == 3:
-                            price_dict["diet_price"] += item.item.price * item.count
-                        else:
-                            self.errorMessage('ERROR: BillTab.setPrices(): ALV is not valid!')    
-                if operation.base.hasItem():
-                    if operation.base.item != None:
-                        from models.translationtables import g_item_alv_dict
-                        alv_class_num = g_item_alv_dict[operation.base.item.__class__.__name__]
-
-                        if alv_class_num == 1:
-                            price_dict["accesories_price"] = operation.base.item.price
-                        elif alv_class_num == 2:
-                            price_dict["medicine_price"] = operation.base.item.price
-                        elif alv_class_num == 3:
-                            price_dict["diet_price"] = operation.base.item.price
-                        else:
-                            self.errorMessage('ERROR: BillTab.setPrices(): ALV is not valid!')
-                    else:
-                        self.errorMessage('ERROR: BillTab.setPrices(): operation.hasItem() is true but item is None!')
-        
         self.ui.operationSpinBox.setValue(price_dict["operation_price"])
         self.ui.accessoriesSpinBox.setValue(price_dict["accesories_price"])
         self.ui.labSpinBox.setValue( price_dict["lab_price"])

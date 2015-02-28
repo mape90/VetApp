@@ -340,6 +340,7 @@ class Operation(Base):
 
     def hasList(self=None):
         return False
+
     
     def getAPrice(self):
         return self.price
