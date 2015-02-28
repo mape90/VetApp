@@ -284,8 +284,8 @@ class BillTab(GenericTab):
     
     def roundEndPrice(self, precision):
         total = self.getTotal()
-        correction = 0.5 if total >= 0 else -0.5
-        rounded = int( total/precision+correction ) * precision + precision
+        from math import ceil
+        rounded = ceil(total/precision) * precision
         previous_value = self.ui.operationSpinBox.value()
         self.ui.operationSpinBox.setValue(previous_value + rounded - total)
           
