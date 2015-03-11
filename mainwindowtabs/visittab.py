@@ -93,6 +93,10 @@ class VisitTab(GenericTab):
                 self.animalTreeWidget.addAskedItem(animal) #TODO find function to add animal
             self.disableAnimalTree(False)
     
+
+    '''
+        setup Visit
+    '''
     def setBasicInfo(self):
         self.disableAnimalTree(True)
         if self.item != None:
