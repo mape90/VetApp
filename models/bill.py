@@ -118,7 +118,7 @@ class Bill(Base):
                 if operation.getType() is Lab.__name__:
                     price_dict["lab_price"] += operation.price
                 else:
-                    price_dict["operation_price"] += operation.price
+                    price_dict["operation_price"] += operation.price * operation.count
 
                 if operation.hasList():
                     for item in operation.items:

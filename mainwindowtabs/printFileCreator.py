@@ -128,6 +128,7 @@ class PrintFileCreator(object):
 
         price_dict = bill.calcPricesFromVisit()
         if(not price_dict["operation_price"] == bill.operations_payment):
+            print("DEBUG:", price_dict["operation_price"] ," ", bill.operations_payment)
             operation_rows += self.genTableRowPrue("Operaatioiden hintamuutos", 1, "", -price_dict["operation_price"] + bill.operations_payment, 1)
             operation_row_count +=1
         if(not price_dict["accesories_price"] == bill.accessories_payment):
@@ -187,13 +188,16 @@ class PrintFileCreator(object):
                 <td style="align:right;"> t_price </td>
             </tr>'''
         temp = temp.replace("operation_name", name)
-        temp = temp.replace("count", str(count))
+        temp = temp.replace("count", self.toStr(count))
         temp = temp.replace("value", type_) #TODO change this to more generic form
-        temp = temp.replace("a_price", str(price))
-        temp = temp.replace("alv_p", str(SqlHandler.getALV(alv)))
-        temp = temp.replace("alv", str(round(count*price*(1.0-1.0/(1.0+SqlHandler.getALV(alv)/100.0))*100.0)/100.0))
-        temp = temp.replace("t_price", str(count*price))
+        temp = temp.replace("a_price", self.toStr(price))
+        temp = temp.replace("alv_p", self.toStr(SqlHandler.getALV(alv)))
+        temp = temp.replace("alv", self.toStr(round(count*price*(1.0-1.0/(1.0+SqlHandler.getALV(alv)/100.0))*100.0)/100.0))
+        temp = temp.replace("t_price", self.toStr(count*price))
         return temp
+    
+    def toStr(self,val):
+        return ('%.2f' % val)
     
     def genItemTableRow(self,surgeryItem):
         from models.translationtables import g_item_alv_dict

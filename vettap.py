@@ -21,7 +21,7 @@ import sys
 from PyQt4 import QtGui
 import datetime
 
-from models import SqlHandler, databasename
+from models import SqlHandler
 #from models.animal import Animal, Sex, Race, Color
 #from models.specie import Specie
 #from models.postoffice import PostOffice, PostNumber
@@ -52,9 +52,13 @@ import os.path
 def main():
     
     #you can change databasename at models.__init__
-    status = os.path.exists(databasename)
+    status = False
+    if SqlHandler.usesLite():
+        status = os.path.exists(databasename)
     
-    SqlHandler.initialize()
+    if not SqlHandler.initialize():
+        print("FATAL ERROR: can not connect to database! Exiting!")
+        return
 
     if not status:
         session = SqlHandler.newSession()
@@ -92,11 +96,11 @@ def main():
         SqlHandler.addItems(session,item_list)
         
         #generate vet TODO: make startup popup window
-        hamina = SqlHandler.PostOffice('Hamina')
+        hamina = SqlHandler.PostOffice('Helsinki')
         SqlHandler.addItem(session,hamina)
-        pnum = SqlHandler.PostNumber(hamina.id,'49420')
+        pnum = SqlHandler.PostNumber(hamina.id,'00000')
         SqlHandler.addItem(session, pnum)
-        vet = SqlHandler.Vet("Sini","Vuoksenkuja 9A", hamina, pnum, 'y_number', 'vet_number','bank_name', 'IBAN', 'SWIF', ['','',''],[])
+        vet = SqlHandler.Vet("NIMI","Osoite", hamina, pnum, 'y_number', 'vet_number','bank_name', 'IBAN', 'SWIF', ['','',''],[])
         SqlHandler.addItem(session,vet)
 
 

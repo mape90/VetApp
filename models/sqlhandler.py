@@ -65,17 +65,26 @@ import datetime
 class SQLHandler(object):
     def __init__(self, Session, Base, dbname='sqlite:///:memory:', debug=False):
         self.dbname = dbname
-        self.debug = debug
-        self.engine = create_engine(dbname, echo=debug, poolclass=SingletonThreadPool)  
+        #self.debug = debug
+        self.engine = create_engine(dbname, echo=debug, 
+                                    poolclass=SingletonThreadPool,
+                                    isolation_level='REPEATABLE_READ')  
         self.Session = Session
         self.Base = Base
         self.session = Session()
         
-        
+    def usesLite(self):
+        return 'sqlite' in self.dbname 
+    
     def initialize(self):
         self.Session.configure(bind=self.engine)
         self.Base.metadata.bind = self.engine
-        self.Base.metadata.create_all(self.engine)
+        from sqlalchemy.exc import OperationalError
+        try:
+            self.Base.metadata.create_all(self.engine)
+            return True
+        except OperationalError:
+            return False
 
     '''-------------OBJECT CREATORS---------------'''    
     def Owner(self,name, address, post_office_id, postnumber_id, email, phonenumber, other_info, flags=0):

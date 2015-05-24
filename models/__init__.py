@@ -19,16 +19,15 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+
 #make session Class for use of other classes
 Session = sessionmaker()
 
 #make Base
 Base = declarative_base()
 
-#chnage this to change database name
-databasename = 'data.db'
+from configfile import isDBDebugOn, genDBString
 
 from models.sqlhandler import SQLHandler
-SqlHandler = SQLHandler(Session=Session, Base=Base, 
-                        dbname=('sqlite:///'+databasename), 
-                        debug=False)
+#SqlHandler = SQLHandler(Session=Session, Base=Base, dbname=genDBString(), debug=isDBDebugOn())
+SqlHandler = SQLHandler(Session=Session, Base=Base, dbname=genDBString('postgresql'), debug=isDBDebugOn())
