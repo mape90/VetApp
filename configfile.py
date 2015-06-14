@@ -14,6 +14,14 @@ _ip = 'localhost'
 _port = '5432'
 _bill_directory = '~/bill/'
 
+_debug_val = True
+
+def logDEBUG(_from, _msg):
+    if _debug_val :
+        print("DEBUG: from: " + str(_from) + ': msg:' + str(_msg))
+    
+def logERROR(_from, _msg):
+    print("ERROR: from: " + str(_from) + ': msd:' + str(_msg))
 
 def isDBDebugOn():
     return False

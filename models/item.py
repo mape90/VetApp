@@ -67,31 +67,6 @@ class Item(Base):
                 #self.setVariable(key,item)
             except:
                 print("DEBUG ERROR Item->update(): wrong variable name: " + str(key))
-
-    #def setVariable(self, name, value):
-        #if name is "name":
-            #self.name = value
-            #return True
-        #elif name is "price":
-            #self.price = value
-            #return True
-        #elif name is "description":
-            #self.description = value
-            #return True
-        #elif name is "barcode":
-            #self.barcode = value
-            #return True
-        #elif name is "customer_descriptions":
-            #self.customer_descriptions = value
-            #return True
-        #elif name is "stock_price":
-            #self.stock_price = value
-            #return True
-        #else:
-            ##TODO: Remove this! after you have tested that all items are working correctly
-            #print("DEBUG: Item->setVariable() did not find variable", name,",", value)
-            #return False
-    
     
     def stringList(self):
         return [str(self.id), self.name, self.typeName(), str(self.price)]
@@ -123,13 +98,6 @@ class Medicine(Item):
     def __init__(self, name, description, stock_price, price, barcode='', duration=None):
         super().__init__(name, description, stock_price, price, barcode)
         self.duration = duration
-
-    def setVariable(self, name, value):
-        if not super().setVariable(name, value):
-            if name is "duration":
-                self.duration = value
-            else:
-                print("DEBUG: "+ self.__class__.__name__+"->setVariable() did not find variable", name,",", value)
 
     def hasDuration(self=None):
         return True
@@ -203,15 +171,11 @@ class ItemDescription(Base):
         self.text = text
 
     def update(self, data):
-        try:
-            for key, item in data.items():
-                if key is "text":
-                    self.text = item
-                elif key is "specie":
-                    #self.specie = item
-                    print("DEBUG: ItemDescription should not change specie. Remove this and make new one if specie need to be changed")
-        except:
-            print("DEBUG ERROR ItemDescription->update(): wrong variable name: " + str(key))
+        for key, item in data.items():
+            try:
+                setattr(self,key,item)
+            except:
+                print("DEBUG ERROR ItemDescription->update(): wrong variable name: " + str(key))
 
     def stringList(self):
         return [str(self.id), self.specie.name, self.text]

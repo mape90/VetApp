@@ -32,6 +32,8 @@ from mainwindowtabs.searchlineedit import SearchLineEdit
 
 from PyQt4.QtGui import QMessageBox
 
+from configfile import logDEBUG, logERROR
+
 from models import SqlHandler
 
 
@@ -65,7 +67,7 @@ class ItemCreatorTab(GenericTab):
         if item :
             self.openItem(item)
         else:
-            print("DEBUG: openItemFromSearch item is None");
+            logDEBUG(self,"openItemFromSearch:  item is None");
     
     def itemCanBeDeleted(self, item):
         return True

@@ -113,29 +113,12 @@ class Visit(Base):
     def getType(self):
         return 'Visit'  
 
-    def setVariable(self, name, value):
-        if name is "start_time":
-            self.start_time = value
-        elif name is "owner":
-            self.owner = value
-        elif name is "vet":
-            self.vet = value
-        elif name is "end_time":
-            self.end_time = value
-        elif name is "visitanimals":
-            self.visitanimals = value
-        else:
-            print("DEBUG: "+ self.__class__.__name__+"->setVariable() did not find variable", name,",", value)
-
     def update(self, data):
-
-        print("REMOVE ME! DEBUG: Visit->update() data is",data, "its type is",str(type(data)))
-
-        try:
-            for key, item in data.items():
-                self.setVariable(key,item)
-        except:
-            print("DEBUG ERROR Visit->update(): wrong variable name: " + str(key))
+        for key, item in data.items():
+            try:
+                setattr(self,key,item)
+            except:
+                print("DEBUG ERROR Visit->update(): wrong variable name: " + str(key))
 
         
     def stringList(self):

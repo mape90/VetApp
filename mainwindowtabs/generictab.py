@@ -55,6 +55,7 @@ from PyQt4.QtCore import QDate
 from models import SqlHandler
 
 from mainwindowtabs import Tabmanager
+from configfile import logDEBUG, logERROR
 
 import datetime
 
@@ -77,7 +78,7 @@ class GenericTab(QWidget):
         return self.item
     
     def askUserIfCanClose(self):
-        print('GenericTab FUNCTIO: askUserIfCanClose')
+        logDEBUG(self,'GenericTab FUNCTIO: askUserIfCanClose')
         reply = QMessageBox.question(self,'Viesti',self.getMessageBoxText(), QMessageBox.Save, QMessageBox.Cancel, QMessageBox.Discard)
         if reply == QMessageBox.Save:
             self.saveTab()
@@ -88,7 +89,7 @@ class GenericTab(QWidget):
             return False
     
     def canCloseTab(self):
-        print('GenericTab  FUNCTIO: CanCloseTab')
+        logDEBUG(self,'GenericTab  FUNCTIO: CanCloseTab')
         if self.hasChanged():
             if self.saveAble():
                 return self.askUserIfCanClose()
@@ -99,7 +100,7 @@ class GenericTab(QWidget):
     
     ''' For close button and external close '''
     def closeTab(self): #SLOT
-        print('GenericTab FUNCTIO: closeTab')
+        logDEBUG(self,'GenericTab FUNCTIO: closeTab')
         if self.canCloseTab():
             Tabmanager.closeTab(tab=self)
     
@@ -110,7 +111,7 @@ class GenericTab(QWidget):
         box.exec()
     
     def saveAndCloseTab(self):
-        print('GenericTab FUNCTIO: saveAndCloseTab')
+        logDEBUG(self,'GenericTab FUNCTIO: saveAndCloseTab')
         tmp_item = None
         if self.saveAble():
             if self.item == None:
@@ -122,7 +123,7 @@ class GenericTab(QWidget):
                     self.item.update(self.getData())
                     SqlHandler.commitSession(self.session)
                 else:
-                    pass #print('No')
+                    pass #logDEBUG(self,'No')
             Tabmanager.closeTab(tab=self)
         else:
             from models.translationtables import g_save_error_message
@@ -131,7 +132,7 @@ class GenericTab(QWidget):
 
 
     def saveTab(self):
-        print('GenericTab FUNCTIO: SaveTab')
+        logDEBUG(self,'GenericTab FUNCTIO: SaveTab')
         #check if tab is valid
         if self.saveAble():
             #check if there is items

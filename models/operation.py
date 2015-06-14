@@ -89,26 +89,12 @@ class OperationBase(Base):
         return False
     
     def update(self, data):
-        try:
-            for key, item in data.items():
-                self.setVariable(key,item)
-        except:
-            print("DEBUG ERROR OperationBase->update(): wrong variable name: " + str(key))
+        for key, item in data.items():
+            try:
+                setattr(self,key,item)
+            except:
+                print("DEBUG ERROR OperationBase->update(): wrong variable name: " + str(key))
    
-    def setVariable(self, name, value):
-        if name is "name":
-            self.name = value
-            return True
-        elif name is "price":
-            self.price = value
-            return True
-        elif name is "description":
-            self.description = value
-            return True
-        else:
-            print("DEBUG: OperationBase->setVariable() did not find variable", name,",", value)
-            return False
-
 class VaccinationBase(OperationBase):
     __tablename__='vaccinationbases'
     id = Column(Integer, ForeignKey('operationbases.id'), primary_key=True)
@@ -123,17 +109,6 @@ class VaccinationBase(OperationBase):
         self.need_resit = need_resit
         self.item= item
    
-    def setVariable(self, name, value):
-        if not super().setVariable(name, value):
-            if name is "duration":
-                self.duration = value
-            elif name is "need_resit":
-                self.need_resit = value
-            elif name is "item":
-                self.item = value
-            else:
-                print("DEBUG: VaccinationBase->setVariable() did not find variable", name,",", value)
-
     def hasItem(self):
         return True
     
@@ -184,13 +159,6 @@ class SurgeryBase(OperationBase):
     def hasList(self=None):
         return True
     
-    def setVariable(self, name, value):
-        if not super().setVariable(name, value):
-            if name is "items":
-                self.items = value
-            else:
-                print("DEBUG: SurgeryBase->setVariable() did not find variable", name,",", value)
-
     def stringList(self):
         price = 0.0
         for i in self.items:
@@ -208,13 +176,6 @@ class MedicationBase(OperationBase):
         super().__init__(name, price, description)
         self.item = item
     
-    def setVariable(self, name, value):
-        if not super().setVariable(name, value):
-            if name is "item":
-                self.item = value
-            else:
-                print("DEBUG: MedicationBase->setVariable() did not find variable", name,",", value)
-
     def hasItem(self):
         return True
        
@@ -312,28 +273,12 @@ class Operation(Base):
                 self.count = 1
 
     def update(self, data):
-        try:
-            for key, item in data.items():
-                self.setVariable(key,item)
-        except:
-            print("DEBUG ERROR Operation->update(): wrong variable name: " + str(key))
+        for key, item in data.items():
+            try:
+                setattr(self,key,item)
+            except:
+                print("DEBUG ERROR OperationBase->update(): wrong variable name: " + str(key))
 
-    def setVariable(self, name, value):
-        if name is "base":
-            self.base = value
-            return True
-        elif name is "price":
-            self.price = value
-            return True
-        elif name is "description":
-            self.description = value
-            return True
-        elif name is "count":
-            self.count = value
-            return True
-        else:
-            print("DEBUG: OperationBase->setVariable() did not find variable", name,",", value)
-            return False
 
     def getType(self=None):
         return self.__class__.__name__
@@ -428,12 +373,6 @@ class Surgery(Operation):
             else:
                 self.items.append(SurgeryItem(item=item.item,count=item.count))
 
-    def setVariable(self, name, value):
-        if not super().setVariable(name, value):
-            if name is "items":
-                self.items = value
-            else:
-                print("DEBUG: Surgery->setVariable() did not find variable", name,",", value)
 
     def hasList(self=None):
         return True
@@ -462,12 +401,6 @@ class Lab(Operation):
         self.base = base
         self.path = path
 
-    def setVariable(self, name, value):
-        if not super().setVariable(name, value):
-            if name is "path":
-                self.path = value
-            else:
-                print("DEBUG: "+ self.__class__.__name__+"->setVariable() did not find variable", name,",", value)
 '''
 
 '''
