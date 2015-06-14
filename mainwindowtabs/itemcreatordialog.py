@@ -21,7 +21,7 @@ Created on Apr 16, 2013
     You should have received a copy of the GNU General Public License
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
-from PyQt4.QtGui import QDialog,QMessageBox
+from PyQt4.QtGui import QDialog,QMessageBox, QWidget
 from mainwindowtabs.generictreewidget import GenericTreeWidget, ButtonType
 from mainwindowtabs.addNewDialog import AddNewSpecie
 from uipy.ui_itemcreator import Ui_ItemCreatorDialog
@@ -99,6 +99,8 @@ self.session.expunge()
 ----------------------------------------------------------------'''
 
 
+        
+
 class ItemCreatorDialog(QDialog):
     def __init__(self, parent, item=None):
         QDialog.__init__(self,parent=parent)
@@ -164,10 +166,9 @@ class ItemCreatorDialog(QDialog):
     def updateDays(self, index):
         self.ui.daySpinEdit.setValue(self.ui.preSetDurationsComboBox.itemData(index))
     
-    def addPreSetDurations(self):
-        #TODO: take hardcoded values and save then to configServer
+    def addPreSetDurations(self):   
         values = [('kuukausi',30), ('1/2 vuosi',180), ('1 vuosi',365), 
-                       ('2 vuotta',730), ('3 vuotta',1095), ('5 vuotta',1825)]
+                       ('2 vuotta',730), ('3 vuotta',1095), ('5 vuotta',1825)] #TODO: take hardcoded values and save then to configServer
         
         for item in values:
             self.ui.preSetDurationsComboBox.addItem(item[0],item[1])
@@ -269,5 +270,4 @@ class ItemCreatorDialog(QDialog):
         box = QMessageBox()
         box.setText('Tuotetta ei voida tallentaa sillä sen nimeä ei ole asetettu')
         box.exec()         
-        
         

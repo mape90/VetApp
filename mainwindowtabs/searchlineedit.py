@@ -62,8 +62,7 @@ class SearchLineEdit(QWidget):
         self.configure()
 
     def configure(self): 
-        #configure popup
-        self.ui.popup.setWindowFlags(Qt.Popup)
+        self.ui.popup.setWindowFlags(Qt.Popup)#configure popup
         self.ui.popup.setFocusPolicy(Qt.NoFocus)
         self.ui.popup.setFocusProxy(self.parent())
         self.ui.popup.setMouseTracking(True)

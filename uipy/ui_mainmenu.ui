@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,4">
      <item>
@@ -86,6 +86,19 @@
          </property>
          <property name="text">
           <string>Eläinlääkäri</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="itemcreator_button">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>50</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Tuotehallinta</string>
          </property>
         </widget>
        </item>

@@ -34,6 +34,9 @@ from mainwindowtabs import Tabmanager
 import datetime
 from math import ceil
 
+from configfile import getBillPath
+
+
 from PyQt4.QtGui import QTextDocument, QPrinter, QPrintPreviewDialog, QPrintDialog
 from PyQt4.QtWebKit import QWebView
 from PyQt4.QtCore import QDate
@@ -361,6 +364,9 @@ class BillTab(GenericTab):
         document.setHtml(html)
 
         printer = QPrinter()
+        
+        
+        printer.setOutputFileName(getBillPath() + str(datetime.datetime.now())[0:-7] + '_' + str(self.item.id) + '.pdf')
         
         printpreview = QPrintDialog(printer, self)
         printpreview.exec()

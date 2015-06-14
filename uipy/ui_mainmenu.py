@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'ui_mainmenu.ui'
 #
-# Created: Wed Apr 24 09:16:23 2013
-#      by: PyQt4 UI code generator 4.9.3
+# Created: Sun Jun 14 11:29:20 2015
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,14 +12,23 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_MainMenu(object):
     def setupUi(self, MainMenu):
         MainMenu.setObjectName(_fromUtf8("MainMenu"))
         MainMenu.resize(1114, 714)
-        self.verticalLayout_2 = QtGui.QVBoxLayout(MainMenu)
-        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.horizontalLayout_2 = QtGui.QHBoxLayout(MainMenu)
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.verticalLayout = QtGui.QVBoxLayout()
@@ -49,6 +58,10 @@ class Ui_MainMenu(object):
         self.vetbutton.setMinimumSize(QtCore.QSize(0, 50))
         self.vetbutton.setObjectName(_fromUtf8("vetbutton"))
         self.verticalLayout.addWidget(self.vetbutton)
+        self.itemcreator_button = QtGui.QPushButton(MainMenu)
+        self.itemcreator_button.setMinimumSize(QtCore.QSize(0, 50))
+        self.itemcreator_button.setObjectName(_fromUtf8("itemcreator_button"))
+        self.verticalLayout.addWidget(self.itemcreator_button)
         self.drugButton = QtGui.QPushButton(MainMenu)
         self.drugButton.setEnabled(False)
         self.drugButton.setMinimumSize(QtCore.QSize(0, 50))
@@ -64,17 +77,18 @@ class Ui_MainMenu(object):
         self.horizontalLayout.addLayout(self.grindLayout)
         self.horizontalLayout.setStretch(0, 1)
         self.horizontalLayout.setStretch(1, 4)
-        self.verticalLayout_2.addLayout(self.horizontalLayout)
+        self.horizontalLayout_2.addLayout(self.horizontalLayout)
 
         self.retranslateUi(MainMenu)
         QtCore.QMetaObject.connectSlotsByName(MainMenu)
 
     def retranslateUi(self, MainMenu):
-        MainMenu.setWindowTitle(QtGui.QApplication.translate("MainMenu", "Form", None, QtGui.QApplication.UnicodeUTF8))
-        self.new_visit_button.setText(QtGui.QApplication.translate("MainMenu", "Uusi käynti", None, QtGui.QApplication.UnicodeUTF8))
-        self.owner_button.setText(QtGui.QApplication.translate("MainMenu", "Uusi Omistaja", None, QtGui.QApplication.UnicodeUTF8))
-        self.animal_button.setText(QtGui.QApplication.translate("MainMenu", "Uusi Eläin", None, QtGui.QApplication.UnicodeUTF8))
-        self.search_button.setText(QtGui.QApplication.translate("MainMenu", "Haku", None, QtGui.QApplication.UnicodeUTF8))
-        self.vetbutton.setText(QtGui.QApplication.translate("MainMenu", "Eläinlääkäri", None, QtGui.QApplication.UnicodeUTF8))
-        self.drugButton.setText(QtGui.QApplication.translate("MainMenu", "Huumeseuranta", None, QtGui.QApplication.UnicodeUTF8))
+        MainMenu.setWindowTitle(_translate("MainMenu", "Form", None))
+        self.new_visit_button.setText(_translate("MainMenu", "Uusi käynti", None))
+        self.owner_button.setText(_translate("MainMenu", "Uusi Omistaja", None))
+        self.animal_button.setText(_translate("MainMenu", "Uusi Eläin", None))
+        self.search_button.setText(_translate("MainMenu", "Haku", None))
+        self.vetbutton.setText(_translate("MainMenu", "Eläinlääkäri", None))
+        self.itemcreator_button.setText(_translate("MainMenu", "Tuotehallinta", None))
+        self.drugButton.setText(_translate("MainMenu", "Huumeseuranta", None))
 

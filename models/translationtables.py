@@ -28,12 +28,15 @@ g_operationbase_translation_dict = {"OperationBase":"Operaatio", "VaccinationBas
                                     "XrayBase":'Röntkentutkimus', "UltrasonicBase":'Ultraäänitutkimus',
                                     "EndoscopyBase": "Endoskooppitutkimus" ,"DentalexaminationBase":"Hammashoito"}
 
+#these items are in two dict so you need to change only this dict to cahange names in both
+g_base_and_item_dict = {"Medicine":"Lääke","Vaccine":"Rokote"}
 
-#ATTENTION these two list have to have same names Rokote == Rokote, Lääke==Lääke
-g_item_translation_dict = {"Item":"Tuote","Medicine":"Lääke","Vaccine":"Rokote","Feed":"Rehu"}
+g_item_translation_dict = {"Item":"Tuote","Medicine":g_base_and_item_dict["Medicine"],
+                           "Vaccine":g_base_and_item_dict["Vaccine"],"Feed":"Rehu"}
 
 #this is used to select correct item in itemcreatordialog
-g_operationbase_to_item_translation_dict = {"VaccinationBase":"Rokote","MedicationBase":"Lääke"}
+g_operationbase_to_item_translation_dict = {"Medicine":g_base_and_item_dict["Medicine"],
+                                            "Vaccine":g_base_and_item_dict["Vaccine"]}
 
 g_visit_end_time_start = "1.1.2000"
 
@@ -41,12 +44,12 @@ g_item_alv_dict = {"Item":1,"Medicine":2,"Vaccine":2,"Feed":3}
 
 g_item_name_dict = {"Item":"Tuote","Medicine":"Lääkeaine","Vaccine":"Rokote","Feed":"Rehu"}
 
-g_unique_tabs = ["MainMenuTab","VetTab","SearchTab", "WarehouseTab", "AppointmentTab"]
+g_unique_tabs = ["MainMenuTab","VetTab","SearchTab", "WarehouseTab", "AppointmentTab","ItemCreatorTab"]
 
 g_tab_name_dict = {'VisitTab':'Käynti','AnimalTab':'Eläin', 'OwnerTab':'Omistaja',
                    'SearchTab':'Etsi', 'MainMenuTab':'Päävalikko', 'WarehouseTab':'Varasto',
                    'AppointmentTab':'Ajanvaraus', 'VetTab':'Eläinlääkäri',
-                   'BillTab':'Lasku'}
+                   'BillTab':'Lasku', 'ItemCreatorTab':'Tuotehallinta'}
 
 g_save_error_message = "Ei voida tallentaa, tietoja puuttuu!"
 

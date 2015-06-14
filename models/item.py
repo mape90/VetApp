@@ -60,36 +60,38 @@ class Item(Base):
         self.barcode = barcode
         self.customer_descriptions=[]
  
-    def update(self, data):
-        try:
-            for key, item in data.items():
-                self.setVariable(key,item)
-        except:
-            print("DEBUG ERROR Item->update(): wrong variable name: " + str(key))
+    def update(self, data):      
+        for key, item in data.items():
+            try:
+                setattr(self, key, item)
+                #self.setVariable(key,item)
+            except:
+                print("DEBUG ERROR Item->update(): wrong variable name: " + str(key))
 
-    def setVariable(self, name, value):
-        if name is "name":
-            self.name = value
-            return True
-        elif name is "price":
-            self.price = value
-            return True
-        elif name is "description":
-            self.description = value
-            return True
-        elif name is "barcode":
-            self.barcode = value
-            return True
-        elif name is "customer_descriptions":
-            self.customer_descriptions = value
-            return True
-        elif name is "stock_price":
-            self.stock_price = value
-            return True
-        else:
-            #TODO: Remove this! after you have tested that all items are working correctly
-            print("DEBUG: Item->setVariable() did not find variable", name,",", value)
-            return False
+    #def setVariable(self, name, value):
+        #if name is "name":
+            #self.name = value
+            #return True
+        #elif name is "price":
+            #self.price = value
+            #return True
+        #elif name is "description":
+            #self.description = value
+            #return True
+        #elif name is "barcode":
+            #self.barcode = value
+            #return True
+        #elif name is "customer_descriptions":
+            #self.customer_descriptions = value
+            #return True
+        #elif name is "stock_price":
+            #self.stock_price = value
+            #return True
+        #else:
+            ##TODO: Remove this! after you have tested that all items are working correctly
+            #print("DEBUG: Item->setVariable() did not find variable", name,",", value)
+            #return False
+    
     
     def stringList(self):
         return [str(self.id), self.name, self.typeName(), str(self.price)]

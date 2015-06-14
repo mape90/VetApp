@@ -29,5 +29,5 @@ Base = declarative_base()
 from configfile import isDBDebugOn, genDBString
 
 from models.sqlhandler import SQLHandler
-#SqlHandler = SQLHandler(Session=Session, Base=Base, dbname=genDBString(), debug=isDBDebugOn())
-SqlHandler = SQLHandler(Session=Session, Base=Base, dbname=genDBString('postgresql'), debug=isDBDebugOn())
+SqlHandler = SQLHandler(Session=Session, Base=Base, dbname=genDBString(), debug=isDBDebugOn())
+#SqlHandler = SQLHandler(Session=Session, Base=Base, dbname=genDBString('postgresql'), debug=isDBDebugOn())

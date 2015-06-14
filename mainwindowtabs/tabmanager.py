@@ -226,7 +226,7 @@ class TabManager(object):
         
         #give TabItem to returnTab if it exist
         if self.returnList[tab] != None:
-            self.returnList[tab].addAskedItem(tabItem)
+            self.returnList[tab].addAskedItem(tab.getItem())
             self.returnList[tab] = None
         
        

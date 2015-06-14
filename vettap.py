@@ -47,14 +47,17 @@ from mainwindowtabs.printFileCreator import PrintFileCreator
 
 from mainwindowtabs.operationSelectorDialog import OperationSelectorDialog
 
+from configfile import genDBString, getDBName
+
 import os.path
 
 def main():
     
     #you can change databasename at models.__init__
-    status = False
-    if SqlHandler.usesLite():
-        status = os.path.exists(databasename)
+    #status = False
+    #if SqlHandler.usesLite():
+    status = os.path.exists(getDBName())
+    print(status)
     
     if not SqlHandler.initialize():
         print("FATAL ERROR: can not connect to database! Exiting!")

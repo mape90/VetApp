@@ -66,9 +66,10 @@ class SQLHandler(object):
     def __init__(self, Session, Base, dbname='sqlite:///:memory:', debug=False):
         self.dbname = dbname
         #self.debug = debug
-        self.engine = create_engine(dbname, echo=debug, 
-                                    poolclass=SingletonThreadPool,
-                                    isolation_level='REPEATABLE_READ')  
+        self.engine = create_engine(dbname, echo=debug, poolclass=SingletonThreadPool)  
+        #self.engine = create_engine(dbname, echo=debug, 
+                                    #poolclass=SingletonThreadPool,
+                                    #isolation_level='SERIALIZABLE')  
         self.Session = Session
         self.Base = Base
         self.session = Session()
