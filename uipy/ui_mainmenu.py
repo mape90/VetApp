@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui_mainmenu.ui'
+# Form implementation generated from reading ui file 'uipy/ui_mainmenu.ui'
 #
-# Created: Sun Jun 14 11:29:20 2015
+# Created: Fri Jun 19 13:55:08 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -62,6 +62,10 @@ class Ui_MainMenu(object):
         self.itemcreator_button.setMinimumSize(QtCore.QSize(0, 50))
         self.itemcreator_button.setObjectName(_fromUtf8("itemcreator_button"))
         self.verticalLayout.addWidget(self.itemcreator_button)
+        self.operationcreator_button = QtGui.QPushButton(MainMenu)
+        self.operationcreator_button.setMinimumSize(QtCore.QSize(0, 50))
+        self.operationcreator_button.setObjectName(_fromUtf8("operationcreator_button"))
+        self.verticalLayout.addWidget(self.operationcreator_button)
         self.drugButton = QtGui.QPushButton(MainMenu)
         self.drugButton.setEnabled(False)
         self.drugButton.setMinimumSize(QtCore.QSize(0, 50))
@@ -90,5 +94,6 @@ class Ui_MainMenu(object):
         self.search_button.setText(_translate("MainMenu", "Haku", None))
         self.vetbutton.setText(_translate("MainMenu", "Eläinlääkäri", None))
         self.itemcreator_button.setText(_translate("MainMenu", "Tuotehallinta", None))
+        self.operationcreator_button.setText(_translate("MainMenu", "Operaatiohallinta", None))
         self.drugButton.setText(_translate("MainMenu", "Huumeseuranta", None))
 

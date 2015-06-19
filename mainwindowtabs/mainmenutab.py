@@ -54,6 +54,7 @@ class MainMenuTab(GenericTab):
         self.ui.animal_button.clicked.connect(self.newAnimal)
         self.ui.vetbutton.clicked.connect(self.newVet)
         self.ui.itemcreator_button.clicked.connect(self.newItemCreator)
+        self.ui.operationcreator_button.clicked.connect(self.newOperationCreator)
         
     def configure(self):
         self.ui.grindLayout
@@ -63,6 +64,10 @@ class MainMenuTab(GenericTab):
     #------------------Signals-----------------------
     def getType(self=None):
         return 'MainMenu'
+    
+    def newOperationCreator(self):
+        from mainwindowtabs.operationbasecreatortab import OperationBaseCreatorTab
+        Tabmanager.openTab(tabCreator=OperationBaseCreatorTab)
     
     def newItemCreator(self):
         from mainwindowtabs.itemcreatortab import ItemCreatorTab

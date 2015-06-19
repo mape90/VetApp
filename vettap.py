@@ -47,22 +47,13 @@ from mainwindowtabs.printFileCreator import PrintFileCreator
 
 from mainwindowtabs.operationSelectorDialog import OperationSelectorDialog
 
+from PyQt4.QtGui import QProgressDialog
+
 from configfile import genDBString, getDBName
 
 import os.path
 
-def main():
-    
-    #you can change databasename at models.__init__
-    #status = False
-    #if SqlHandler.usesLite():
-    status = os.path.exists(getDBName())
-    print(status)
-    
-    if not SqlHandler.initialize():
-        print("FATAL ERROR: can not connect to database! Exiting!")
-        return
-
+def init(status):
     if not status:
         session = SqlHandler.newSession()
         SqlHandler.addItems(session,[SqlHandler.ALV(alv=24,alv_class=1),    #Normal items
@@ -107,15 +98,37 @@ def main():
         SqlHandler.addItem(session,vet)
 
 
+def main():
     
+    #you can change databasename at models.__init__
+    #status = False
+    #if SqlHandler.usesLite():
+    status = os.path.exists(getDBName())
     
     app = QtGui.QApplication(sys.argv)
+    
+    box = QProgressDialog()
+    box.setMinimum(0);
+    box.setMaximum(0);
+    box.setLabelText('Ladataan...')
+    box.show()
+    
+    
+    if not SqlHandler.initialize():
+        print(g_error_msg_dict['database_init'])
+        return
+    
+    init(status)
+    
     vet_app = MainWindow()
     Tabmanager.openTab(tabCreator=MainMenuTab)
-
+    
+    box.reset()
     vet_app.showMaximized()
     
+    
     sys.exit(app.exec_())
+    
     
     
 main()

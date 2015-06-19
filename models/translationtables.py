@@ -44,17 +44,19 @@ g_item_alv_dict = {"Item":1,"Medicine":2,"Vaccine":2,"Feed":3}
 
 g_item_name_dict = {"Item":"Tuote","Medicine":"Lääkeaine","Vaccine":"Rokote","Feed":"Rehu"}
 
-g_unique_tabs = ["MainMenuTab","VetTab","SearchTab", "WarehouseTab", "AppointmentTab","ItemCreatorTab"]
+g_unique_tabs = ["MainMenuTab","VetTab","SearchTab", "WarehouseTab", "AppointmentTab","ItemCreatorTab", "OperationBaseCreatorTab"]
 
 g_tab_name_dict = {'VisitTab':'Käynti','AnimalTab':'Eläin', 'OwnerTab':'Omistaja',
                    'SearchTab':'Etsi', 'MainMenuTab':'Päävalikko', 'WarehouseTab':'Varasto',
                    'AppointmentTab':'Ajanvaraus', 'VetTab':'Eläinlääkäri',
-                   'BillTab':'Lasku', 'ItemCreatorTab':'Tuotehallinta'}
+                   'BillTab':'Lasku', 'ItemCreatorTab':'Tuotehallinta',
+                   "OperationBaseCreatorTab":"Operaatiohallinta"}
 
 g_save_error_message = "Ei voida tallentaa, tietoja puuttuu!"
 
 g_treewidget_button_texts = {'add':'Lisää', 'remove':'Poista', 'open':'Avaa','check':'Tehty'}
 
+g_error_msg_dict = {'database_init': 'Tietokannan alustaminen epäonnistui. Ota yhteyttä ylläpitoon.'}
 
 
 

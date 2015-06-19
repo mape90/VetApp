@@ -64,6 +64,9 @@ class OperationBase(Base):
             print("ERROR: " + name + " wont have translation in g_operationbase_translation_dict")
             return name
     
+    def hasDuration(self):
+        return False
+    
     def getType(self):
         return self.__class__.__name__
     
@@ -108,7 +111,10 @@ class VaccinationBase(OperationBase):
         self.duration = duration
         self.need_resit = need_resit
         self.item= item
-   
+    
+    def hasDuration(self):
+        return True
+    
     def hasItem(self):
         return True
     

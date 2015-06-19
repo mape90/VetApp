@@ -30,6 +30,8 @@ from mainwindowtabs.itemcreatordialog import ItemCreatorDialog
 import inspect
 from datetime import timedelta
 
+from configfile import logDEBUG, logERROR
+
 class OperationBaseCreator(QDialog):
     def __init__(self, parent=None, item=None):
         QDialog.__init__(self, parent)
@@ -37,7 +39,7 @@ class OperationBaseCreator(QDialog):
         self.ui.setupUi(self)
         self.session = SqlHandler.newSession()
         if item != None:
-            self.item = SqlHandler.makeCopy(self.session, self.item)
+            self.item = SqlHandler.makeCopy(self.session, item)
         else:
             self.item = None
 
@@ -142,7 +144,23 @@ class OperationBaseCreator(QDialog):
         if self.item != None:
             self.ui.typeComboBox.setCurrentIndex(self.ui.typeComboBox.findText(self.item.getName()))
             self.ui.typeComboBox.setDisabled(True)
-            #TODO: add items to their places
+            self.ui.nameEdit.setText(self.item.name)
+            self.ui.priceSpinBox.setValue(self.item.price)
+            self.ui.descriptionTextEdit.setPlainText(self.item.description)
+            if(self.item.hasItem()):
+                if(self.item.hasDuration()):
+                    self.ui.resitCheckBox.setDisabled(False)
+                    self.ui.durationspinBox.setDisabled(True)
+                    if(self.item.need_resit):
+                        self.ui.getFromMedicineButton.setDisabled(False)
+                        self.ui.resitCheckBox.setCheckState(2) #Checked
+                        self.ui.durationspinBox.setDisabled(False)
+                        self.ui.durationspinBox.setValue(self.item.duration.days)
+                
+                self.itemSearchEdit.addAskedItem(self.item.item)
+            if(self.item.hasList()):
+                self.itemTreeWidget.setItems(self.item.items)
+
     
     def setTypes(self):
         from models.translationtables import g_operationbase_translation_dict
