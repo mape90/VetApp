@@ -98,13 +98,36 @@ def init(status):
         
         SqlHandler.addItems(session,item_list)
         
-        #generate vet TODO: make startup popup window
-        hamina = SqlHandler.PostOffice('Helsinki')
-        SqlHandler.addItem(session,hamina)
-        pnum = SqlHandler.PostNumber(hamina.id,'00000')
-        SqlHandler.addItem(session, pnum)
-        vet = SqlHandler.Vet("NIMI","Osoite", hamina, pnum, 'y_number', 'vet_number','bank_name', 'IBAN', 'SWIF', ['','',''],[])
-        SqlHandler.addItem(session,vet)
+        try:
+            f = open('postinumerot.txt', "r", encoding="utf-8")
+            raw_p_data  = f.readlines()
+            
+            offices = []
+            offices_dict = {}
+            for line in raw_p_data:
+                if len(line) > 1:
+                    office = SqlHandler.PostOffice(line.split(' ')[0])
+                    offices.append(office)
+                    offices_dict[line.split(' ')[0]] = office;
+            
+            SqlHandler.addItems(session,offices)
+            
+            numbers = []
+            for line in raw_p_data:
+                if len(line) > 1:
+                    for item in line.split(' ')[1].strip().split(','):
+                        numbers.append(SqlHandler.PostNumber(offices_dict[line.split(' ')[0]].id, int(item)))
+            
+            SqlHandler.addItems(session,numbers)
+            f.close()
+        except IOError:
+            print("Can not find file named: "+ cats_file_name)
+            pass
+        
+        
+        
+        
+
 
 
 def main():
