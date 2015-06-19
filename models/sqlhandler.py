@@ -420,7 +420,7 @@ class SQLHandler(object):
     
     def addItems(self, session, itemlist):
         if itemlist != None and len(itemlist) > 0:
-            print("DEBUG: SQLHandler->addItems(), itemlist == " + str(itemlist))
+            print("DEBUG: SQLHandler->addItems(), itemlist len == " + str(len(itemlist)))
             session.add_all(itemlist)
             session.commit()
         else:

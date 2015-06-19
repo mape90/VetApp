@@ -70,6 +70,7 @@ def init(status):
         item_list = []
         dogs_file_name = "koirarodut.txt"
         cats_file_name = "kissarodut.txt"
+        horse_file_name = "hevosrodut.txt"
         try:
             f = open(dogs_file_name, "r", encoding="utf-8")
             for race_name in f.readlines():
@@ -82,6 +83,14 @@ def init(status):
             f = open(cats_file_name, "r", encoding="utf-8")
             for race_name in f.readlines():
                 item_list.append(SqlHandler.Race(race_name.strip(),kissa.id)) 
+            f.close()
+        except IOError:
+            print("Can not find file named: "+ cats_file_name)
+            pass
+        try:
+            f = open(horse_file_name, "r", encoding="utf-8")
+            for race_name in f.readlines():
+                item_list.append(SqlHandler.Race(race_name.strip(),hevonen.id)) 
             f.close()
         except IOError:
             print("Can not find file named: "+ cats_file_name)
