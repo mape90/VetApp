@@ -421,7 +421,7 @@ class Medication(Operation):
         self.base = base
     
     def getAPrice(self):
-        return self.price if self.price > 0.001 else self.base.item.price
+        return self.price + self.base.item.price
 
 '''
 

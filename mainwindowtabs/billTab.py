@@ -193,12 +193,10 @@ class BillTab(GenericTab):
                 else:
                     self.errorMessage('ERROR: BillTab.setPrices(): ALV is not valid!') 
         elif _type is 'Lab':
-            price_dict["lab_price"] += operation.price
+            prices["lab_price"] += operation.price
         elif _type is 'Medication':
-            if operation.price > 0.001:
-                prices["medicine_price"] += operation.price
-            else:
-                prices["medicine_price"] += operation.base.item.price
+            prices["operation_price"] += operation.price
+            prices["medicine_price"] += operation.base.item.price
         elif _type is 'Lameness':
             prices["operation_price"] += operation.price
         elif _type is 'Xray':
@@ -316,24 +314,20 @@ class BillTab(GenericTab):
         self.ui.operationSpinBox.setValue(previous_value + rounded - total)
           
     def updateEndPrice(self, value):
-        price_ALV1 = self.getALV1Price()
-        price_ALV2 = self.getALV2Price()
-        price_ALV3 = self.getALV3Price()
-        
-        ALV1 = SqlHandler.getALV(1)
-        ALV2 = SqlHandler.getALV(2)
-        ALV3 = SqlHandler.getALV(3)
+        price_ALV1 = self.getALV1Price() * (100+SqlHandler.getALV(1))/100.
+        price_ALV2 = self.getALV2Price() * (100+SqlHandler.getALV(2))/100.
+        price_ALV3 = self.getALV3Price() * (100+SqlHandler.getALV(3))/100.
         
         self.ui.price_ALV1_total_label.setText('%.2f' % price_ALV1)
-        self.ui.ALV1_total.setText('%.2f' % (price_ALV1 * (ALV1/(100.0+ALV1))))
+        self.ui.ALV1_total.setText('%.2f' % (price_ALV1-self.getALV1Price()))
         
         self.ui.price_ALV2_total_label.setText('%.2f' % price_ALV2)
-        self.ui.ALV2_total.setText('%.2f' % (price_ALV2 * (ALV2/(100.0+ALV2))))
+        self.ui.ALV2_total.setText('%.2f' % (price_ALV2-self.getALV2Price()))
         
         self.ui.price_ALV3_total_label.setText('%.2f' % price_ALV3)
-        self.ui.ALV3_total.setText('%.2f' % (price_ALV3 * (ALV3/(100.0+ALV3))))
+        self.ui.ALV3_total.setText('%.2f' % (price_ALV3-self.getALV3Price()))
         
-        self.ui.endPriceLabel.setText('%.2f' % self.getTotal())
+        self.ui.endPriceLabel.setText('%.2f' % (price_ALV1 + price_ALV2 + price_ALV3))
       
     
     def setAlv1Names(self):
@@ -374,30 +368,30 @@ class BillTab(GenericTab):
         document.print(printer)
      
     def getData(self):
-        data = []
-        data.append(self.visit)
+        data = {}
+        data['visit'] = self.visit
         if self.ui.clinic_radio_button.isChecked():
-            data.append(self.ui.clinicPriceSpinBox.value())
-            data.append(0.0) #km
-            data.append(0.0) #km_paymnet
+            data['clinic_payment'] = self.ui.clinicPriceSpinBox.value()
+            data['km'] = 0.0
+            data['km_payment'] = 0.0
         else:
-            data.append(self.ui.visitPriceSpinBox.value())
-            data.append(self.ui.KmSpinBox.value())
-            data.append(self.ui.KmPriceSpinBox.value())
+            data['clinic_payment'] = self.ui.visitPriceSpinBox.value()
+            data['km'] = self.ui.KmSpinBox.value()
+            data['km_payment'] = self.ui.KmPriceSpinBox.value()
+        data['operations_payment'] = self.ui.operationSpinBox.value()
+        data['lab_payment'] = self.ui.labSpinBox.value()
+        data['accessories_payment'] = self.ui.accessoriesSpinBox.value()
+        data['extra_percent'] = self.ui.precentSlider.value()
+        data['medicines_payment'] = self.ui.medicineSpinBox.value()
+        data['diet_payment'] = self.ui.dietSpinBox.value()
+        data['payment_method'] = (self.ui.paymentComboBox.itemData(self.ui.paymentComboBox.currentIndex()))
+        data['due_date'] = self.qdateToPy(self.ui.DueDateEdit.date())
+        data['paid_time'] = self.qdateToPy(self.ui.paidDateEdit.date())
+        data['paid_value'] = self.ui.paidSpinBox.value()
+        data['index_number'] = self.ui.indexNumberLabel.text()
+        data['other_info'] = self.ui.otherInfoTextEdit.toPlainText()
+        data['satus'] = 0 #status TODO: implement if needed
         
-        data.append(self.ui.operationSpinBox.value())
-        data.append(self.ui.labSpinBox.value())
-        data.append(self.ui.accessoriesSpinBox.value())
-        data.append(self.ui.precentSlider.value())
-        data.append(self.ui.medicineSpinBox.value())
-        data.append(self.ui.dietSpinBox.value())
-        data.append(self.ui.paymentComboBox.itemData(self.ui.paymentComboBox.currentIndex()))
-        data.append(self.qdateToPy(self.ui.DueDateEdit.date()))
-        data.append(self.qdateToPy(self.ui.paidDateEdit.date()))
-        data.append(self.ui.paidSpinBox.value())
-        data.append(self.ui.indexNumberLabel.text())
-        data.append(self.ui.otherInfoTextEdit.toPlainText())
-        data.append(0)#status
         return data
     
     def makeItem(self):

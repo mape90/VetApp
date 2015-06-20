@@ -29,6 +29,8 @@ import datetime
 #import Base from init file
 from models import Base
 
+from configfile import logDEBUG, logERROR
+
 class Bill(Base):
     __tablename__ = 'bills'
     id = Column(Integer, Sequence('bills_id_seq'), primary_key=True)
@@ -62,8 +64,7 @@ class Bill(Base):
     other_info = Column(String(1000))
     status = Column(Integer)
     
-    def __init__(self, visit, clinic_payment, km, km_payment, operations_payment, lab_payment, accessories_payment, extra_percent,
-                 medicines_payment, diet_payment, payment_method, due_date, paid_time, paid_value,index_number, other_info,satus = 0):
+    def __init__(self, visit, clinic_payment, km, km_payment, operations_payment, lab_payment, accessories_payment, extra_percent,medicines_payment, diet_payment, payment_method, due_date, paid_time, paid_value,index_number, other_info,satus = 0):
         self.visit = visit
         self.visit_id = visit.id
         self.clinic_payment = clinic_payment
@@ -85,24 +86,8 @@ class Bill(Base):
 
    
     def update(self, data):
-        self.visit = data[0]
-        self.clinic_payment = data[1]
-        self.km = data[2]
-        self.km_payment = data[3]
-        self.operations_payment = data[4]
-        self.lab_payment = data[5]
-        self.accessories_payment = data[6]
-        self.extra_percent = data[7]
-        self.medicines_payment = data[8]
-        self.diet_payment = data[9]
-        self.payment_method = data[10]
-        self.due_date = data[11]
-        self.paid_time = data[12]
-        self.paid_value = data[13]
-        self.index_number = data[14]
-        self.other_info = data[15]
-        self.satus = data[16] 
-
+        for key in data.keys():
+            setattr(self, key, data[key])
 
     def calcPricesFromVisit(self):
         price_dict = {}
@@ -114,7 +99,7 @@ class Bill(Base):
         
         for visit_animal in self.visit.visitanimals:
             for operation in visit_animal.operations:
-                from models.operation import Lab
+                from models.operation import Lab, Medication
                 if operation.getType() is Lab.__name__:
                     price_dict["lab_price"] += operation.price
                 else:
@@ -138,56 +123,67 @@ class Bill(Base):
                         alv_class_num = g_item_alv_dict[operation.base.item.__class__.__name__]
 
                         if alv_class_num == 1:
-                            price_dict["accesories_price"] = operation.base.item.price
+                            price_dict["accesories_price"] += operation.base.item.price
                         elif alv_class_num == 2:
-                            price_dict["medicine_price"] = operation.base.item.price
+                            price_dict["medicine_price"] += operation.base.item.price
                         elif alv_class_num == 3:
-                            price_dict["diet_price"] = operation.base.item.price
+                            price_dict["diet_price"] += operation.base.item.price
                         else:
                             pass
                     else:
                         pass
 
-            return price_dict
-        
-
-    def getALV0Price(self):
-        return self.km_payment
-
-    def getALV1Price(self):
-        return ((self.clinic_payment+self.operations_payment+self.lab_payment
-                +self.accessories_payment)*((100+self.extra_percent)/100.0))
+        return price_dict
     
     def getExtraPartFromPrice(self):
         return ((self.clinic_payment+self.operations_payment+self.lab_payment
-                +self.accessories_payment)*((self.extra_percent)/100.0))
+                +self.accessories_payment)*((self.extra_percent)/100.0))  
+   
+    def getALVMul(self, alv_type):
+        if(alv_type):
+            from models import SqlHandler
+            return (1.0 + SqlHandler.getALV(alv_type) / 100.0)
+        else:
+            return 1.0
     
-    def getALV2Price(self):
-        return self.medicines_payment
-    
-    def getALV3Price(self):
-        return self.diet_payment
+    def getRawPrice(self, alv_type):
+        if(alv_type == 1):
+            return ((self.clinic_payment+self.operations_payment+self.lab_payment
+                +self.accessories_payment)*((100+self.extra_percent)/100.0))
+        elif(alv_type == 2):
+            return self.medicines_payment
+        elif(alv_type == 3):
+            return self.diet_payment
+        elif(alv_type == 0):
+            return self.km_payment
+        else:
+            logError("getRawPrice, incorrect alv_type: ", alv_type)
     
     def getALVXPrice(self, alv_type):
-        if(alv_type == 3):
-            return self.getALV3Price()
-        elif(alv_type == 2):
-            return self.getALV2Price()
-        else:
-            return self.getALV1Price()
+        return self.getRawPrice(alv_type) * self.getALVMul(alv_type)
+
+    def getALVDiff(self, alv_type):
+        return self.getALVXPrice(alv_type) - self.getRawPrice(alv_type)
     
-    def getTaxFreePrice(self):
-        return self.getTotalPrice()-self.getTotalALV()
     
-    def getALV(self, alv_type):
-        from models import  SqlHandler
-        return round(self.getALVXPrice(alv_type)*(1.0-1.0/(1.0+SqlHandler.getALV(alv_type)/100.0))*100.0)/100.0
+    #def getALV(self, alv_type):
+        #return self.getALVXPrice(alv_type)
       
     def getTotalPrice(self):
-        return self.getALV0Price()+self.getALV1Price()+self.getALV2Price()+self.getALV3Price()
+        total = 0.0
+        for i in range(0,4):
+            tmp = self.getALVXPrice(i)
+            logDEBUG("tmp", tmp )
+            total += tmp
+        
+        logDEBUG("Total price: ", total)
+        return total
                 
     def getTotalALV(self):
-        return self.getALV(1) + self.getALV(2) + self.getALV(3)
+        total = 0.0
+        for i in range(1,4):
+            total += self.getALVDiff(i)
+        return total
         
     def getType(self):
         return 'Bill'

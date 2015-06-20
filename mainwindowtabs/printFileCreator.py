@@ -128,7 +128,7 @@ class PrintFileCreator(object):
 
         price_dict = bill.calcPricesFromVisit()
         if(not price_dict["operation_price"] == bill.operations_payment):
-            print("DEBUG:", price_dict["operation_price"] ," ", bill.operations_payment)
+            print("DEBUG: PrintFileCreator: ", price_dict["operation_price"] ," ", bill.operations_payment)
             operation_rows += self.genTableRowPrue("Operaatioiden hintamuutos", 1, "", -price_dict["operation_price"] + bill.operations_payment, 1)
             operation_row_count +=1
         if(not price_dict["accesories_price"] == bill.accessories_payment):
@@ -138,6 +138,7 @@ class PrintFileCreator(object):
             operation_rows += self.genTableRowPrue("Laboratorio hintamuutos", 1, "", -price_dict["lab_price"] + bill.lab_payment, 1)
             operation_row_count +=1
         if(not price_dict["medicine_price"] == bill.medicines_payment):
+            print("DEBUG: PrintFileCreator: ", price_dict["medicine_price"] ," ", bill.medicines_payment)
             operation_rows += self.genTableRowPrue("Lääkkeiden hintamuutos", 1, "", -price_dict["medicine_price"] + bill.medicines_payment, 2)
             operation_row_count +=1
         if(not price_dict["diet_price"] == bill.diet_payment):
@@ -154,9 +155,9 @@ class PrintFileCreator(object):
         
         self.change("operations_lists", operation_rows, False)
         
-        self.change("price_total", str(bill.getTotalPrice()))
-        self.change("need_to_pay", str(bill.getTotalPrice()-bill.paid_value))
-        self.change("alv_total", str(bill.getTotalALV()))
+        self.change("price_total", self.toStr(bill.getTotalPrice()))
+        self.change("need_to_pay", self.toStr(bill.getTotalPrice()-bill.paid_value))
+        self.change("alv_total", self.toStr(bill.getTotalALV()))
         
         self.change("vet_phonenumber", "") #TODO implement
         self.change("vet_email_address", "") #TODO implement
@@ -177,23 +178,21 @@ class PrintFileCreator(object):
             </tr>'''
     
     
+    def incALV(self, value, alv_p):
+        return value*(100+alv_p)/100.0
+    
     def genTableRowPrue(self, name, count, type_, price, alv):
-        temp = '''<tr>
-                <td style="text-align:left"> operation_name </td>
-                <td style="text-align:center"> count </td>
-                <td style="text-align:center"> value </td>
-                <td style="text-align:center"> a_price </td>
-                <td style="text-align:center"> alv_p </td>
-                <td style="text-align:right"> alv </td>
-                <td style="align:right;"> t_price </td>
+        alv_p = SqlHandler.getALV(alv)
+        inc_alv_price = self.incALV(price, alv_p)
+        temp = '''<tr> 
+                <td style="text-align:left">''' + name + '''</td>
+                <td style="text-align:center">''' + self.toStr(count) + '''</td>
+                <td style="text-align:center">''' + type_ + '''</td>
+                <td style="text-align:center">''' + self.toStr(inc_alv_price) + '''</td>
+                <td style="text-align:center">''' + self.toStr(alv_p) + '''</td>
+                <td style="text-align:right">''' + self.toStr(inc_alv_price-price)+ '''</td>
+                <td style="align:right;">''' + self.toStr(inc_alv_price * count) + '''</td>
             </tr>'''
-        temp = temp.replace("operation_name", name)
-        temp = temp.replace("count", self.toStr(count))
-        temp = temp.replace("value", type_) #TODO change this to more generic form
-        temp = temp.replace("a_price", self.toStr(price))
-        temp = temp.replace("alv_p", self.toStr(SqlHandler.getALV(alv)))
-        temp = temp.replace("alv", self.toStr(round(count*price*(1.0-1.0/(1.0+SqlHandler.getALV(alv)/100.0))*100.0)/100.0))
-        temp = temp.replace("t_price", self.toStr(count*price))
         return temp
     
     def toStr(self,val):
