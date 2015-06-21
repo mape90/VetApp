@@ -92,13 +92,13 @@ class PrintFileCreator(object):
         
         if(bill.clinic_payment > 0):
             if(bill.km == 0):
-                operation_rows += self.genTableRowPrue("Klinikkamaksu", 1, "", bill.clinic_payment, 1)
+                operation_rows += self.genTableRowPrue("Klinikkamaksu", 1, "", bill.clinic_payment,  SqlHandler.getALV(1))
             else:
-                operation_rows += self.genTableRowPrue("Käyntimaksu", 1, "", bill.clinic_payment, 1)
+                operation_rows += self.genTableRowPrue("Käyntimaksu", 1, "", bill.clinic_payment,  SqlHandler.getALV(1))
             operation_row_count +=1
                 
         if(bill.km_payment > 0):
-            operation_rows += self.genTableRowPrue("Kilometrikorvaus " + str(bill.km) + "km", 1, "", bill.clinic_payment, 1)
+            operation_rows += self.genTableRowPrue("Kilometrikorvaus " + str(bill.km) + "km", 1, "", bill.clinic_payment,  SqlHandler.getALV(1))
             operation_row_count +=1
               
         
@@ -135,24 +135,24 @@ class PrintFileCreator(object):
         price_dict = bill.calcPricesFromVisit()
         if(not price_dict["operation_price"] == bill.operations_payment):
             print("DEBUG: PrintFileCreator: ", price_dict["operation_price"] ," ", bill.operations_payment)
-            operation_rows += self.genTableRowPrue("Operaatioiden hintamuutos", 1, "", -price_dict["operation_price"] + bill.operations_payment, 1)
+            operation_rows += self.genTableRowPrue("Operaatioiden hintamuutos", 1, "", -price_dict["operation_price"] + bill.operations_payment,  SqlHandler.getALV(1))
             operation_row_count +=1
         if(not price_dict["accesories_price"] == bill.accessories_payment):
-            operation_rows += self.genTableRowPrue("Tarvikkeiden hintamuutos", 1, "", -price_dict["accesories_price"] + bill.accessories_payment, 1)
+            operation_rows += self.genTableRowPrue("Tarvikkeiden hintamuutos", 1, "", -price_dict["accesories_price"] + bill.accessories_payment,  SqlHandler.getALV(1))
             operation_row_count +=1
         if(not price_dict["lab_price"] == bill.lab_payment):
-            operation_rows += self.genTableRowPrue("Laboratorio hintamuutos", 1, "", -price_dict["lab_price"] + bill.lab_payment, 1)
+            operation_rows += self.genTableRowPrue("Laboratorio hintamuutos", 1, "", -price_dict["lab_price"] + bill.lab_payment,  SqlHandler.getALV(1))
             operation_row_count +=1
         if(not price_dict["medicine_price"] == bill.medicines_payment):
             print("DEBUG: PrintFileCreator: ", price_dict["medicine_price"] ," ", bill.medicines_payment)
-            operation_rows += self.genTableRowPrue("Lääkkeiden hintamuutos", 1, "", -price_dict["medicine_price"] + bill.medicines_payment, 2)
+            operation_rows += self.genTableRowPrue("Lääkkeiden hintamuutos", 1, "", -price_dict["medicine_price"] + bill.medicines_payment,  SqlHandler.getALV(2))
             operation_row_count +=1
         if(not price_dict["diet_price"] == bill.diet_payment):
-            operation_rows += self.genTableRowPrue("Rehujen hintamuutos", 1, "", -price_dict["diet_price"] + bill.diet_payment, 3)
+            operation_rows += self.genTableRowPrue("Rehujen hintamuutos", 1, "", -price_dict["diet_price"] + bill.diet_payment,  SqlHandler.getALV(3))
             operation_row_count +=1
             
         if(not 0 == bill.extra_percent):
-            operation_rows += self.genTableRowPrue("Muu korotus (" + str(bill.extra_percent) + "%)", 1, "", bill.getExtraPartFromPrice(), 1)
+            operation_rows += self.genTableRowPrue("Muu korotus (" + str(bill.extra_percent) + "%)", 1, "", bill.getExtraPartFromPrice(),  SqlHandler.getALV(1))
             operation_row_count +=1
         
         
