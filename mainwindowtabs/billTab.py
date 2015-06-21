@@ -224,7 +224,9 @@ class BillTab(GenericTab):
         
         for visit_animal in visit.visitanimals:
             for operation in visit_animal.operations:
-                price_dict = self.updatePriceList(operation, price_dict)
+                tmp = operation.getPriceDict()
+                for key in tmp:
+                    price_dict[key] += tmp[key]
 
         self.ui.operationSpinBox.setValue(price_dict["operation_price"])
         self.ui.accessoriesSpinBox.setValue(price_dict["accesories_price"])

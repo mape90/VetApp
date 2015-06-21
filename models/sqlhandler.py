@@ -140,6 +140,7 @@ class SQLHandler(object):
         return ALV(alv, alv_class)
     
     def getALV(self, alv_class):
+        print("DEBUG: sqlHandler trys to get alv of class: ", alv_class)
         return self.session.query(ALV).filter(ALV.alv_class==alv_class).one().alv
     
     def setALV(self, alv_class, alv):
@@ -270,11 +271,7 @@ class SQLHandler(object):
     '''--------------------------------------------'''
     
     def Bill(self,data):
-        return Bill(visit=data[0], clinic_payment=data[1], km=data[2], km_payment=data[3],
-                    operations_payment=data[4], lab_payment=data[5], accessories_payment=data[6],
-                    extra_percent=data[7], medicines_payment=data[8], diet_payment=data[9],
-                    payment_method=data[10], due_date=data[11], paid_time=data[12], 
-                    paid_value=data[13],index_number=data[14], other_info=data[15],satus=data[16])
+        return Bill(data)
     
     def getBill(self, session, visit):
         item = session.query(Bill).filter(Bill.visit_id == visit.id).all()

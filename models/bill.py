@@ -64,25 +64,8 @@ class Bill(Base):
     other_info = Column(String(1000))
     status = Column(Integer)
     
-    def __init__(self, visit, clinic_payment, km, km_payment, operations_payment, lab_payment, accessories_payment, extra_percent,medicines_payment, diet_payment, payment_method, due_date, paid_time, paid_value,index_number, other_info,satus = 0):
-        self.visit = visit
-        self.visit_id = visit.id
-        self.clinic_payment = clinic_payment
-        self.km = km
-        self.km_payment = km_payment
-        self.operations_payment = operations_payment
-        self.lab_payment = lab_payment
-        self.accessories_payment = accessories_payment
-        self.extra_percent = extra_percent
-        self.medicines_payment = medicines_payment
-        self.diet_payment = diet_payment
-        self.payment_method = payment_method
-        self.due_date = due_date
-        self.paid_time = paid_time
-        self.paid_value = paid_value
-        self.other_info = other_info
-        self.index_number = index_number
-        self.satus = satus 
+    def __init__(self, data):
+        self.update(data)
 
    
     def update(self, data):
@@ -99,41 +82,12 @@ class Bill(Base):
         
         for visit_animal in self.visit.visitanimals:
             for operation in visit_animal.operations:
-                from models.operation import Lab, Medication
-                if operation.getType() is Lab.__name__:
-                    price_dict["lab_price"] += operation.price
-                else:
-                    price_dict["operation_price"] += operation.price * operation.count
+                tmp = operation.getPriceDict()
+                for key in tmp:
+                    price_dict[key] += tmp[key]
+                
+        return price_dict       
 
-                if operation.hasList():
-                    for item in operation.items:
-                        from models.translationtables import g_item_alv_dict
-                        if g_item_alv_dict[item.item.__class__.__name__] == 1:
-                            price_dict["accesories_price"] += item.item.price * item.count
-                        elif g_item_alv_dict[item.item.__class__.__name__] == 2:
-                            price_dict["medicine_price"] += item.item.price * item.count
-                        elif g_item_alv_dict[item.item.__class__.__name__] == 3:
-                            price_dict["diet_price"] += item.item.price * item.count
-                        else:
-                            pass
-
-                if operation.base.hasItem():
-                    if operation.base.item != None:
-                        from models.translationtables import g_item_alv_dict
-                        alv_class_num = g_item_alv_dict[operation.base.item.__class__.__name__]
-
-                        if alv_class_num == 1:
-                            price_dict["accesories_price"] += operation.base.item.price
-                        elif alv_class_num == 2:
-                            price_dict["medicine_price"] += operation.base.item.price
-                        elif alv_class_num == 3:
-                            price_dict["diet_price"] += operation.base.item.price
-                        else:
-                            pass
-                    else:
-                        pass
-
-        return price_dict
     
     def getExtraPartFromPrice(self):
         return ((self.clinic_payment+self.operations_payment+self.lab_payment

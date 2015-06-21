@@ -40,7 +40,7 @@ g_operationbase_to_item_translation_dict = {"Medicine":g_base_and_item_dict["Med
 
 g_visit_end_time_start = "1.1.2000"
 
-g_item_alv_dict = {"Item":1,"Medicine":2,"Vaccine":2,"Feed":3}
+g_item_alv_dict = {"Item":1,"Medicine":2,'Drug':2, "Vaccine":2,"Feed":3}
 
 g_item_name_dict = {"Item":"Tuote","Medicine":"Lääkeaine","Vaccine":"Rokote","Feed":"Rehu"}
 

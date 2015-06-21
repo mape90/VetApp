@@ -47,9 +47,16 @@ class AddNewDialog(QDialog):
         #save button
         self.ui.saveButton.clicked.connect(self.saveCheck)
         #enter
-        self.ui.lineEdit.returnPressed.connect(self.saveCheck)
         self.ui.cancelButton.clicked.connect(self.closeDialog)
-    
+   
+    #whit this function we will prevet Qdialog to auto close and cause segfault
+    def keyPressEvent(self, evt):
+        if(evt.key() == Qt.Key_Enter or evt.key() == Qt.Key_Return):
+            self.saveCheck()
+            return
+        QDialog.keyPressEvent(evt);
+   
+        
     def hideComboBox(self):
         self.ui.comboBox.hide()
         self.ui.comboboxLabel.hide()
@@ -108,8 +115,9 @@ class AddNewSex(AddNewDialog):
         self.hideComboBox()
         
     def saveNewItem(self):
-        SqlHandler.addItem(self.session, SqlHandler.Sex(self.ui.lineEdit.text()))
-        #Will always be updated
+        _sex = SqlHandler.Sex(self.ui.lineEdit.text())
+        SqlHandler.addItem(self.session, _sex)
+        #Will always be updated 
         self.parent().setSex(self.ui.lineEdit.text())
         self.closeDialog()
 

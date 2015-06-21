@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
-from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, DateTime, Table
+from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, DateTime, Table, Float
 from sqlalchemy.orm import relationship
 
 from models import Base
@@ -82,6 +82,29 @@ visit_animals_table = Table('visit_animals_table', Base.metadata,
                       Column('visitanimal_id', Integer, ForeignKey('visitanimals.id')),
                       Column('visit_id', Integer, ForeignKey('visits.id')))
 
+visit_items_table = Table('visit_items_table', Base.metadata,
+                      Column('visititem_id', Integer, ForeignKey('visititems.id')),
+                      Column('visit_id', Integer, ForeignKey('visits.id')))
+                      
+                      
+class VisitItem(Base):
+    __tablename__='visititems'
+    id = Column(Integer, Sequence('visitimtems_id_seq'), primary_key=True)
+    item_id = Column(Integer, ForeignKey('items.id'), nullable=False)
+    item = relationship("Item")
+    count = Column(Float)
+    
+    def __init__(self, item, count):
+        self.item = item
+        self.count = count
+    
+    def update(self, data):
+        for key in data.keys():
+            setattr(self, key, data[key])
+    
+    def stringList(self):
+        return [str(self.item.name), ('%.2f' % self.item.price), ('%.2f' % self.count)]
+
 
 class Visit(Base):
     #Asetetaan taulukon nimi
@@ -99,6 +122,7 @@ class Visit(Base):
     
     visitanimals = relationship("VisitAnimal", secondary = visit_animals_table)
     
+    items = relationship("VisitItem", secondary = visit_items_table)
   
     def __init__(self, start_time, owner, vet, end_time=None, visitanimals = []):
         self.start_time = start_time

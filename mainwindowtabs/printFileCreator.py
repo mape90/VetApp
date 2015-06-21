@@ -104,21 +104,27 @@ class PrintFileCreator(object):
         
         for va in bill.visit.visitanimals:
             for oper in va.operations:
-                operation_rows += self.genTableRow(oper)
-                operation_row_count += 1
-                if(oper.hasList()):
-                    for item in oper.items:
-                        operation_rows += self.genItemTableRow(item)
-                        operation_row_count += 1
-                elif(oper.base.hasItem()):
-                    from models.translationtables import g_item_alv_dict
+                (rows, count) = self.genTableRow(oper)
+                operation_rows += rows
+                operation_row_count += count
+                
+                
+                
+                #operation_rows += self.genTableRow(oper)
+                #operation_row_count += 1
+                #if(oper.hasList()):
+                    #for item in oper.items:
+                        #operation_rows += self.genItemTableRow(item)
+                        #operation_row_count += 1
+                #elif(oper.base.hasItem()):
+                    #from models.translationtables import g_item_alv_dict
 
-                    operation_rows += self.genTableRowPrue(oper.base.item.name, 1,
-                                                           "kpl", oper.base.item.price,
-                                                           g_item_alv_dict[oper.base.item.__class__.__name__])
-                    operation_row_count += 1
-                else:
-                    pass
+                    #operation_rows += self.genTableRowPrue(oper.base.item.name, 1,
+                                                           #"kpl", oper.base.item.price,
+                                                           #g_item_alv_dict[oper.base.item.__class__.__name__])
+                    #operation_row_count += 1
+                #else:
+                    #pass
         
         #price_dict["operation_price"]
         #price_dict["accesories_price"]
@@ -182,7 +188,7 @@ class PrintFileCreator(object):
         return value*(100+alv_p)/100.0
     
     def genTableRowPrue(self, name, count, type_, price, alv):
-        alv_p = SqlHandler.getALV(alv)
+        alv_p = alv
         inc_alv_price = self.incALV(price, alv_p)
         temp = '''<tr> 
                 <td style="text-align:left">''' + name + '''</td>
@@ -208,12 +214,36 @@ class PrintFileCreator(object):
                                alv  = g_item_alv_dict[surgeryItem.item.__class__.__name__])
 
     
-    def genTableRow(self, operation, alv = 1):
-        return self.genTableRowPrue(name = operation.base.name,
-                                    count = operation.count,
-                                    type_ = "kpl",
-                                    price = operation.price,
-                                    alv = alv)
+    def genTableRow(self, operation):
+        counter = 0
+        tmp_rows = ''
+        tmp_rows += self.genTableRowPrue(name = operation.base.name,
+                                        count = operation.count,
+                                        type_ = "kpl",
+                                        price = operation.price,
+                                        alv = SqlHandler.getALV(1))
+        counter += 1
+        if(hasattr(operation.base, 'item')):
+            print("operation.base.item: ", operation.base.item)
+            tmp_rows += self.genTableRowPrue(name = ('- ' + operation.base.item.name),
+                                             count = operation.count,
+                                             type_ = "kpl", #operation.base.item.item_type
+                                             price = operation.base.item.price,
+                                             alv = operation.base.item.getALV())
+            counter += 1
+        if(hasattr(operation, 'items')):
+            print("items listing strt")
+            for surgeryitem in operation.items:
+                total_count = operation.count*surgeryitem.count
+                
+                tmp_rows += self.genTableRowPrue(name = ('- ' + surgeryitem.item.name),
+                                                count = total_count,
+                                                type_ = 'kpl', #surgeryitem.item.item_type
+                                                price = surgeryitem.item.price,
+                                                alv = surgeryitem.item.getALV())
+                counter += 1
+        
+        return (tmp_rows, counter)
 
 
     def change(self, old, new, parse=True):

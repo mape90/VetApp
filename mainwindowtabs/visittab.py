@@ -161,6 +161,8 @@ class VisitTab(GenericTab):
             line.setText(i,string_list[i])
 
 
+    
+
     def operationChanged(self,current, previous):
         if current != None:
             '''Enable operation related if those arent enabled'''

@@ -25,6 +25,7 @@ from sqlalchemy.orm import relationship
 from models.item import *
 
 import datetime
+from configfile import logDEBUG, logERROR
 
 from models.translationtables import g_operationbase_translation_dict
 
@@ -252,6 +253,12 @@ class DentalexaminationBase(OperationBase):
 #
 #----------------------------------------------
 
+#price_dict["operation_price"]
+#price_dict["accesories_price"]
+#price_dict["lab_price"]
+#price_dict["medicine_price"]
+#price_dict["diet_price"]
+
 '''
     These classes are for visit to handle and save operations thet have been done.
 '''
@@ -277,6 +284,52 @@ class Operation(Base):
                 self.count = float(count)
             except ValueError:
                 self.count = 1
+
+    def _addItemToPrice(self, item, price_dict, _count = 1):
+        _type = item.getType()
+        logDEBUG("Operation -> getPriceDict() item type: ", _type)
+        _price = (item.price * _count)
+        if(_type in ['Vaccine', 'Drug','Medicine']):
+            price_dict["medicine_price"] += _price
+        elif(_type in ['Feed']):
+            price_dict["diet_price"] += _price
+        elif(_type in ['Item']):
+            price_dict["accesories_price"] += _price
+        else:
+            logERROR("Operation -> getPriceDict(), base.item has unspesified type: ", _type)
+        return price_dict
+
+    def getPriceDict(self):
+        price_dict = {}
+        price_dict["operation_price"] = 0.0
+        price_dict["lab_price"] = 0.0
+        
+        #item prices are added to these
+        price_dict["accesories_price"] = 0.0
+        price_dict["medicine_price"] = 0.0
+        price_dict["diet_price"] = 0.0
+
+        print("DEBUG: getPriceDict() type: id:", self.getType())
+        if("Lab" in [self.getType()]):
+            print("DEBUG: LAB FOUND")
+            price_dict["lab_price"] += self.price
+        else:
+            price_dict["operation_price"] += self.price
+        
+        if(hasattr(self.base, 'item')):
+            self._addItemToPrice(self.base.item, price_dict)
+        if(hasattr(self, 'items')):
+            for surgeryitem in self.items:
+                print(surgeryitem)
+                self._addItemToPrice(surgeryitem.item, price_dict, surgeryitem.count)
+
+        
+        for key in price_dict:
+            price_dict[key] *= self.count
+        
+        return price_dict
+        
+
 
     def update(self, data):
         for key, item in data.items():
@@ -352,7 +405,7 @@ class SurgeryItem(Base):
         self.count = count
 
     def getType(self=None):
-        return self.__class__.__name__
+        return "SurgeryItem"
 
     def stringList(self):
         string_list = self.item.stringList()
@@ -374,10 +427,13 @@ class Surgery(Operation):
         self.items = []
 
         for item in items:
-            if item.getType() == SurgeryItem.getType():
+            if("SurgeryBaseItem" == item.getType()):
+                self.items.append(SurgeryItem(item=item.item,count=item.count))
+            elif("SurgeryItem" == item.getType()):
                 self.items.append(item)
             else:
-                self.items.append(SurgeryItem(item=item.item,count=item.count))
+                print("ERROR type error in Surgery __init__(), adding items item type is ", type(item))
+               
 
 
     def hasList(self=None):
@@ -394,7 +450,6 @@ class Surgery(Operation):
 '''
 
 '''
-
 class Lab(Operation):
     __tablename__='labs'
     id = Column(Integer, ForeignKey('operations.id'), primary_key=True)

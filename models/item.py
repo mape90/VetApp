@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
-from sqlalchemy import Column, Integer, String, Sequence, Interval, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, Sequence, Interval, ForeignKey, Table, Float, DateTime
 from sqlalchemy.orm import relationship, backref
 
 from models import Base
@@ -69,7 +69,7 @@ class Item(Base):
                 print("DEBUG ERROR Item->update(): wrong variable name: " + str(key))
     
     def stringList(self):
-        return [str(self.id), self.name, self.typeName(), str(self.price)]
+        return [str(self.id), self.name, self.typeName(), ('%.2f' % self.price)]
     
     def hasDuration(self=None):
         return False
@@ -82,7 +82,8 @@ class Item(Base):
     
     def getALV(self=None):
         from models import SqlHandler
-        return SqlHandler.getALV(1)
+        from models.translationtables import g_item_alv_dict
+        return SqlHandler.getALV(g_item_alv_dict[self.getType()])
 
 
 
@@ -108,9 +109,49 @@ class Medicine(Item):
     def typeName(self=None):
         return 'Lääke'
 
-    def getALV(self=None):
-        from models import SqlHandler
-        return SqlHandler.getALV(2)
+    #def getALV(self=None):
+        #from models import SqlHandler
+        #return SqlHandler.getALV(2)
+
+
+class DrugUsage(Base):
+    __tablename__='drugusages'
+    id = Column(Integer, primary_key=True)
+    drug_id = Column(Integer, ForeignKey('medicines.id'))
+    drug = relationship("Drug") #will this work or shuld it be Medicine?
+    amount = Column(Float)
+    time = Column(DateTime)
+    
+    def __init__(self,drug, amount, time):
+        self.drug = drug
+        self.drug_id = drug.id
+        self.amount = amount
+        self.time = time
+        
+
+class Drug(Medicine):
+    __tablename__='drugs'
+    id = Column(Integer, ForeignKey('medicines.id'), primary_key=True)
+    duration = Column(Interval)  
+    
+    opening_time = Column(DateTime)
+    end_time = Column(DateTime)
+    batch_nunber = Column(String(255))
+    
+    __mapper_args__ = {'polymorphic_identity':'drug',}
+    def __init__(self, name, description, stock_price, price, opening_time,batch_nunber,end_time=None, barcode='', duration=None):
+        super().__init__(name, description, stock_price, price, barcode, duration)
+        self.opening_time = opening_time
+        self.end_time = end_time
+        self.batch_nunber = batch_nunber
+        
+        
+    def getType(self=None):
+        return 'Drug'
+    
+    def typeName(self=None):
+        return 'Huumausaine'
+
 '''
     Item class for feed.
     
@@ -148,9 +189,9 @@ class Feed(Item):
     def typeName(self=None):
         return 'Rehu'
 
-    def getALV(self=None):
-        from models import SqlHandler
-        return SqlHandler.getALV(3)
+    #def getALV(self=None):
+        #from models import SqlHandler
+        #return SqlHandler.getALV(3)
 
 
 '''
