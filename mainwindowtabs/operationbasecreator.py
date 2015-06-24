@@ -56,6 +56,10 @@ class OperationBaseCreator(QDialog):
         self.configureConnections()
         self.setBasicInfo()
     
+
+    def getCurrentItemType(self):
+        return self.ui.typeComboBox.currentText()
+
     def configureConnections(self):
         self.ui.typeComboBox.currentIndexChanged['int'].connect(self.setSpecialInfo)
         self.ui.closeButton.clicked.connect(self.closeCreator)

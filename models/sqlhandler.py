@@ -51,6 +51,7 @@ from models.operation import Endoscopy, Dentalexamination, OperationBase, Vaccin
 from models.operation import SurgeryBase, MedicationBase, LamenessBase, XrayBase
 from models.operation import UltrasonicBase, EndoscopyBase, DentalexaminationBase, LabBase, PhoneRecipie, RecipieMedicine
 from models.bill import Bill
+from models.globalvar import GlobalVar
 
 from sqlalchemy.pool import SingletonThreadPool
 import datetime
@@ -131,6 +132,16 @@ class SQLHandler(object):
     def Todo(self, vet_id, name, deadline, text):
         return Todo(vet_id, name, deadline, text)
     
+    #---------GLOBAL VARS-----#
+
+    def GlobalVar(self, key, value):
+        return GlobalVar(key,value)
+
+    def getGlobalVar(self,key):
+        print("DEBUG try to find global var with key: ", key)
+        return float(self.session.query(GlobalVar).filter(GlobalVar.key==key).one().value)
+
+
     #----------ITEMS---------#
     def getItemCreators(self):
         return [Item, Vaccine, Medicine, Feed]

@@ -232,7 +232,7 @@ class TabManager(object):
        
         #update Tab text
         if tabType in ["OwnerTab","AnimalTab"]:
-            text = newItem.name #owner or animal name
+            text = tab.getItem().name #owner or animal name
         else:
             text = self.translate[tabType] + " " + str(tab.getItem().id)
         

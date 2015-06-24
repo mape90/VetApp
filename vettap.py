@@ -59,7 +59,10 @@ def init(status):
         SqlHandler.addItems(session,[SqlHandler.ALV(alv=24,alv_class=1),    #Normal items
                                      SqlHandler.ALV(alv=10,alv_class=2),    #Medicines
                                      SqlHandler.ALV(alv=14,alv_class=3)])   #Feed
-                   
+
+        SqlHandler.addItems(session, [SqlHandler.GlobalVar(key="clinicpayment", value="20.00"),
+                                      SqlHandler.GlobalVar(key="km_price", value="0.48")])
+
         #create species
         koira = SqlHandler.Specie('Koira')
         kissa = SqlHandler.Specie('Kissa')

@@ -33,7 +33,7 @@ from mainwindowtabs import Tabmanager
 
 import datetime
 from math import ceil
-
+from models.translationtables import g_payment_time_dict, g_item_alv_dict
 from configfile import getBillPath
 
 
@@ -46,6 +46,7 @@ class BillTab(GenericTab):
         GenericTab.__init__(self, parent=parent, item=item)
         self.ui = Ui_BillTab()
         self.ui.setupUi(self)
+
         
         self.print_format_path = "print_formating.html"
         self.payment_methods = ['Käteinen','Pankkikortti','Luottokortti','Pankkisiirto','Muu']
@@ -62,6 +63,8 @@ class BillTab(GenericTab):
             self.ui.indexNumberLabel.setText(str(self.calcIndexNumber()))
         else:
             self.visit = self.item.visit
+
+        self.setDefaultClinicPrice()
      
     def configure(self):  
         pass
@@ -138,7 +141,7 @@ class BillTab(GenericTab):
                 
             else:
                 self.ui.ownerLabel.setText(self.item.owner.name)
-                self.ui.clinicPriceSpinBox.setValue(28.06) #TODO: take default clinicPrice from configServer
+                self.setDefaultClinicPrice()
                 self.setPrices(self.item) #item is visit
             
         else:
@@ -160,7 +163,7 @@ class BillTab(GenericTab):
         return base_number*10 + check_sum
     
     def setDefaultClinicPrice(self):
-        self.ui.clinicPriceSpinBox.setValue(28.06)  #TODO: take default clinicPrice from configServer
+        self.ui.clinicPriceSpinBox.setValue(SqlHandler.getGlobalVar(key="clinicpayment"))
     
         
     def updatePriceList(self, operation, old_prices):
@@ -183,7 +186,6 @@ class BillTab(GenericTab):
                 self.errorMessage('ERROR: BillTab.setPrices(): operation.hasItem() is true but item is None!')
         elif _type is 'Surgery':
             for item in operation.items:
-                from models.translationtables import g_item_alv_dict
                 if g_item_alv_dict[item.item.__class__.__name__] == 1:
                     prices["accesories_price"] += item.item.price * item.count
                 elif g_item_alv_dict[item.item.__class__.__name__] == 2:
@@ -244,7 +246,7 @@ class BillTab(GenericTab):
     
     def setDueDates(self):
         self.ui.DueDateTimeComboBox.clear()
-        data = dict([('Heti',datetime.timedelta(days=0)),('1 vk',datetime.timedelta(days=7)),('2 vk',datetime.timedelta(days=14))])
+        data = g_payment_time_dict
         for key in data:
             self.ui.DueDateTimeComboBox.addItem(key,data[key])
         
@@ -262,8 +264,8 @@ class BillTab(GenericTab):
     def updateKmData(self):
         km = self.ui.KmSpinBox.value()
         #TODO: add these hardcoded values to configure server (msg from UpdateKmData)
-        self.ui.visitPriceSpinBox.setValue(26.93 if km > 0.0 else 0)
-        self.ui.KmPriceSpinBox.setValue(km*0.48)
+        self.ui.visitPriceSpinBox.setValue(SqlHandler.getGlobalVar(key="clinicpayment") if km > 0.0 else 0)
+        self.ui.KmPriceSpinBox.setValue(km*SqlHandler.getGlobalVar(key="km_price"))
 
         
     def setToday(self):

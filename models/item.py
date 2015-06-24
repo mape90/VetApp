@@ -23,6 +23,9 @@ from models import Base
 from models.specie import Specie
 
 
+from models.translationtables import g_item_alv_dict
+from models.translationtables import g_item_name_dict
+
 class ALV(Base):
     __tablename__ = 'alvs'
     id = Column(Integer, Sequence('alvs_id_seq'), primary_key=True)
@@ -39,7 +42,12 @@ class ALV(Base):
     
 
 
-
+class ItemStrings():
+    item = 'Item'
+    medicine = 'Medicine'
+    drug = 'Drug'
+    vaccine = 'Vaccine'
+    feed = 'Feed'
 
 class Item(Base):
     __tablename__ = 'items'
@@ -64,7 +72,6 @@ class Item(Base):
         for key, item in data.items():
             try:
                 setattr(self, key, item)
-                #self.setVariable(key,item)
             except:
                 print("DEBUG ERROR Item->update(): wrong variable name: " + str(key))
     
@@ -75,15 +82,14 @@ class Item(Base):
         return False
     
     def getType(self=None):
-        return 'Item'
+        return ItemStrings.item
     
     def typeName(self=None):
-        return 'Tuote'
+        return g_item_name_dict[ItemStrings.item]
     
     def getALV(self=None):
         from models import SqlHandler
-        from models.translationtables import g_item_alv_dict
-        return SqlHandler.getALV(g_item_alv_dict[self.getType()])
+        return SqlHandler.getALV(g_item_alv_dict[ItemStrings.item])
 
 
 
@@ -104,14 +110,15 @@ class Medicine(Item):
         return True
     
     def getType(self=None):
-        return 'Medicine'
+        return ItemStrings.medicine
 
     def typeName(self=None):
-        return 'Lääke'
 
-    #def getALV(self=None):
-        #from models import SqlHandler
-        #return SqlHandler.getALV(2)
+        return g_item_name_dict[ItemStrings.medicine]
+
+    def getALV(self=None):
+        from models import SqlHandler
+        return SqlHandler.getALV(g_item_alv_dict[ItemStrings.medicine])
 
 
 class DrugUsage(Base):
@@ -147,10 +154,14 @@ class Drug(Medicine):
         
         
     def getType(self=None):
-        return 'Drug'
+        return ItemStrings.drug
     
     def typeName(self=None):
-        return 'Huumausaine'
+        return g_item_name_dict[ItemStrings.drug]
+
+    def getALV(self=None):
+        from models import SqlHandler
+        return SqlHandler.getALV(g_item_alv_dict[ItemStrings.drug])
 
 '''
     Item class for feed.
@@ -170,10 +181,14 @@ class Vaccine(Medicine):
         super().__init__(name, description, stock_price, price, barcode, duration)
     
     def getType(self=None):
-        return 'Vaccine'
+        return ItemStrings.vaccine
     
     def typeName(self=None):
-        return 'Rokote'
+        return g_item_name_dict[ItemStrings.vaccine]
+
+    def getALV(self=None):
+        from models import SqlHandler
+        return SqlHandler.getALV(g_item_alv_dict[ItemStrings.vaccine])
     
 
 class Feed(Item):
@@ -184,14 +199,14 @@ class Feed(Item):
         super().__init__(name, description, stock_price, price, barcode)
 
     def getType(self=None):
-        return 'Feed'
+        return ItemStrings.feed
 
     def typeName(self=None):
-        return 'Rehu'
+        return g_item_name_dict[ItemStrings.feed]
 
-    #def getALV(self=None):
-        #from models import SqlHandler
-        #return SqlHandler.getALV(3)
+    def getALV(self=None):
+        from models import SqlHandler
+        return SqlHandler.getALV(g_item_alv_dict[ItemStrings.feed])
 
 
 '''

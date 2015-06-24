@@ -27,7 +27,7 @@ from mainwindowtabs.addNewDialog import AddNewSpecie
 from uipy.ui_itemcreator import Ui_ItemCreatorDialog
 from uipy.ui_ownerdescription import Ui_OwnerDescriptionDialog
 
-from models.translationtables import g_operationbase_to_item_translation_dict
+from models.translationtables import g_item_to_base_dict, g_preset_durations
 
 from models import SqlHandler
 import datetime
@@ -102,11 +102,12 @@ self.session.expunge()
         
 
 class ItemCreatorDialog(QDialog):
-    def __init__(self, parent, item=None):
+    def __init__(self, parent, item=None, deftype='Item'):
         QDialog.__init__(self,parent=parent)
         self.ui = Ui_ItemCreatorDialog()
         self.ui.setupUi(self)
         self.session = SqlHandler.newSession()
+        self.deftype = deftype
         
         self.item = item
         if self.item != None:
@@ -123,15 +124,21 @@ class ItemCreatorDialog(QDialog):
     def selectCorrectItem(self):
         #find operation creator and select it ui and typeComboBox that has operation list
         try:
-            parent_typeComboBox = self.parent().parent().parent().parent().ui.typeComboBox
-            operation = parent_typeComboBox.itemData(parent_typeComboBox.currentIndex())
+            p = self.parent()
+            for i in range(0,4):
+                if hasattr(p, 'getCurrentItemType') :
+                    item_name = p.getCurrentItemType()
+                    print("name: ", item_name, " in dict it is ", g_item_to_base_dict[item_name])
+                    if(g_item_to_base_dict[item_name]):
+                        self.ui.typeSelectComboBox.setCurrentIndex(self.ui.typeSelectComboBox.findText(g_item_to_base_dict[item_name]))
+                    else:
+                        print("ERROR: cant find type selectCorrectItem(), str: ", item_name)
 
-            #set correct item selected
-            if operation.__name__ in g_operationbase_to_item_translation_dict:
-                self.ui.typeSelectComboBox.setCurrentIndex(self.ui.typeSelectComboBox.findText(
-                    g_operationbase_to_item_translation_dict[operation.__name__]))
+
+                p = p.parent()
+
         except:
-            print("ERROR: ItemCreatorDialog->selectCorrectItem(). error to find parent. something is changed in operationbase! FIX ME!")
+            print("ERROR: ItemCreatorDialog->selectCorrectItem(). error to find parent. something is changed in operationbase!")
 
 
     def configureConnections(self):
@@ -167,8 +174,7 @@ class ItemCreatorDialog(QDialog):
         self.ui.daySpinEdit.setValue(self.ui.preSetDurationsComboBox.itemData(index))
     
     def addPreSetDurations(self):   
-        values = [('kuukausi',30), ('1/2 vuosi',180), ('1 vuosi',365), 
-                       ('2 vuotta',730), ('3 vuotta',1095), ('5 vuotta',1825)] #TODO: take hardcoded values and save then to configServer
+        values = g_preset_durations
         
         for item in values:
             self.ui.preSetDurationsComboBox.addItem(item[0],item[1])
