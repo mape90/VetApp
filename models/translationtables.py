@@ -48,7 +48,7 @@ g_tab_name_dict = {'VisitTab':'Käynti','AnimalTab':'Eläin', 'OwnerTab':'Omista
                    'SearchTab':'Etsi', 'MainMenuTab':'Päävalikko', 'WarehouseTab':'Varasto',
                    'AppointmentTab':'Ajanvaraus', 'VetTab':'Eläinlääkäri',
                    'BillTab':'Lasku', 'ItemCreatorTab':'Tuotehallinta',
-                   "OperationBaseCreatorTab":"Operaatiohallinta"}
+                   "OperationBaseCreatorTab":"Operaatiohallinta","SummaryTab":"Yhteenveto"}
 
 
 g_visit_end_time_start = "1.1.2000"

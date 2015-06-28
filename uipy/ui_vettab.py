@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'ui_vettab.ui'
 #
-# Created: Tue Apr 23 11:51:16 2013
-#      by: PyQt4 UI code generator 4.9.3
+# Created: Sat Jun 27 19:19:48 2015
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,16 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_VetTab(object):
     def setupUi(self, VetTab):
@@ -21,8 +30,8 @@ class Ui_VetTab(object):
         font = QtGui.QFont()
         font.setUnderline(False)
         VetTab.setFont(font)
-        self.verticalLayout_3 = QtGui.QVBoxLayout(VetTab)
-        self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
+        self.verticalLayout = QtGui.QVBoxLayout(VetTab)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.horizontalLayout_12 = QtGui.QHBoxLayout()
         self.horizontalLayout_12.setObjectName(_fromUtf8("horizontalLayout_12"))
         self.basicInfoLayout = QtGui.QVBoxLayout()
@@ -146,6 +155,16 @@ class Ui_VetTab(object):
         self.IbanEdit.setObjectName(_fromUtf8("IbanEdit"))
         self.horizontalLayout_7.addWidget(self.IbanEdit)
         self.basicInfoLayout.addLayout(self.horizontalLayout_7)
+        self.horizontalLayout_10 = QtGui.QHBoxLayout()
+        self.horizontalLayout_10.setObjectName(_fromUtf8("horizontalLayout_10"))
+        self.label_15 = QtGui.QLabel(VetTab)
+        self.label_15.setMinimumSize(QtCore.QSize(93, 0))
+        self.label_15.setObjectName(_fromUtf8("label_15"))
+        self.horizontalLayout_10.addWidget(self.label_15)
+        self.swifbiclineEdit = QtGui.QLineEdit(VetTab)
+        self.swifbiclineEdit.setObjectName(_fromUtf8("swifbiclineEdit"))
+        self.horizontalLayout_10.addWidget(self.swifbiclineEdit)
+        self.basicInfoLayout.addLayout(self.horizontalLayout_10)
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.basicInfoLayout.addItem(spacerItem)
         self.horizontalLayout_12.addLayout(self.basicInfoLayout)
@@ -178,7 +197,7 @@ class Ui_VetTab(object):
         self.horizontalLayout_12.addLayout(self.verticalLayout_2)
         self.horizontalLayout_12.setStretch(0, 1)
         self.horizontalLayout_12.setStretch(1, 2)
-        self.verticalLayout_3.addLayout(self.horizontalLayout_12)
+        self.verticalLayout.addLayout(self.horizontalLayout_12)
         self.horizontalLayout_9 = QtGui.QHBoxLayout()
         self.horizontalLayout_9.setObjectName(_fromUtf8("horizontalLayout_9"))
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
@@ -192,31 +211,32 @@ class Ui_VetTab(object):
         self.saveAndCloseButton = QtGui.QPushButton(VetTab)
         self.saveAndCloseButton.setObjectName(_fromUtf8("saveAndCloseButton"))
         self.horizontalLayout_9.addWidget(self.saveAndCloseButton)
-        self.verticalLayout_3.addLayout(self.horizontalLayout_9)
+        self.verticalLayout.addLayout(self.horizontalLayout_9)
 
         self.retranslateUi(VetTab)
         QtCore.QMetaObject.connectSlotsByName(VetTab)
 
     def retranslateUi(self, VetTab):
-        VetTab.setWindowTitle(QtGui.QApplication.translate("VetTab", "VetTab", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_9.setText(QtGui.QApplication.translate("VetTab", "Eläinlääkäri", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_10.setText(QtGui.QApplication.translate("VetTab", "Eläinlääkäri", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.setToolTip(QtGui.QApplication.translate("VetTab", "Valitse tyhjä luodaksesi uusi", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("VetTab", "Nimi", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("VetTab", "Osoite", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("VetTab", "Postitoimipaikka", None, QtGui.QApplication.UnicodeUTF8))
-        self.addPostOfficeButton.setText(QtGui.QApplication.translate("VetTab", "+", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtGui.QApplication.translate("VetTab", "Postinumero", None, QtGui.QApplication.UnicodeUTF8))
-        self.addPostNumberButton.setText(QtGui.QApplication.translate("VetTab", "+", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_5.setText(QtGui.QApplication.translate("VetTab", "Y-numero", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_6.setText(QtGui.QApplication.translate("VetTab", "Eläilääkäri nro", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_8.setText(QtGui.QApplication.translate("VetTab", "Pankki", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_7.setText(QtGui.QApplication.translate("VetTab", "IBAN", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_14.setText(QtGui.QApplication.translate("VetTab", "Asiakas tekstit laskuun", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_13.setText(QtGui.QApplication.translate("VetTab", "Suomi", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_12.setText(QtGui.QApplication.translate("VetTab", "Ruotsi", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_11.setText(QtGui.QApplication.translate("VetTab", "Englanti", None, QtGui.QApplication.UnicodeUTF8))
-        self.closeButton.setText(QtGui.QApplication.translate("VetTab", "Sulje", None, QtGui.QApplication.UnicodeUTF8))
-        self.saveButton.setText(QtGui.QApplication.translate("VetTab", "Tallenna", None, QtGui.QApplication.UnicodeUTF8))
-        self.saveAndCloseButton.setText(QtGui.QApplication.translate("VetTab", "Tallenna ja sulje", None, QtGui.QApplication.UnicodeUTF8))
+        VetTab.setWindowTitle(_translate("VetTab", "VetTab", None))
+        self.label_9.setText(_translate("VetTab", "Eläinlääkäri", None))
+        self.label_10.setText(_translate("VetTab", "Eläinlääkäri", None))
+        self.comboBox.setToolTip(_translate("VetTab", "Valitse tyhjä luodaksesi uusi", None))
+        self.label.setText(_translate("VetTab", "Nimi", None))
+        self.label_2.setText(_translate("VetTab", "Osoite", None))
+        self.label_3.setText(_translate("VetTab", "Postitoimipaikka", None))
+        self.addPostOfficeButton.setText(_translate("VetTab", "+", None))
+        self.label_4.setText(_translate("VetTab", "Postinumero", None))
+        self.addPostNumberButton.setText(_translate("VetTab", "+", None))
+        self.label_5.setText(_translate("VetTab", "Y-tunnus", None))
+        self.label_6.setText(_translate("VetTab", "Eläilääkäri nro", None))
+        self.label_8.setText(_translate("VetTab", "Pankki", None))
+        self.label_7.setText(_translate("VetTab", "IBAN", None))
+        self.label_15.setText(_translate("VetTab", "SWIF/BIC", None))
+        self.label_14.setText(_translate("VetTab", "Asiakas tekstit laskuun", None))
+        self.label_13.setText(_translate("VetTab", "Suomi", None))
+        self.label_12.setText(_translate("VetTab", "Ruotsi", None))
+        self.label_11.setText(_translate("VetTab", "Englanti", None))
+        self.closeButton.setText(_translate("VetTab", "Sulje", None))
+        self.saveButton.setText(_translate("VetTab", "Tallenna", None))
+        self.saveAndCloseButton.setText(_translate("VetTab", "Tallenna ja sulje", None))
 

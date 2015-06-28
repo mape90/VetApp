@@ -90,8 +90,7 @@ class Bill(Base):
 
     
     def getExtraPartFromPrice(self):
-        return ((self.clinic_payment+self.operations_payment+self.lab_payment
-                +self.accessories_payment)*((self.extra_percent)/100.0))  
+        return (self.operations_payment*((self.extra_percent)/100.0))
    
     def getALVMul(self, alv_type):
         if(alv_type):
@@ -102,14 +101,14 @@ class Bill(Base):
     
     def getRawPrice(self, alv_type):
         if(alv_type == 1):
-            return ((self.clinic_payment+self.operations_payment+self.lab_payment
-                +self.accessories_payment)*((100+self.extra_percent)/100.0))
+            return ((self.km_payment + self.clinic_payment + self.operations_payment*((100+self.extra_percent)/100.0) +
+                     self.lab_payment + self.accessories_payment))
         elif(alv_type == 2):
             return self.medicines_payment
         elif(alv_type == 3):
             return self.diet_payment
         elif(alv_type == 0):
-            return self.km_payment
+            return 0
         else:
             logError("getRawPrice, incorrect alv_type: ", alv_type)
     

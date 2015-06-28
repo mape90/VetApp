@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'ui_animal.ui'
 #
-# Created: Sat Apr 13 21:44:19 2013
-#      by: PyQt4 UI code generator 4.9.3
+# Created: Fri Jun 26 21:45:14 2015
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,16 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_Animal(object):
     def setupUi(self, Animal):
@@ -307,47 +316,47 @@ class Ui_Animal(object):
         QtCore.QMetaObject.connectSlotsByName(Animal)
 
     def retranslateUi(self, Animal):
-        Animal.setWindowTitle(QtGui.QApplication.translate("Animal", "Form", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("Animal", "Nimi", None, QtGui.QApplication.UnicodeUTF8))
-        self.nameLineEdit.setPlaceholderText(QtGui.QApplication.translate("Animal", "Nimi", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("Animal", "Virallinen nimi", None, QtGui.QApplication.UnicodeUTF8))
-        self.officialNamelineEdit.setPlaceholderText(QtGui.QApplication.translate("Animal", "Virallinen nimi", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_8.setText(QtGui.QApplication.translate("Animal", "syntymäaika", None, QtGui.QApplication.UnicodeUTF8))
-        self.birthdayEdit.setDisplayFormat(QtGui.QApplication.translate("Animal", "MM-dd-yyyy", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtGui.QApplication.translate("Animal", "Laji", None, QtGui.QApplication.UnicodeUTF8))
-        self.newSpecieButton.setToolTip(QtGui.QApplication.translate("Animal", "Lisää uusi laji", None, QtGui.QApplication.UnicodeUTF8))
-        self.newSpecieButton.setText(QtGui.QApplication.translate("Animal", "+", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_5.setText(QtGui.QApplication.translate("Animal", "Rotu", None, QtGui.QApplication.UnicodeUTF8))
-        self.newRaceButton.setToolTip(QtGui.QApplication.translate("Animal", "Lisää uusi rotu", None, QtGui.QApplication.UnicodeUTF8))
-        self.newRaceButton.setText(QtGui.QApplication.translate("Animal", "+", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_6.setText(QtGui.QApplication.translate("Animal", "Sukupuoli", None, QtGui.QApplication.UnicodeUTF8))
-        self.newSexButton.setToolTip(QtGui.QApplication.translate("Animal", "Lisää uusi sukupuoli", None, QtGui.QApplication.UnicodeUTF8))
-        self.newSexButton.setText(QtGui.QApplication.translate("Animal", "+", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_7.setText(QtGui.QApplication.translate("Animal", "Väri", None, QtGui.QApplication.UnicodeUTF8))
-        self.newColorButton.setToolTip(QtGui.QApplication.translate("Animal", "Lisää uusi väri", None, QtGui.QApplication.UnicodeUTF8))
-        self.newColorButton.setText(QtGui.QApplication.translate("Animal", "+", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("Animal", "Rekisteri nro.", None, QtGui.QApplication.UnicodeUTF8))
-        self.recNumlineEdit.setPlaceholderText(QtGui.QApplication.translate("Animal", "Rekisterinumero", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_12.setText(QtGui.QApplication.translate("Animal", "Passi", None, QtGui.QApplication.UnicodeUTF8))
-        self.passportLineEdit.setPlaceholderText(QtGui.QApplication.translate("Animal", "Passin numero", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_9.setText(QtGui.QApplication.translate("Animal", "mikrosiru", None, QtGui.QApplication.UnicodeUTF8))
-        self.microLineEdit.setPlaceholderText(QtGui.QApplication.translate("Animal", "Mikrosirun numero", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_10.setText(QtGui.QApplication.translate("Animal", "Tatuointi", None, QtGui.QApplication.UnicodeUTF8))
-        self.tattooLineEdit.setPlaceholderText(QtGui.QApplication.translate("Animal", "Tatuointi merkintä", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_11.setText(QtGui.QApplication.translate("Animal", "vakuutus", None, QtGui.QApplication.UnicodeUTF8))
-        self.insuranceEdit.setToolTip(QtGui.QApplication.translate("Animal", "Vakuutus numero ja tiedot tänne", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_14.setText(QtGui.QApplication.translate("Animal", "Muuta", None, QtGui.QApplication.UnicodeUTF8))
-        self.otherInfoTextEdit.setToolTip(QtGui.QApplication.translate("Animal", "Muut eläimen tiedot tänne", None, QtGui.QApplication.UnicodeUTF8))
-        self.deathcheckBox.setText(QtGui.QApplication.translate("Animal", "Kuollut", None, QtGui.QApplication.UnicodeUTF8))
-        self.statusCheckBox.setText(QtGui.QApplication.translate("Animal", "Vaativa", None, QtGui.QApplication.UnicodeUTF8))
-        self.rightTabWidget.setTabText(self.rightTabWidget.indexOf(self.vaccineTab), QtGui.QApplication.translate("Animal", "Rokotukset", None, QtGui.QApplication.UnicodeUTF8))
-        self.rightTabWidget.setTabText(self.rightTabWidget.indexOf(self.weigthControlTab), QtGui.QApplication.translate("Animal", "Painonseuranta", None, QtGui.QApplication.UnicodeUTF8))
-        self.rightTabWidget.setTabText(self.rightTabWidget.indexOf(self.pictureTab), QtGui.QApplication.translate("Animal", "Kuvat", None, QtGui.QApplication.UnicodeUTF8))
-        self.leftTabWidget.setTabText(self.leftTabWidget.indexOf(self.medicineTab), QtGui.QApplication.translate("Animal", "Lääkkeet", None, QtGui.QApplication.UnicodeUTF8))
-        self.leftTabWidget.setTabText(self.leftTabWidget.indexOf(self.labTab), QtGui.QApplication.translate("Animal", "Labrata", None, QtGui.QApplication.UnicodeUTF8))
-        self.leftTabWidget.setTabText(self.leftTabWidget.indexOf(self.phonerecepietab), QtGui.QApplication.translate("Animal", "Puhelinreseptit", None, QtGui.QApplication.UnicodeUTF8))
-        self.searchOwnersButton.setText(QtGui.QApplication.translate("Animal", "Hae omistajat", None, QtGui.QApplication.UnicodeUTF8))
-        self.canselButton.setText(QtGui.QApplication.translate("Animal", "Sulje", None, QtGui.QApplication.UnicodeUTF8))
-        self.saveButton.setText(QtGui.QApplication.translate("Animal", "Tallenna", None, QtGui.QApplication.UnicodeUTF8))
-        self.saveAndExitButton.setText(QtGui.QApplication.translate("Animal", "Tallenna ja sulje", None, QtGui.QApplication.UnicodeUTF8))
+        Animal.setWindowTitle(_translate("Animal", "Form", None))
+        self.label_2.setText(_translate("Animal", "Nimi", None))
+        self.nameLineEdit.setPlaceholderText(_translate("Animal", "Nimi", None))
+        self.label_3.setText(_translate("Animal", "Virallinen nimi", None))
+        self.officialNamelineEdit.setPlaceholderText(_translate("Animal", "Virallinen nimi", None))
+        self.label_8.setText(_translate("Animal", "syntymäaika", None))
+        self.birthdayEdit.setDisplayFormat(_translate("Animal", "d.M.yyyy", None))
+        self.label_4.setText(_translate("Animal", "Laji", None))
+        self.newSpecieButton.setToolTip(_translate("Animal", "Lisää uusi laji", None))
+        self.newSpecieButton.setText(_translate("Animal", "+", None))
+        self.label_5.setText(_translate("Animal", "Rotu", None))
+        self.newRaceButton.setToolTip(_translate("Animal", "Lisää uusi rotu", None))
+        self.newRaceButton.setText(_translate("Animal", "+", None))
+        self.label_6.setText(_translate("Animal", "Sukupuoli", None))
+        self.newSexButton.setToolTip(_translate("Animal", "Lisää uusi sukupuoli", None))
+        self.newSexButton.setText(_translate("Animal", "+", None))
+        self.label_7.setText(_translate("Animal", "Väri", None))
+        self.newColorButton.setToolTip(_translate("Animal", "Lisää uusi väri", None))
+        self.newColorButton.setText(_translate("Animal", "+", None))
+        self.label.setText(_translate("Animal", "Rekisteri nro.", None))
+        self.recNumlineEdit.setPlaceholderText(_translate("Animal", "Rekisterinumero", None))
+        self.label_12.setText(_translate("Animal", "Passi", None))
+        self.passportLineEdit.setPlaceholderText(_translate("Animal", "Passin numero", None))
+        self.label_9.setText(_translate("Animal", "mikrosiru", None))
+        self.microLineEdit.setPlaceholderText(_translate("Animal", "Mikrosirun numero", None))
+        self.label_10.setText(_translate("Animal", "Tatuointi", None))
+        self.tattooLineEdit.setPlaceholderText(_translate("Animal", "Tatuointi merkintä", None))
+        self.label_11.setText(_translate("Animal", "vakuutus", None))
+        self.insuranceEdit.setToolTip(_translate("Animal", "Vakuutus numero ja tiedot tänne", None))
+        self.label_14.setText(_translate("Animal", "Muuta", None))
+        self.otherInfoTextEdit.setToolTip(_translate("Animal", "Muut eläimen tiedot tänne", None))
+        self.deathcheckBox.setText(_translate("Animal", "Kuollut", None))
+        self.statusCheckBox.setText(_translate("Animal", "Vaativa", None))
+        self.rightTabWidget.setTabText(self.rightTabWidget.indexOf(self.vaccineTab), _translate("Animal", "Rokotukset", None))
+        self.rightTabWidget.setTabText(self.rightTabWidget.indexOf(self.weigthControlTab), _translate("Animal", "Painonseuranta", None))
+        self.rightTabWidget.setTabText(self.rightTabWidget.indexOf(self.pictureTab), _translate("Animal", "Kuvat", None))
+        self.leftTabWidget.setTabText(self.leftTabWidget.indexOf(self.medicineTab), _translate("Animal", "Lääkkeet", None))
+        self.leftTabWidget.setTabText(self.leftTabWidget.indexOf(self.labTab), _translate("Animal", "Labrata", None))
+        self.leftTabWidget.setTabText(self.leftTabWidget.indexOf(self.phonerecepietab), _translate("Animal", "Puhelinreseptit", None))
+        self.searchOwnersButton.setText(_translate("Animal", "Hae omistajat", None))
+        self.canselButton.setText(_translate("Animal", "Sulje", None))
+        self.saveButton.setText(_translate("Animal", "Tallenna", None))
+        self.saveAndExitButton.setText(_translate("Animal", "Tallenna ja sulje", None))
 

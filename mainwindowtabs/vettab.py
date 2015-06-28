@@ -186,7 +186,7 @@ class VetTab(GenericTab):
         data.append(self.ui.vetNumberEdit.text())
         data.append(self.ui.bankEdit.text())
         data.append(self.ui.IbanEdit.text())
-        data.append("") #TODO implement SWIF
+        data.append(self.ui.swifbiclineEdit.text())
         data.append([self.ui.finnishPextEdit.toPlainText(),
                      self.ui.englishTextEdit_3.toPlainText(),
                      self.ui.swedenTextEdit.toPlainText()])#DO NOT CHANGE THESE ORDER

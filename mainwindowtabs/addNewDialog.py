@@ -18,9 +18,11 @@
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from PyQt4.QtGui import QDialog, QDoubleSpinBox,QSizePolicy
+from PyQt4.QtGui import QDialog, QDoubleSpinBox,QSizePolicy, QPlainTextEdit
 from PyQt4.QtCore import Qt
 from uipy.ui_popup import Ui_Dialog
+
+from configfile import logDEBUG, logERROR
 
 from models import SqlHandler
 
@@ -119,6 +121,27 @@ class AddNewSex(AddNewDialog):
         SqlHandler.addItem(self.session, _sex)
         #Will always be updated 
         self.parent().setSex(self.ui.lineEdit.text())
+        self.closeDialog()
+        
+class AddNewSummary(AddNewDialog):
+    def __init__(self, parent=None):
+        AddNewDialog.__init__(self, parent)
+        self.setText('Uusi tekstipohja', 'Tekstipohja:')
+        self.hideUnNeeded()
+        self.textEdit = QPlainTextEdit(parent=self)
+        self.ui.verticalLayout.insertWidget(1,self.textEdit)
+    
+    def hideUnNeeded(self):
+        self.hideComboBox()
+        self.ui.lineEdit.hide()
+    
+    def saveNewItem(self):
+        SqlHandler.addItem(self.session, SqlHandler.SummaryText(self.textEdit.toPlainText()))
+        try:
+            self.parent().addText(self.ui.lineEdit.text())
+        except:
+            logERROR("AddNewSummary failed to add text to parent!")
+        
         self.closeDialog()
 
 class AddNewSpecie(AddNewDialog):

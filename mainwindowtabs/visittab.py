@@ -152,7 +152,18 @@ class VisitTab(GenericTab):
         self.ui.saveButton.clicked.connect(self.saveTab)
         self.ui.billButton.clicked.connect(self.openBill)
         self.ui.closeButton.clicked.connect(self.closeTab)
+        
+        self.ui.openSummaryButton.clicked(self.openSummary)
 
+
+    def openSummary(self):
+        class AddHandler():
+            def __init__(self, textarea):
+                self.textarea = textarea
+            def addAskedItem(self,item):
+                self.textarea.setPlainText(item)
+                
+        Tabmanager.openTab(tabCreator=SummaryTab, self.visit, returnTab)
     
     def updateOperation(self, line):
         operation = line.data(0,0) #get operation
@@ -275,7 +286,7 @@ class VisitTab(GenericTab):
   
     '''Clears text areas and operation tree'''
     def clearAnimalRelated(self):
-        self.ui.animalNameLabel.setText('Ei valittua eläintä')
+        #self.ui.animalNameLabel.setText('Ei valittua eläintä')
         self.ui.amanuensisTextEdit.setPlainText('')
         self.ui.statusTextEdit.setPlainText('')
         self.ui.diagnosisTextEdit.setPlainText('')
@@ -302,7 +313,7 @@ class VisitTab(GenericTab):
         return data
     
     def setVisitAnimalData(self,visitanimal):
-        self.ui.animalNameLabel.setText(visitanimal.animal.name)
+        #self.ui.animalNameLabel.setText(visitanimal.animal.name)
         self.ui.amanuensisTextEdit.setPlainText(visitanimal.anamnesis)
         self.ui.statusTextEdit.setPlainText(visitanimal.status)
         self.ui.diagnosisTextEdit.setPlainText(visitanimal.diagnosis)

@@ -52,6 +52,7 @@ from models.operation import SurgeryBase, MedicationBase, LamenessBase, XrayBase
 from models.operation import UltrasonicBase, EndoscopyBase, DentalexaminationBase, LabBase, PhoneRecipie, RecipieMedicine
 from models.bill import Bill
 from models.globalvar import GlobalVar
+from models.summarytext import SummaryText
 
 from sqlalchemy.pool import SingletonThreadPool
 import datetime
@@ -371,6 +372,14 @@ class SQLHandler(object):
     
     def searchPhoneRecipies(self, session, start=0,end=50): 
         return session.query(PhoneRecipie).order_by(PhoneRecipie.made_time)[start:end]
+    
+    #summary functions
+    
+    def SummaryText(self, name, text):
+        return SummaryText(name, text)
+    
+    def searchSummary(self, session, question):
+        return session.query(SummaryText).filter(SummaryText.name.like('%'+ question +'%'))
     
     #---------------------------------#
     #

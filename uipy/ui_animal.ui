@@ -160,7 +160,7 @@
             </date>
            </property>
            <property name="displayFormat">
-            <string>MM-dd-yyyy</string>
+            <string>d.M.yyyy</string>
            </property>
            <property name="calendarPopup">
             <bool>true</bool>
