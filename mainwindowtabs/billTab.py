@@ -118,22 +118,26 @@ class BillTab(GenericTab):
         if self.item != None:
             if self.item.getType() != 'Visit':
                 self.ui.ownerLabel.setText(self.item.visit.owner.name)   
+
                 if self.item.km < 0.001 and self.item.km_payment < 0.001:
                     self.ui.clinic_radio_button.setChecked(True)
-                    self.ui.clinicPriceSpinBox.setValue(self.item.clinic_payment)
+                    self.ui.clinicPriceSpinBox.setValue(self.item.clinic_payment * ((100+SqlHandler.getALV(1))/100.))
                 else:
                     self.ui.clinic_radio_button.setChecked(False)
                     self.ui.KmSpinBox.setValue(self.item.km)
-                    self.ui.visitPriceSpinBox.setValue(self.item.clinic_payment)
-                    self.ui.KmPriceSpinBox.setValue(self.item.km_payment)
-                self.ui.operationSpinBox.setValue(self.item.operations_payment)
-                self.ui.accessoriesSpinBox.setValue(self.item.accessories_payment)
-                self.ui.labSpinBox.setValue(self.item.lab_payment)
-                self.ui.medicineSpinBox.setValue(self.item.medicines_payment)
-                self.ui.dietSpinBox.setValue(self.item.diet_payment)
+
+                    self.ui.visitPriceSpinBox.setValue(self.item.clinic_payment * ((100+SqlHandler.getALV(1))/100.))
+                    self.ui.KmPriceSpinBox.setValue(self.item.km_payment * ((100+SqlHandler.getALV(1))/100.))
+
+                self.ui.operationSpinBox.setValue(self.item.operations_payment * ((100+SqlHandler.getALV(1))/100.))
+                self.ui.accessoriesSpinBox.setValue(self.item.accessories_payment * ((100+SqlHandler.getALV(1))/100.))
+                self.ui.labSpinBox.setValue(self.item.lab_payment * ((100+SqlHandler.getALV(1))/100.))
+                self.ui.medicineSpinBox.setValue(self.item.medicines_payment * ((100+SqlHandler.getALV(2))/100.))
+                self.ui.dietSpinBox.setValue(self.item.diet_payment * ((100+SqlHandler.getALV(3))/100.))
+                self.ui.paidSpinBox.setValue(self.item.paid_value) #this has all alvs so it cant be out of them
+
                 self.ui.otherInfoTextEdit.setPlainText(self.item.other_info)
                 self.ui.paymentComboBox.setCurrentIndex(self.ui.paymentComboBox.findData(self.item.payment_method))
-                self.ui.paidSpinBox.setValue(self.item.paid_value)
                 self.ui.paidDateEdit.setDate(self.item.paid_time)
                 self.ui.DueDateEdit.setDate(self.item.due_date)
                 self.ui.precentSlider.setValue(self.item.extra_percent)
@@ -163,78 +167,21 @@ class BillTab(GenericTab):
         return base_number*10 + check_sum
     
     def setDefaultClinicPrice(self):
-        self.ui.clinicPriceSpinBox.setValue(SqlHandler.getGlobalVar(key="clinicpayment"))
+        self.ui.clinicPriceSpinBox.setValue(SqlHandler.getGlobalVar(key="clinicpayment") * (100+SqlHandler.getALV(1))/100.)
     
-        
-    def updatePriceList(self, operation, old_prices):
-        _type = operation.getType()
-        
-        prices = {}
-        prices["operation_price"] = 0.0
-        prices["accesories_price"] = 0.0
-        prices["lab_price"] = 0.0
-        prices["medicine_price"] = 0.0
-        prices["diet_price"] = 0.0
-        
-        if _type is 'Basic':
-            prices["operation_price"] += operation.price
-        elif _type is 'Vaccination':
-            prices["operation_price"] += operation.price
-            if operation.base.item != None:
-                prices["medicine_price"] += operation.base.item.price
-            else:
-                self.errorMessage('ERROR: BillTab.setPrices(): operation.hasItem() is true but item is None!')
-        elif _type is 'Surgery':
-            for item in operation.items:
-                if g_item_alv_dict[item.item.__class__.__name__] == 1:
-                    prices["accesories_price"] += item.item.price * item.count
-                elif g_item_alv_dict[item.item.__class__.__name__] == 2:
-                    prices["medicine_price"] += item.item.price * item.count
-                elif g_item_alv_dict[item.item.__class__.__name__] == 3:
-                    prices["diet_price"] += item.item.price * item.count
-                else:
-                    self.errorMessage('ERROR: BillTab.setPrices(): ALV is not valid!') 
-        elif _type is 'Lab':
-            prices["lab_price"] += operation.price
-        elif _type is 'Medication':
-            prices["operation_price"] += operation.price
-            prices["medicine_price"] += operation.base.item.price
-        elif _type is 'Lameness':
-            prices["operation_price"] += operation.price
-        elif _type is 'Xray':
-            prices["operation_price"] += operation.price
-        elif _type is 'Ultrasonic':
-            prices["operation_price"] += operation.price
-        elif _type is 'Endoscopy':
-            prices["operation_price"] += operation.price
-        elif _type is 'Dentalexamination':
-            prices["operation_price"] += operation.price
-        else:
-            print("DEBUG: ERROR: cant solve operation type, type is ", _type)
 
-        for key in prices:
-            old_prices[key] += prices[key]*operation.count
-        return old_prices
+
+        
+
         
     def setPrices(self, visit):
-        price_dict = {}
-        price_dict["operation_price"] = 0.0
-        price_dict["accesories_price"] = 0.0
-        price_dict["lab_price"] = 0.0
-        price_dict["medicine_price"] = 0.0
-        price_dict["diet_price"] = 0.0
-        
-        for visit_animal in visit.visitanimals:
-            for operation in visit_animal.operations:
-                tmp = operation.getPriceDict()
-                for key in tmp:
-                    price_dict[key] += tmp[key]
+        price_dict = visit.getPriceDict()
 
-        self.ui.operationSpinBox.setValue(price_dict["operation_price"])
-        self.ui.accessoriesSpinBox.setValue(price_dict["accesories_price"])
-        self.ui.labSpinBox.setValue( price_dict["lab_price"])
-        self.ui.medicineSpinBox.setValue(price_dict["medicine_price"])
-        self.ui.dietSpinBox.setValue(price_dict["diet_price"])
+        self.ui.operationSpinBox.setValue(price_dict["operation_price"] * (100+SqlHandler.getALV(1))/100.)
+        self.ui.accessoriesSpinBox.setValue(price_dict["accesories_price"] * (100+SqlHandler.getALV(1))/100.)
+        self.ui.labSpinBox.setValue( price_dict["lab_price"] * (100+SqlHandler.getALV(1))/100.)
+        self.ui.medicineSpinBox.setValue(price_dict["medicine_price"] * (100+SqlHandler.getALV(2))/100.)
+        self.ui.dietSpinBox.setValue(price_dict["diet_price"] * (100+SqlHandler.getALV(3))/100.)
 
     def dueDateChanged(self,value):
         self.ui.DueDateEdit.setDate(datetime.datetime.now()+self.ui.DueDateTimeComboBox.itemData(self.ui.DueDateTimeComboBox.currentIndex()))
@@ -259,13 +206,14 @@ class BillTab(GenericTab):
        
     def clinicVisitPageChange(self, status):
         self.ui.stackedWidget.setCurrentIndex(0 if status else 1)
-        self.updateEndPrice(0)
+        self.updateEndPrice(0) #zero is just because connections need to give parameter
     
     def updateKmData(self):
-        km = self.ui.KmSpinBox.value()
-        #TODO: add these hardcoded values to configure server (msg from UpdateKmData)
-        self.ui.visitPriceSpinBox.setValue(SqlHandler.getGlobalVar(key="clinicpayment") if km > 0.0 else 0)
-        self.ui.KmPriceSpinBox.setValue(km*SqlHandler.getGlobalVar(key="km_price"))
+        pass
+        '''#km = self.ui.KmSpinBox.value()
+
+        #self.ui.visitPriceSpinBox.setValue(SqlHandler.getGlobalVar(key="clinicpayment") if km > 0.0 else 0)
+        #self.ui.KmPriceSpinBox.setValue(km*SqlHandler.getGlobalVar(key="km_price"))'''
 
         
     def setToday(self):
@@ -274,9 +222,7 @@ class BillTab(GenericTab):
     def changePercent(self, value):
         self.ui.extraPercentLabel.setText(str(value))
     
-       
-    
-        
+
     def getALV1Price(self):
         price_ALV1 = 0.0
         if not self.ui.clinic_radio_button.isChecked():
@@ -289,16 +235,16 @@ class BillTab(GenericTab):
         price_ALV1 += self.ui.accessoriesSpinBox.value()
         price_ALV1 += self.ui.labSpinBox.value()
         
-        return price_ALV1*(100 + self.ui.precentSlider.value())/100.0
+        return (price_ALV1*(100 + self.ui.precentSlider.value())/100.0) / ((100+SqlHandler.getALV(1))/100.)
         
     def getALV2Price(self):
-        return self.ui.medicineSpinBox.value()
+        return self.ui.medicineSpinBox.value() / ((100+SqlHandler.getALV(2))/100.)
         
     def getALV3Price(self):
-        return self.ui.dietSpinBox.value()
+        return self.ui.dietSpinBox.value() / ((100+SqlHandler.getALV(3))/100.)
       
     def getTotal(self):
-        return self.getALV1Price() + self.getALV2Price() + self.getALV3Price()
+        return self.getALV1Price()*((100+SqlHandler.getALV(1))/100.) + self.getALV2Price()*((100+SqlHandler.getALV(2))/100.) + self.getALV3Price()*((100+SqlHandler.getALV(3))/100.)
       
     
     def roundEndPrice1(self):
@@ -311,13 +257,16 @@ class BillTab(GenericTab):
         self.roundEndPrice(0.05)
     
     def roundEndPrice(self, precision):
-        total = self.getTotal()
+        total = round(self.getTotal(), 3) #convert i.e 1.000000000001 to 1.000
+
+        print("rounding: total: " , total)
+
         from math import ceil
         rounded = ceil(total/precision) * precision
         previous_value = self.ui.operationSpinBox.value()
         self.ui.operationSpinBox.setValue(previous_value + rounded - total)
           
-    def updateEndPrice(self, value):
+    def updateEndPrice(self):
         price_ALV1 = self.getALV1Price() * (100+SqlHandler.getALV(1))/100.
         price_ALV2 = self.getALV2Price() * (100+SqlHandler.getALV(2))/100.
         price_ALV3 = self.getALV3Price() * (100+SqlHandler.getALV(3))/100.
@@ -375,19 +324,20 @@ class BillTab(GenericTab):
         data = {}
         data['visit'] = self.visit
         if self.ui.clinic_radio_button.isChecked():
-            data['clinic_payment'] = self.ui.clinicPriceSpinBox.value()
+            data['clinic_payment'] = self.ui.clinicPriceSpinBox.value() / ((100+SqlHandler.getALV(1))/100.)
             data['km'] = 0.0
             data['km_payment'] = 0.0
         else:
-            data['clinic_payment'] = self.ui.visitPriceSpinBox.value()
+            data['clinic_payment'] = self.ui.visitPriceSpinBox.value() / ((100+SqlHandler.getALV(1))/100.)
             data['km'] = self.ui.KmSpinBox.value()
-            data['km_payment'] = self.ui.KmPriceSpinBox.value()
-        data['operations_payment'] = self.ui.operationSpinBox.value()
-        data['lab_payment'] = self.ui.labSpinBox.value()
-        data['accessories_payment'] = self.ui.accessoriesSpinBox.value()
+            data['km_payment'] = self.ui.KmPriceSpinBox.value() / ((100+SqlHandler.getALV(1))/100.)
+
+        data['operations_payment'] = self.ui.operationSpinBox.value() / ((100+SqlHandler.getALV(1))/100.)
+        data['lab_payment'] = self.ui.labSpinBox.value() / ((100+SqlHandler.getALV(1))/100.)
+        data['accessories_payment'] = self.ui.accessoriesSpinBox.value() / ((100+SqlHandler.getALV(1))/100.)
         data['extra_percent'] = self.ui.precentSlider.value()
-        data['medicines_payment'] = self.ui.medicineSpinBox.value()
-        data['diet_payment'] = self.ui.dietSpinBox.value()
+        data['medicines_payment'] = self.ui.medicineSpinBox.value() / ((100+SqlHandler.getALV(2))/100.)
+        data['diet_payment'] = self.ui.dietSpinBox.value() / ((100+SqlHandler.getALV(3))/100.)
         data['payment_method'] = (self.ui.paymentComboBox.itemData(self.ui.paymentComboBox.currentIndex()))
         data['due_date'] = self.qdateToPy(self.ui.DueDateEdit.date())
         data['paid_time'] = self.qdateToPy(self.ui.paidDateEdit.date())

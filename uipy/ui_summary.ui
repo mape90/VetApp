@@ -48,7 +48,14 @@
        <item>
         <widget class="QPushButton" name="getInfoFromVisitButton">
          <property name="text">
-          <string>Hae lääketiedot käynnistä</string>
+          <string>Hae eläimen lääkeselosteet</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="addSearchButton">
+         <property name="text">
+          <string>Lisää</string>
          </property>
         </widget>
        </item>
@@ -115,6 +122,20 @@
          </property>
         </spacer>
        </item>
+       <item>
+        <widget class="QPushButton" name="canselButton">
+         <property name="text">
+          <string>Hylkää</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="closeButton">
+         <property name="text">
+          <string>Tallenna muutokset</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
     </layout>
@@ -124,6 +145,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>plainTextEdit</tabstop>
+  <tabstop>closeButton</tabstop>
+  <tabstop>canselButton</tabstop>
+  <tabstop>getInfoFromVisitButton</tabstop>
+  <tabstop>addSearchButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

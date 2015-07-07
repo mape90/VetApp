@@ -32,11 +32,16 @@ g_operationbase_translation_dict = {"OperationBase":"Operaatio", "VaccinationBas
 #these items are in two dict so you need to change only this dict to cahange names in both
 g_base_and_item_dict = {"Medicine":"Lääke","Vaccine":"Rokote"}
 
+g_medicines_list = ["Medicine", "Vaccine", "Drug"]
+
 g_item_translation_dict = {"Item":"Tuote","Medicine":g_base_and_item_dict["Medicine"],
                            "Vaccine":g_base_and_item_dict["Vaccine"],"Feed":"Rehu"}
 
 g_item_name_dict = {"Item":"Tuote","Medicine":g_base_and_item_dict["Medicine"],
                     "Vaccine":g_base_and_item_dict["Vaccine"],"Feed":"Rehu", "Drug":"Huumausaine"}
+
+g_item_to_bill_class_dict = {'Item':"accesories_price" ,'Medicine':'medicine_price' , 'Vaccine':'medicine_price' , 'Feed':"diet_price" , 'Drug':"medicine_price"}
+
 
 #translate operation name to item name both in user language (i.e, finnish)
 g_item_to_base_dict = {g_operationbase_translation_dict['VaccinationBase'] : g_base_and_item_dict["Vaccine"],
@@ -59,7 +64,8 @@ g_save_error_message = "Ei voida tallentaa, tietoja puuttuu!"
 
 g_treewidget_button_texts = {'add':'Lisää', 'remove':'Poista', 'open':'Avaa','check':'Tehty'}
 
-g_error_msg_dict = {'database_init': 'Tietokannan alustaminen epäonnistui. Ota yhteyttä ylläpitoon.'}
+g_error_msg_dict = {'database_init': 'Tietokannan alustaminen epäonnistui. Ota yhteyttä ylläpitoon.',
+                    'summary_name_used':"Nimi on jo käytössä, valitse jokin muu"}
 
 g_payment_time_dict = dict([('Heti',datetime.timedelta(days=0)),('1 vk',datetime.timedelta(days=7)),('2 vk',datetime.timedelta(days=14))])
 

@@ -24,7 +24,7 @@ Created on 14, 6, 2015
 '''
 
 from mainwindowtabs.generictab import GenericTab
-from uipy.ui_summary import Ui_summaryTab
+from uipy.ui_summary import Ui_SummaryTab
 from uipy.ui_searchlineedit import Ui_SearchLineEdit
 
 from mainwindowtabs.searchlineedit import SearchLineEdit
@@ -38,11 +38,29 @@ from models import SqlHandler
 
 
 class SummaryTab(GenericTab):
-    def __init__(self, parent=None,visit=None):
+    def __init__(self, parent=None,item=None):
         GenericTab.__init__(self, parent=parent, item=None)
-        self.ui = Ui_summaryTab()
+        self.ui = Ui_SummaryTab()
         self.ui.setupUi(self)
-        self.visit = visit
+        self.returnItem = False
+        self.visitanimal = None
+
+        if type(item) is dict:
+            if 'owner' in item:
+                self.ui.ownerNameLabel.setText(item['owner'].name)
+            else:
+                logERROR(self, "SummaryTab.init: owner not found from dict")
+            if 'visitanimal' in item:
+                self.visitanimal = item['visitanimal']
+                self.ui.animalNameLabel.setText(item['visitanimal'].animal.name)
+            else:
+                logERROR(self, "SummaryTab.init: owner not found from dict")
+            if 'text' in item:
+                self.addText(item['text'])
+            else:
+                logERROR(self, "SummaryTab.init: text not found from dict")
+        else:
+            logDEBUG(self, "SummaryTab.init: item is not dict it is: "+ item)
         
         self.session = SqlHandler.newSession()
         
@@ -53,17 +71,34 @@ class SummaryTab(GenericTab):
         
         self.configure()
         self.configureConnctions()
-    
-    def getDataFromVisit(self):
-        if self.visit:
-            #TODO
-            self.ui.plainTextEdit.appendPlainText("")
+
+    def getItem(self):
+        if self.returnItem:
+            return self.ui.plainTextEdit.toPlainText()
         else:
-            logERROR("Summary do not hava visit, as it should have")
+            return None
+
+    def getDataFromVisitanimal(self):
+        if(self.visitanimal):
+            d = self.visitanimal.getMedicineDict()
+            for key in d.keys():
+                self.addText(key +':\n')
+                self.addText(d[key] +'\n')
+
+
+    def saveChanges(self):
+        self.returnItem = True;
+        self.closeTab()
 
     def configureConnctions(self):
-        self.ui.getInfoFromVisitButton.clicked.connect(self.getDataFromVisit)
+        self.ui.getInfoFromVisitButton.clicked.connect(self.getDataFromVisitanimal)
+        self.ui.canselButton.clicked.connect(self.closeTab)
+        self.ui.closeButton.clicked.connect(self.saveChanges)
+        self.ui.addSearchButton.clicked.connect(self.addFromSearch)
     
+    def addFromSearch(self):
+        self.addText(self.itemSearchEdit.getCurrentItem().text)
+
     def configure(self):
         self.ui.searchLayout.insertWidget(0,self.itemSearchEdit)
     
@@ -71,6 +106,7 @@ class SummaryTab(GenericTab):
         self.ui.plainTextEdit.appendPlainText(text)
     
     def addAskedItem(self, item):
-        logDEBUG("Some one called SummaryTab with addAskedItem, item ", item)
-
-class    
+        try:
+            self.ui.plainTextEdit.appendPlainText(item)
+        except:
+            logERROR(self, "Added item was not string it was : " + str(type(item)))

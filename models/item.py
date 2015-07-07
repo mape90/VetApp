@@ -58,6 +58,9 @@ class Item(Base):
     price = Column(Integer)
     barcode = Column(String(100))
     item_type = Column(String(50))
+
+    count_type = Column(String(10))
+
     customer_descriptions = relationship("ItemDescription", backref='item', cascade="all, delete, delete-orphan")
     __mapper_args__ = {'polymorphic_identity':'item','polymorphic_on':item_type}
     def __init__(self, name, description, stock_price, price, barcode=''):
@@ -67,6 +70,7 @@ class Item(Base):
         self.price = price
         self.barcode = barcode
         self.customer_descriptions=[]
+        self.count_type = 'kpl'
  
     def update(self, data):      
         for key, item in data.items():

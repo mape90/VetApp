@@ -73,20 +73,7 @@ class Bill(Base):
             setattr(self, key, data[key])
 
     def calcPricesFromVisit(self):
-        price_dict = {}
-        price_dict["operation_price"] = 0.0
-        price_dict["accesories_price"] = 0.0
-        price_dict["lab_price"] = 0.0
-        price_dict["medicine_price"] = 0.0
-        price_dict["diet_price"] = 0.0
-        
-        for visit_animal in self.visit.visitanimals:
-            for operation in visit_animal.operations:
-                tmp = operation.getPriceDict()
-                for key in tmp:
-                    price_dict[key] += tmp[key]
-                
-        return price_dict       
+        return self.visit.getPriceDict()
 
     
     def getExtraPartFromPrice(self):

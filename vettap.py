@@ -19,6 +19,8 @@
 import sys
 
 from PyQt4 import QtGui
+
+
 import datetime
 
 from models import SqlHandler
@@ -129,10 +131,6 @@ def init(status):
         
         
         
-        
-
-
-
 def main():
     
     #you can change databasename at models.__init__
@@ -141,7 +139,7 @@ def main():
     status = os.path.exists(getDBName())
     
     app = QtGui.QApplication(sys.argv)
-    
+
     box = QProgressDialog()
     box.setMinimum(0);
     box.setMaximum(0);

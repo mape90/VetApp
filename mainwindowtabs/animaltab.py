@@ -425,7 +425,7 @@ class AnimalTab(GenericTab):
         #self.initializeParameters()
     
     def saveAble(self):
-        return len(self.ui.nameLineEdit.text() + self.ui.officialNamelineEdit.text()) > 1
+        return len(self.ui.nameLineEdit.text() + self.ui.officialNamelineEdit.text()) >= 1
     
     def addAskedItem(self, item):#TODO: implement
         pass

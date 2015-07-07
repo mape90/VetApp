@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
-from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, Interval, Boolean, Table, Date
+from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, Interval, Boolean, Table, Date, Float
 from sqlalchemy.orm import relationship
 
 #from sqlalchemy.ext.declarative import declarative_base
@@ -27,7 +27,7 @@ from models.item import *
 import datetime
 from configfile import logDEBUG, logERROR
 
-from models.translationtables import g_operationbase_translation_dict
+from models.translationtables import g_operationbase_translation_dict, g_item_to_bill_class_dict
 
 ##----------------------------------------------##
 #
@@ -65,6 +65,7 @@ class OperationBase(Base):
             print("ERROR: " + name + " wont have translation in g_operationbase_translation_dict")
             return name
     
+
     def hasDuration(self):
         return False
     
@@ -329,7 +330,16 @@ class Operation(Base):
         
         return price_dict
         
-
+    def getItems(self):
+        tmp = []
+        if hasattr(self.base, 'item'):
+            logDEBUG(self.base, "has item")
+            tmp.extend(self.base.item)
+        if hasattr(self, 'items'):
+            logDEBUG(self, "has items")
+            for i in self.items: #list has surgery items
+                tmp.extend(i.item)
+        return tmp
 
     def update(self, data):
         for key, item in data.items():
@@ -388,6 +398,35 @@ class Vaccination(Operation):
             return self.price + self.base.item.price
         else:
             return self.price
+
+
+
+
+class VisitItem(Base):
+    __tablename__='visititems'
+    id = Column(Integer, Sequence('visititem_id_seq'), primary_key=True)
+    visitanimal_id = Column(Integer, ForeignKey('visitanimals.id'))
+    item_id = Column(Integer, ForeignKey('items.id'))
+    item = relationship("Item")
+    count = Column(Float)
+    def __init__(self,item,count=1):
+        self.item = item
+        self.count = count
+
+    def getType(self=None):
+        return "VisitItem"
+
+    def stringList(self):
+        string_list = self.item.stringList()
+        string_list[3] = str(float(string_list[3]) * self.count)
+        string_list.append(str(self.count))
+        return string_list
+
+    def getPriceDict(self):
+        tmp = {}
+        tmp[g_item_to_bill_class_dict[self.item.getType()]] = self.item.price * self.count
+        return tmp
+
 
 
 '''

@@ -52,7 +52,6 @@ class TabManager(object):
     
 
     def openTab(self, tabCreator, newItem=None, returnTab=None):
-        
         print("DEBUG: TabManager->openTab(): tabCreator, newItem, returnTab:",(tabCreator, newItem, returnTab))
         
         tabType = tabCreator.__name__
@@ -159,7 +158,11 @@ class TabManager(object):
             #check if tab is saved
             if not tab.getItem() == None:
                 #tab has saved item so we can get id from it
-                item_id = str(tab.getItem().id)
+                item_id = ''
+                #check if item is normal item or some other i.e. summaryTab has string as item
+                #and it wont have id
+                if hasattr(tab.getItem(), 'id'):
+                    item_id = str(tab.getItem().id)
                 
                 key = tabType + item_id
 

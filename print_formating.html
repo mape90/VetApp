@@ -1,262 +1,283 @@
 <!DOCTYPE html>
 <html>
-	<meta charset="UTF-8">
-	<body style="font-family: Helvetica, Arial, sans-serif;font-size: 24px">
-	
+    <meta charset="UTF-8">
+    <body style="font-family: Helvetica, Arial, sans-serif;font-size: 24px">
 
-	
-	<style>
 
-	div.A4
-	{
-			width:928px; 
-			height:1200px;
-	}
-	
-	p
-	{
-			font-size:80%;
-	}
-	
-	div.topleft{
-			<!-- background-color:#70D7D7; -->
-			height:40%;
-			width:60%;
-			float:left;
-	}
-	
-	div.vetinfo
-	{
-			<!-- background-color:#00D7FF; -->
-			margin-top:1%;
-			margin-bottom:1%;
-			margin-right:1%;
-			margin-left:1%;
-			height:47%;
-			width:98%;
-			float:left;
-	}
-	div.ownerinfo
-	{
-			<!-- background-color:#00D700; -->
-			margin-top:1%;
-			margin-bottom:1%;
-			margin-right:1%;
-			margin-left:1%;
-			height:47%;
-			width:98%;
-			float:left;
-	}
-	div.topright
-	{
-			<!-- background-color:#EEEEEE; -->
-			height:40%;
-			width:40%;
-			float:right;
-	}
-	
-	table
-	{
-			border-bottom:1px solid black;
-			border-top: 1px solid black;
-			border-left: 1px solid black;
-			border-right: 1px solid black;
-			border-collapse:collapse;
-	}
-	
-	th{
-			font-size:80%;
-			border-left:1px solid black;
-			border-bottom:1px solid black;
-			border-collapse:collapse;
-	}
-	td
-	{
-			text-align:right;
-			border-left:1px solid black;
-			font-size:80%
-	}
-	
-	table.billtable
-	{
-			width:98%;
-			margin-top:1%;
-			margin-bottom:1%;
-			margin-right:1%;
-			margin-left:1%;
-			float:right;
-	}
-	
-	div.operation
-	{
-			<!-- background-color:#FF0000; -->
-			height:40%;
-			width:98%;
-			float:left;
-			margin-top:1%;
-			margin-bottom:1%;
-			margin-right:1%;
-			margin-left:1%;
-	}
-	
-	table.operationtable
-	{
 
-	}
-	
-	div.bottomtext
-	{
-			width:928px;
-			position:fixed;
-			bottom: 0;
-			left:0;
-			border-top:1px solid black;
-			clear:both;
-			text-align:center;
-			
-	}
-	
-	div.placesundertable
-	{
-			float:right;
-	}
-	
-	</style>
-		<div id="bill" class="A4">
-			
-			<div id="topleft" class="topleft">
-<!-- 					<img src="file:///home/mp/workspace/VetApp/ala_hampaat.png" width="200px" height="50px"> -->
-					<div class="vetinfo">
-							<b>Eläinlääkäri</b>
-							<p>
-									vet_name 
-									<br> Eläinlääkäri numero: vet_number
-									<br> vet_address, vet_postnumber, vet_postaddress
-									<br> Kuuluu arvonlisä rekisteriin.
-							</p>
-					</div>
-					<div class="ownerinfo">
-							<b>Omistajantiedot</b>
-									<p> owner_name <br> 
-									owner_address, owner_postnumber, owner_postaddress
-							</p>
-					</div>
-			</div>
-			<div id="billinfo" class="topright">
-				<b style="font-size:110%;"> Lasku </b>
-				<table class="billtable">
-					<tr>
-						<td> Laskun numero </td>
-						<td> bill_number </td>
-					</tr>
-					<tr>
-						<td> Päiväys </td>
-						<td> bill_date </td>
-					</tr>
-					<tr>
-						<td> Eräpäivä </td>
-						<td> due_date </td>
-					</tr> 
-					<tr>
-						<td> Viivästyskorko </td>
-						<td> penalty_interest % </td>
-					</tr>
-					<tr>
-						<td> Viitenumero </td>
-						<td> index_number</td>
-					</tr>
-					<tr>
-						<td> Maksuehto</td>
-						<td> payment_condition</td>
-					</tr>
-					<tr>
-						<td> Pankki </td>
-						<td> bank_name</td>
-					</tr> 
-					<tr>
-						<td> Tilinumero </td>
-						<td> account_number </td>
-					</tr> 
-					<tr>
-						<td> SWIF/BIC </td>
-						<td> swif_bic</td>
-					</tr> 
-					<tr>
-						<td> Maksutapa </td>
-						<td> payment_method</td>
-					</tr> 
-				</table>
-			</div>
+    <style>
 
-			<div id="operations" class="operation">
-				<table class="operationtable">
-					<tr>
-						<th style="width:45%;text-align:left"><b> Tuote </b></th>
-						<th style="width:5%"><b> Määrä<b> </th>
-						<th style="width:5%"><b> Yksikkö<b> </th>
-						<th style="width:7%"><b> á hinta<b> </th>
-						<th style="width:7%"><b> Alv %<b> </th>
-						<th style="width:5%"><b> Alv<b> </th>
-						<th style="width:5%"><b> Yhteensä<b> </th>
-						
-					</tr> 
-					operations_lists
-					<!-- <tr>
-						<td style="text-align:left"> operation_name </td>
-						<td style="text-align:center"> count </td>
-						<td style="text-align:center"> value </td>
-						<td style="text-align:center"> a_price </td>
-						<td style="text-align:center"> alv_p </td>
-						<td style="text-align:right"> alv </td>
-						<td style="align:right;"> t_price </td>
-					</tr>
-					<tr>
-							<td style="text-align:left"> </td>
-							<td style="text-align:center"> </td>
-							<td style="text-align:center"> </td>
-							<td style="text-align:center"> </td>
-							<td style="text-align:center"> </td>
-							<td style="text-align:right">  </td>
-							<td style="align:right;"> <br> </td>
-					</tr> -->
-				</table>
-				<div id=endpirces class=placesundertable> 
-					<br> 
-					<table style="border:none">
-						<tr>
-						<td style="border:none"> <b> Yhteensä: &nbsp; </b> </td > <td style="border:none; float:right">  price_total € </td>
-						</tr>
-						<tr>
-						<td style="border:none"> <b> Maksettavaa: &nbsp; </b> </td > <td style="border:2px solid black; float:right">  need_to_pay € </td>
-						</tr>
-						<tr>
-						<td style="border:none"> Yhteensä alv: &nbsp; </td> <td style="border:none;float:right">  alv_total €</td>
-						</tr>
-					</table>
-				</div>
-				<p style="float:left"><b> Lisätiedot: </b><br> other_info </p>
-			</div>
-			<div id="bottomtext" class="bottomtext">
-				<table style="width:100%;border:none;margin-right:5%;margin-left:5%;">
-					<tr>
-						<td style="border:none;text-align:left"> vet_name </td> 
-						<td style="border:none;text-align:left"> puh. vet_phonenumber </td> 
-						<td style="border:none;text-align:left"> bank_name </td>
-					</tr>
-					<tr>
-						<td style="border:none;text-align:left"> vet_address </td> 
-						<td style="border:none;text-align:left"> sift_bic </td> 
-						<td style="border:none;text-align:left"> account_number </td>
-					</tr>
-					<tr>
-						<td style="border:none;text-align:left"> vet_postnumber, vet_postaddress  </td> 
-						<td style="border:none;text-align:left"> sp. vet_email_address  </td> 
-						<td style="border:none;text-align:left">  </td>
-					</tr>
-				</table>
-			</div>
+    div.A4
+    {
+            width:928px;
+            height:1200px;
+    }
 
-		</div>
-	
-	</body>
+    p
+    {
+            font-size:80%;
+    }
+
+    div.topleft{
+            <!-- background-color:#70D7D7; -->
+            height:40%;
+            width:60%;
+            float:left;
+    }
+
+    div.vetinfo
+    {
+            font-size:70%;
+            margin-top:1%;
+            margin-bottom:0%;
+            margin-right:1%;
+            margin-left:1%;
+            height:47%;
+            width:98%;
+            float:left;
+    }
+    div.ownerinfo
+    {
+            font-size:90%;
+            border-top-style: solid;
+
+            border-top-width: medium;
+            margin-top:1%;
+            margin-bottom:-2%;
+            margin-right:1%;
+            margin-left:1%;
+           /* height:47%;*/
+            width:98%;
+            float:left;
+    }
+
+    div.animalinfo{
+            border-top-style: solid;
+            border-top-width: thin;
+            font-size:90%;
+            margin-top:0%;
+            margin-bottom:-2%;
+            margin-right:0%;
+            margin-left:1%;
+           /* height:47%;*/
+            width:98%;
+            float:left;
+    }
+
+    div.topright
+    {
+
+            height:40%;
+            width:40%;
+            float:right;
+    }
+
+    div.topright2
+    {
+            background-color:#EEEEEE;
+
+            float:right;
+    }
+
+    table
+    {
+            border-bottom:1px solid black;
+            border-top: 1px solid black;
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+            border-collapse:collapse;
+    }
+
+    th{
+            font-size:80%;
+            border-left:1px solid black;
+            border-bottom:1px solid black;
+            border-collapse:collapse;
+    }
+    td
+    {
+            text-align:right;
+            border-left:1px solid black;
+            font-size:80%
+    }
+
+    table.billtable
+    {
+            width:98%;
+            margin-top:1%;
+            margin-bottom:1%;
+            margin-right:1%;
+            margin-left:1%;
+            float:right;
+    }
+
+    div.operation
+    {
+            <!-- background-color:#FF0000; -->
+            height:40%;
+            width:98%;
+            float:left;
+            margin-top:1%;
+            margin-bottom:1%;
+            margin-right:1%;
+            margin-left:1%;
+    }
+
+    table.operationtable
+    {
+
+    }
+
+    div.bottomtext
+    {
+            width:928px;
+            position:fixed;
+            bottom: 0;
+            left:0;
+            border-top:1px solid black;
+            clear:both;
+            text-align:center;
+
+    }
+
+    div.placesundertable
+    {
+            float:right;
+    }
+
+    </style>
+        <div id="bill" class="A4">
+
+            <div id="topleft" class="topleft">
+                    <div class="vetinfo">
+                            <b>Eläinlääkäri</b>
+                            <p>
+                                    vet_name
+                                    <br> Eläinlääkäri numero: vet_number
+                                    <br> vet_address, vet_postnumber, vet_postaddress
+                                    <br> Kuuluu arvonlisärekisteriin.
+                            </p>
+                    </div>
+                    <div class="ownerinfo">
+
+                            <p style="font-size:70%;"> <b>Omistajantiedot</b> </br> owner_name,  owner_address, owner_postnumber, owner_postaddress </p>
+                    </div>
+
+                    animal_info_area
+
+
+            </div>
+
+            <div>
+                <div id="billinfo" class="topright">
+                    <b style="font-size:110%;"> Lasku </b>
+                    <table class="billtable">
+                        <tr>
+                            <td> Laskun numero </td>
+                            <td> bill_number </td>
+                        </tr>
+                        <tr>
+                            <td> Päiväys </td>
+                            <td> bill_date </td>
+                        </tr>
+                        <tr>
+                            <td> Eräpäivä </td>
+                            <td> due_date </td>
+                        </tr>
+                        <tr>
+                            <td> Viivästyskorko </td>
+                            <td> penalty_interest % </td>
+                        </tr>
+                        <tr>
+                            <td> Viitenumero </td>
+                            <td> index_number</td>
+                        </tr>
+                        <tr>
+                            <td> Maksuehto</td>
+                            <td> payment_condition</td>
+                        </tr>
+                        <tr>
+                            <td> Pankki </td>
+                            <td> bank_name</td>
+                        </tr>
+                        <tr>
+                            <td> Tilinumero </td>
+                            <td> account_number </td>
+                        </tr>
+                        <tr>
+                            <td> SWIF/BIC </td>
+                            <td> swif_bic</td>
+                        </tr>
+                        <tr>
+                            <td> Maksutapa </td>
+                            <td> payment_method</td>
+                        </tr>
+
+                        <tr style="border-top:2px solid black;">
+                            <td> <b>Maksettava</b> </td>
+                            <td > <p style="font-size:110%;"> <b>need_to_pay € &nbsp; </b> </p>  </td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+
+
+
+            <div id="operations" class="operation" >
+                <table class="operationtable">
+                    <tr>
+                        <th style="width:45%;text-align:left"><b> Tuote </b></th>
+                        <th style="width:5%"><b> Määrä<b> </th>
+                        <th style="width:5%"><b> Yksikkö<b> </th>
+                        <th style="width:7%"><b> á hinta<b> </th>
+                        <th style="width:7%"><b> Alv %<b> </th>
+                        <th style="width:5%"><b> Alv<b> </th>
+                        <th style="width:5%"><b> Yhteensä<b> </th>
+
+                    </tr>
+                    operations_lists
+                    <tr>
+                        <td style="text-align:left"> operation_name </td>
+                        <td style="text-align:center"> count </td>
+                        <td style="text-align:center"> value </td>
+                        <td style="text-align:center"> a_price </td>
+                        <td style="text-align:center"> alv_p </td>
+                        <td style="text-align:right"> alv </td>
+                        <td style="align:right;"> t_price </td>
+                    </tr>
+                    <tr>
+                            <td style="text-align:left"> </td>
+                            <td style="text-align:center"> </td>
+                            <td style="text-align:center"> </td>
+                            <td style="text-align:center"> </td>
+                            <td style="text-align:center"> </td>
+                            <td style="text-align:right">  </td>
+                            <td style="align:right;"> <br> </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div>
+                <div style="float:left; width:72%">
+                <p ><b> Lisätiedot: </b> other_info</p>
+                </div>
+                <div id=endpirces style="float:left; max-width:28%">
+                    <br>
+                    <table style="border:none">
+                        <tr>
+                            <td style="border:none"> <b> Yhteensä: &nbsp; </b> </td > <td style="border:none; float:right">  price_total € </td>
+                        </tr>
+                        <tr>
+                            <td style="border:none"> Yhteensä alv: &nbsp; </td> <td style="border:none;float:right">  alv_total €</td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </body>
 </html>

@@ -19,6 +19,8 @@
 from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, DateTime, Table, Float
 from sqlalchemy.orm import relationship
 
+from models.translationtables import g_medicines_list
+
 from models import Base
 from models.vet import Vet
 
@@ -48,6 +50,8 @@ class VisitAnimal(Base):
     treatment = Column(String(1000))
     
     operations = relationship("Operation", backref='visitanimals', cascade="all, delete-orphan")
+
+    items = relationship("VisitItem", backref='visitanimals', cascade="all, delete-orphan")
     
     def __init__(self,animal, anamnesis='', status='', diagnosis='', treatment=''):
         self.animal = animal
@@ -57,53 +61,46 @@ class VisitAnimal(Base):
         self.diagnosis = diagnosis
         self.treatment = treatment
         self.operations = []
+        self.items = []
     
     def stringList(self):
         return [str(self.id), self.animal.name, self.animal.official_name, 
                 self.animal.specie.name if self.animal.specie != None else '', 
                 self.animal.race.name if self.animal.race != None else '']
-        
+
+    #get visit animal all items
+    def getAllItems(self):
+        l =[]
+        for i in self.items: #list has VisitItems
+            l.extend(i.item)
+        for oper in operations:
+            l.extend(oper.getItems())
+        return l
+
+    #return all medicine texts in format {name1 : text1, name2:text2,...}
+    def getMedicineDict(self):
+        tmp = {}
+        for item in self.getAllItems():
+            if item.getType() in g_medicines_list:
+                for desc in item.customer_descriptions:
+                    if desc.specie is self.animal.specie:
+                        tmp[item.name] = desc.text
+        return tmp
+
     def getType(self=None):
         return 'VisitAnimal'
     
-    def update(self,itemList):
-        if itemList != None and len(itemList) == 5:
-            print('VisitAnimal.update: ',itemList)
-            self.anamnesis = itemList[0]
-            self.status = itemList[1]
-            self.diagnosis = itemList[2]
-            self.treatment = itemList[3]
-            self.operations = itemList[4]
-        else:
-            print('VisitAnimal functio update got wrong lenght itemlist')
+    def update(self,data):
+        for key, item in data.items():
+            try:
+                setattr(self,key,item)
+            except:
+                print("DEBUG ERROR VisitAnimal->update(): wrong variable name: " + str(key))
 
 
 visit_animals_table = Table('visit_animals_table', Base.metadata,
                       Column('visitanimal_id', Integer, ForeignKey('visitanimals.id')),
                       Column('visit_id', Integer, ForeignKey('visits.id')))
-
-visit_items_table = Table('visit_items_table', Base.metadata,
-                      Column('visititem_id', Integer, ForeignKey('visititems.id')),
-                      Column('visit_id', Integer, ForeignKey('visits.id')))
-                      
-                      
-class VisitItem(Base):
-    __tablename__='visititems'
-    id = Column(Integer, Sequence('visitimtems_id_seq'), primary_key=True)
-    item_id = Column(Integer, ForeignKey('items.id'), nullable=False)
-    item = relationship("Item")
-    count = Column(Float)
-    
-    def __init__(self, item, count):
-        self.item = item
-        self.count = count
-    
-    def update(self, data):
-        for key in data.keys():
-            setattr(self, key, data[key])
-    
-    def stringList(self):
-        return [str(self.item.name), ('%.2f' % self.item.price), ('%.2f' % self.count)]
 
 
 class Visit(Base):
@@ -121,8 +118,6 @@ class Visit(Base):
     owner = relationship("Owner")
     
     visitanimals = relationship("VisitAnimal", secondary = visit_animals_table)
-    
-    items = relationship("VisitItem", secondary = visit_items_table)
   
     def __init__(self, start_time, owner, vet, end_time=None, visitanimals = []):
         self.start_time = start_time
@@ -131,6 +126,30 @@ class Visit(Base):
         self.end_time = end_time
         self.visitanimals = visitanimals
    
+
+    def getPriceDict(self):
+        price_dict = {}
+        price_dict["operation_price"] = 0.0
+        price_dict["accesories_price"] = 0.0
+        price_dict["lab_price"] = 0.0
+        price_dict["medicine_price"] = 0.0
+        price_dict["diet_price"] = 0.0
+
+        for visit_animal in self.visitanimals:
+            for operation in visit_animal.operations:
+                tmp = operation.getPriceDict()
+                for key in tmp:
+                    price_dict[key] += tmp[key]
+
+            for visititem in visit_animal.items:
+                tmp = visititem.getPriceDict()
+                for key in tmp:
+                    price_dict[key] += tmp[key]
+
+        return price_dict
+
+
+
     def setCurrentTime(self):
         self.endtime = datetime.datetime.now()
     

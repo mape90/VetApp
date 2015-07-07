@@ -19,10 +19,12 @@
 '''
 
 from PyQt4.QtGui import QDialog, QDoubleSpinBox,QSizePolicy, QPlainTextEdit
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, SIGNAL
 from uipy.ui_popup import Ui_Dialog
 
-from configfile import logDEBUG, logERROR
+from models.translationtables import g_error_msg_dict
+
+from configfile import logDEBUG, logERROR, popErrorMessage
 
 from models import SqlHandler
 
@@ -56,7 +58,7 @@ class AddNewDialog(QDialog):
         if(evt.key() == Qt.Key_Enter or evt.key() == Qt.Key_Return):
             self.saveCheck()
             return
-        QDialog.keyPressEvent(evt);
+        self.emit(SIGNAL('keyPressEvent'), evt)
    
         
     def hideComboBox(self):
@@ -125,7 +127,7 @@ class AddNewSex(AddNewDialog):
         
 class AddNewSummary(AddNewDialog):
     def __init__(self, parent=None):
-        AddNewDialog.__init__(self, parent)
+        AddNewDialog.__init__(self, parent=parent)
         self.setText('Uusi tekstipohja', 'Tekstipohja:')
         self.hideUnNeeded()
         self.textEdit = QPlainTextEdit(parent=self)
@@ -133,16 +135,20 @@ class AddNewSummary(AddNewDialog):
     
     def hideUnNeeded(self):
         self.hideComboBox()
-        self.ui.lineEdit.hide()
     
     def saveNewItem(self):
-        SqlHandler.addItem(self.session, SqlHandler.SummaryText(self.textEdit.toPlainText()))
-        try:
-            self.parent().addText(self.ui.lineEdit.text())
-        except:
-            logERROR("AddNewSummary failed to add text to parent!")
-        
-        self.closeDialog()
+
+        tmp = SqlHandler.SummaryText(self.ui.lineEdit.text(), self.textEdit.toPlainText())
+
+        if(tmp):
+            SqlHandler.addItem(self.session, tmp)
+            try:
+                self.parent().addAskedItem(tmp)
+            except:
+                logERROR(self,"Failed to add text to parent!")
+            self.closeDialog()
+        else:
+            popErrorMessage(g_error_msg_dict['summary_name_used'])
 
 class AddNewSpecie(AddNewDialog):
     def __init__(self, parent=None):

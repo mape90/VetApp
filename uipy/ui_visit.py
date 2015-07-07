@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uipy/ui_visit.ui'
 #
-# Created: Sat Jun 27 22:09:14 2015
+# Created: Tue Jun 30 21:56:00 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_Visit(object):
     def setupUi(self, Visit):
         Visit.setObjectName(_fromUtf8("Visit"))
-        Visit.resize(1161, 834)
+        Visit.resize(1117, 786)
         self.verticalLayout_11 = QtGui.QVBoxLayout(Visit)
         self.verticalLayout_11.setObjectName(_fromUtf8("verticalLayout_11"))
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
@@ -159,10 +159,8 @@ class Ui_Visit(object):
         self.horizontalLayout_4.addLayout(self.verticalLayout_12)
         self.itemAddLayout = QtGui.QVBoxLayout()
         self.itemAddLayout.setObjectName(_fromUtf8("itemAddLayout"))
-        self.tableView = QtGui.QTableView(Visit)
-        self.tableView.setObjectName(_fromUtf8("tableView"))
-        self.itemAddLayout.addWidget(self.tableView)
         self.horizontalLayout_4.addLayout(self.itemAddLayout)
+        self.horizontalLayout_4.setStretch(1, 1)
         self.verticalLayout_11.addLayout(self.horizontalLayout_4)
         self.operationMainLayout = QtGui.QHBoxLayout()
         self.operationMainLayout.setObjectName(_fromUtf8("operationMainLayout"))
@@ -298,7 +296,7 @@ class Ui_Visit(object):
         self.billButton = QtGui.QPushButton(Visit)
         self.billButton.setObjectName(_fromUtf8("billButton"))
         self.horizontalLayout_13.addWidget(self.billButton)
-        spacerItem7 = QtGui.QSpacerItem(17, 58, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem7 = QtGui.QSpacerItem(17, 0, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_13.addItem(spacerItem7)
         self.closeButton = QtGui.QPushButton(Visit)
         self.closeButton.setObjectName(_fromUtf8("closeButton"))
@@ -312,7 +310,6 @@ class Ui_Visit(object):
         self.verticalLayout_11.addLayout(self.horizontalLayout_13)
         self.verticalLayout_11.setStretch(0, 1)
         self.verticalLayout_11.setStretch(1, 5)
-        self.verticalLayout_11.setStretch(2, 1)
 
         self.retranslateUi(Visit)
         self.stackedWidget.setCurrentIndex(1)

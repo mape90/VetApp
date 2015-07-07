@@ -6,6 +6,13 @@
 
 from os.path import expanduser, exists, dirname
 from os import makedirs
+from PyQt4.QtGui import QMessageBox
+
+
+def popErrorMessage(text):
+    msgBox = QMessageBox();
+    msgBox.setText(text);
+    msgBox.exec();
 
 _databasename = 'data.db'
 _username = 'VetApp'

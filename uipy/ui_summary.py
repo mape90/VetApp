@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uipy/ui_summary.ui'
 #
-# Created: Sat Jun 27 22:52:57 2015
+# Created: Tue Jul  7 19:02:19 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -46,6 +46,9 @@ class Ui_SummaryTab(object):
         self.getInfoFromVisitButton = QtGui.QPushButton(SummaryTab)
         self.getInfoFromVisitButton.setObjectName(_fromUtf8("getInfoFromVisitButton"))
         self.horizontalLayout_3.addWidget(self.getInfoFromVisitButton)
+        self.addSearchButton = QtGui.QPushButton(SummaryTab)
+        self.addSearchButton.setObjectName(_fromUtf8("addSearchButton"))
+        self.horizontalLayout_3.addWidget(self.addSearchButton)
         self.searchLayout = QtGui.QHBoxLayout()
         self.searchLayout.setObjectName(_fromUtf8("searchLayout"))
         self.horizontalLayout_3.addLayout(self.searchLayout)
@@ -75,6 +78,12 @@ class Ui_SummaryTab(object):
         self.horizontalLayout_2.addWidget(self.animalNameLabel)
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
+        self.canselButton = QtGui.QPushButton(SummaryTab)
+        self.canselButton.setObjectName(_fromUtf8("canselButton"))
+        self.horizontalLayout_2.addWidget(self.canselButton)
+        self.closeButton = QtGui.QPushButton(SummaryTab)
+        self.closeButton.setObjectName(_fromUtf8("closeButton"))
+        self.horizontalLayout_2.addWidget(self.closeButton)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.verticalLayout_2.addLayout(self.verticalLayout)
         self.plainTextEdit = QtGui.QPlainTextEdit(SummaryTab)
@@ -83,13 +92,20 @@ class Ui_SummaryTab(object):
 
         self.retranslateUi(SummaryTab)
         QtCore.QMetaObject.connectSlotsByName(SummaryTab)
+        SummaryTab.setTabOrder(self.plainTextEdit, self.closeButton)
+        SummaryTab.setTabOrder(self.closeButton, self.canselButton)
+        SummaryTab.setTabOrder(self.canselButton, self.getInfoFromVisitButton)
+        SummaryTab.setTabOrder(self.getInfoFromVisitButton, self.addSearchButton)
 
     def retranslateUi(self, SummaryTab):
         SummaryTab.setWindowTitle(_translate("SummaryTab", "Form", None))
         self.label.setText(_translate("SummaryTab", "Yhteenveto/Hoito-ohje", None))
-        self.getInfoFromVisitButton.setText(_translate("SummaryTab", "Hae lääketiedot käynnistä", None))
+        self.getInfoFromVisitButton.setText(_translate("SummaryTab", "Hae eläimen lääkeselosteet", None))
+        self.addSearchButton.setText(_translate("SummaryTab", "Lisää", None))
         self.label_2.setText(_translate("SummaryTab", "Omistaja:", None))
         self.ownerNameLabel.setText(_translate("SummaryTab", "owner_name", None))
         self.label_4.setText(_translate("SummaryTab", "Eläin", None))
         self.animalNameLabel.setText(_translate("SummaryTab", "animal_name", None))
+        self.canselButton.setText(_translate("SummaryTab", "Hylkää", None))
+        self.closeButton.setText(_translate("SummaryTab", "Tallenna muutokset", None))
 

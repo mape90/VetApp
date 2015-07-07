@@ -73,7 +73,7 @@ class VisitTab(GenericTab):
         self.ui = Ui_Visit()
         self.ui.setupUi(self)
         self.ui.stackedWidget.setCurrentIndex(0) #TODO:remove if needed
-        
+
         self.currentVisitAnimal = None
         self.currentOperation = None
         
@@ -129,6 +129,10 @@ class VisitTab(GenericTab):
         self.ui.operationMainLayout.setStretch(0,1)
         self.ui.operationMainLayout.setStretch(1,2)
         
+        from models.operation import VisitItem
+        self.visititemTreeWidget = ItemTreeWidget(parent=self, session=self.session, creator=VisitItem)
+        self.ui.itemAddLayout.addWidget(self.visititemTreeWidget)
+
         
         self.animalTreeWidget = VisitAnimalTreeWidget(parent=self, session=self.session)
        
@@ -153,17 +157,21 @@ class VisitTab(GenericTab):
         self.ui.billButton.clicked.connect(self.openBill)
         self.ui.closeButton.clicked.connect(self.closeTab)
         
-        self.ui.openSummaryButton.clicked(self.openSummary)
+        self.ui.openSummaryButton.clicked.connect(self.openSummary)
 
+
+    #item will be string from SummaryTab it item is None do not update
+    def addAskedItem(self, item):
+        if item != None:
+            self.ui.treatmentTextEdit.setPlainText(item)
 
     def openSummary(self):
-        class AddHandler():
-            def __init__(self, textarea):
-                self.textarea = textarea
-            def addAskedItem(self,item):
-                self.textarea.setPlainText(item)
-                
-        Tabmanager.openTab(tabCreator=SummaryTab, self.visit, returnTab)
+        from mainwindowtabs.summarytab import SummaryTab
+        Tabmanager.openTab(tabCreator=SummaryTab,
+                           newItem={'owner' : self.ownerserachline.getCurrentItem(),
+                                    'visitanimal' : self.animalTreeWidget.getSelectedItem(),
+                                    'text':self.ui.treatmentTextEdit.toPlainText()},
+                           returnTab=self)
     
     def updateOperation(self, line):
         operation = line.data(0,0) #get operation
@@ -255,7 +263,6 @@ class VisitTab(GenericTab):
             self.setEndTime()
             self.saveTab()
             from mainwindowtabs.billTab import BillTab
-            #TODO: add check if there is already bill so open it
             bill = SqlHandler.getBill(self.session, self.item)
             if bill != None:
                 Tabmanager.openTab(tabCreator=BillTab, newItem=bill)
@@ -265,8 +272,6 @@ class VisitTab(GenericTab):
             self.errorMessage('Omistajaa ei ole asetettu!')
         
     def animalChanged(self,current, previous):
-        print('VisitTab: animalChanged: current', current)
-        print('VisitTab: animalChanged: previous', previous)
         if current != None:
             '''Enable animal related if those arent enabled'''
             if not self.operationTreeWidget.isEnabled():
@@ -292,6 +297,7 @@ class VisitTab(GenericTab):
         self.ui.diagnosisTextEdit.setPlainText('')
         self.ui.treatmentTextEdit.setPlainText('')
         self.operationTreeWidget.clearTreeWidget()
+        self.visititemTreeWidget.clearTreeWidget()
     
     '''Saves current data to self.currentVisitAnimal'''
     def updateCurrentVisitAnimal(self):
@@ -301,13 +307,15 @@ class VisitTab(GenericTab):
 
     def getVisitAnimalData(self):
         print('VisitTab: getVisitAnimalData')
-        data = []    
-        data.append(self.ui.amanuensisTextEdit.toPlainText())
-        data.append(self.ui.statusTextEdit.toPlainText())
-        data.append(self.ui.diagnosisTextEdit.toPlainText())
-        data.append(self.ui.treatmentTextEdit.toPlainText())
+        data = {}
+        data['anamnesis'] = self.ui.amanuensisTextEdit.toPlainText()
+        data['status'] = self.ui.statusTextEdit.toPlainText()
+        data['diagnosis'] = self.ui.diagnosisTextEdit.toPlainText()
+        data['treatment'] = self.ui.treatmentTextEdit.toPlainText()
         self.updateCurerentOperation()
-        data.append(self.operationTreeWidget.getItemsFromList())
+        data['operations'] = self.operationTreeWidget.getItemsFromList()
+        data['items'] = self.visititemTreeWidget.getItemsFromList()
+
         #self.clearOperationRelated()
         self.disableOperationRelated(True)
         return data
@@ -319,6 +327,7 @@ class VisitTab(GenericTab):
         self.ui.diagnosisTextEdit.setPlainText(visitanimal.diagnosis)
         self.ui.treatmentTextEdit.setPlainText(visitanimal.treatment)
         self.operationTreeWidget.setItems(visitanimal.operations)
+        self.visititemTreeWidget.setItems(visitanimal.items)
     
     def ownerSet(self):
         self.disableAnimalTree(False)
@@ -343,6 +352,10 @@ class VisitTab(GenericTab):
         self.ui.threatmentLabel.setDisabled(state)
         self.ui.treatmentTextEdit.setDisabled(state)
         self.operationTreeWidget.setDisabled(state)
+        self.visititemTreeWidget.setDisabled(state)
+
+        self.itemTreeWidget.setDisabled(state)
+        self.ui.openSummaryButton.setDisabled(state)
         if state:
             self.disableOperationRelated(state)
     

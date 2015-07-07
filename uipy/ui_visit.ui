@@ -6,16 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1161</width>
-    <height>834</height>
+    <width>1117</width>
+    <height>786</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_11" stretch="1,5,1">
+  <layout class="QVBoxLayout" name="verticalLayout_11" stretch="1,5,0">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,1,0">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_9">
        <item>
@@ -286,11 +286,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="itemAddLayout">
-       <item>
-        <widget class="QTableView" name="tableView"/>
-       </item>
-      </layout>
+      <layout class="QVBoxLayout" name="itemAddLayout"/>
      </item>
     </layout>
    </item>
@@ -610,7 +606,7 @@
        <property name="sizeHint" stdset="0">
         <size>
          <width>17</width>
-         <height>58</height>
+         <height>0</height>
         </size>
        </property>
       </spacer>

@@ -37,6 +37,22 @@ class PrintFileCreator(object):
         box.setText(message)
         box.exec()
     
+    def genAnimalInfo(visitanimal):
+        tmp = '<div class="animalinfo"><p style="font-size:70%;"> <b style="font-size:110%;">'
+        tmp +=  visitanimal.animal.name + '</b>'
+        if len(visitanimal.animal.official_name) > 0:
+            tmp += '(' + visitanimal.animal.official_name + ')'
+        tmp += '</br> Syntynyt: ' + self.datetimeToStr(visitanimal.animal.birthday) +' <br>'
+        tmp += 'Rotu: ' + visitanimal.animal.race.name +' <br> '
+        tmp += 'Sukupuoli: ' +visitanimal.animal.sex.name +' </p></div>'
+        return tmp
+
+    def genAnimalInfos(visitanimals): #TODO: will work only for 1-3 animals FIX this
+        tmp = ''
+        for visitanimal in visitanimals:
+            tmp += genAnimalInfo(visitanimal)
+        return tmp
+
     def makePrintfile(self, bill, language='Finnish'):#TODO:add bill needed info
         
         self.html = ""
@@ -85,7 +101,7 @@ class PrintFileCreator(object):
         self.change("swif_bic", bill.visit.vet.SWIF)
         self.change("payment_method", bill.payment_method)
         
-        
+        self.change("animal_info_area", genAnimalInfos(bill.visit.visitanimals))
         
         operation_rows = ""
         operation_row_count = 0
@@ -103,34 +119,21 @@ class PrintFileCreator(object):
               
         
         for va in bill.visit.visitanimals:
+            if(len(bill.visit.visitanimals) > 1):
+                (rows, count) = self.genAnimalTableRow(va.animal.name)
+                operation_rows += rows
+                operation_row_count += count
+
             for oper in va.operations:
                 (rows, count) = self.genTableRow(oper)
                 operation_rows += rows
                 operation_row_count += count
-                
-                
-                
-                #operation_rows += self.genTableRow(oper)
-                #operation_row_count += 1
-                #if(oper.hasList()):
-                    #for item in oper.items:
-                        #operation_rows += self.genItemTableRow(item)
-                        #operation_row_count += 1
-                #elif(oper.base.hasItem()):
-                    #from models.translationtables import g_item_alv_dict
 
-                    #operation_rows += self.genTableRowPrue(oper.base.item.name, 1,
-                                                           #"kpl", oper.base.item.price,
-                                                           #g_item_alv_dict[oper.base.item.__class__.__name__])
-                    #operation_row_count += 1
-                #else:
-                    #pass
-        
-        #price_dict["operation_price"]
-        #price_dict["accesories_price"]
-        #price_dict["lab_price"]
-        #price_dict["medicine_price"]
-        #price_dict["diet_price"]
+            for item in va.items:
+                (rows, count) = self.genItemTableRow(item)
+                operation_rows += rows
+                operation_row_count += count
+
 
         price_dict = bill.calcPricesFromVisit()
         if(not price_dict["operation_price"] == bill.operations_payment):
@@ -183,6 +186,17 @@ class PrintFileCreator(object):
                     <td style="align:right;"> <br> </td>
             </tr>'''
     
+    def genAnimalTableRow(self, name):
+        return '''<tr>
+                    <td style="text-align:left">''' + name + '''</td>
+                    <td style="text-align:center"> </td>
+                    <td style="text-align:center"> </td>
+                    <td style="text-align:center"> </td>
+                    <td style="text-align:center"> </td>
+                    <td style="text-align:right">  </td>
+                    <td style="align:right;"> <br> </td>
+            </tr>'''
+
     
     def incALV(self, value, alv_p):
         return value*(100+alv_p)/100.0
@@ -204,16 +218,14 @@ class PrintFileCreator(object):
     def toStr(self,val):
         return ('%.2f' % val)
     
-    def genItemTableRow(self,surgeryItem):
-        from models.translationtables import g_item_alv_dict
+    def genItemTableRow(self,item):
+        return self.genTableRowPrue(name = item.item.name,
+                               count = item.count,
+                               type_ = item.item.count_type,
+                               price = item.item.price,
+                               alv  = item.item.getALV())
 
-        return self.genTableRowPrue(name = surgeryItem.item.name, 
-                               count = surgeryItem.count,
-                               type_ ="kpl",
-                               price = surgeryItem.item.price,
-                               alv  = g_item_alv_dict[surgeryItem.item.__class__.__name__])
 
-    
     def genTableRow(self, operation):
         counter = 0
         tmp_rows = ''
@@ -227,7 +239,7 @@ class PrintFileCreator(object):
             print("operation.base.item: ", operation.base.item)
             tmp_rows += self.genTableRowPrue(name = ('- ' + operation.base.item.name),
                                              count = operation.count,
-                                             type_ = "kpl", #operation.base.item.item_type
+                                             type_ = operation.base.item.count_type,
                                              price = operation.base.item.price,
                                              alv = operation.base.item.getALV())
             counter += 1
@@ -238,7 +250,7 @@ class PrintFileCreator(object):
                 
                 tmp_rows += self.genTableRowPrue(name = ('- ' + surgeryitem.item.name),
                                                 count = total_count,
-                                                type_ = 'kpl', #surgeryitem.item.item_type
+                                                type_ = surgeryitem.item.count_type,
                                                 price = surgeryitem.item.price,
                                                 alv = surgeryitem.item.getALV())
                 counter += 1

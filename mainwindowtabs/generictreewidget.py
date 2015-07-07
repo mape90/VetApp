@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8
 '''
 Created on 2.4.2013
 
@@ -19,7 +21,7 @@ Created on 2.4.2013
     You should have received a copy of the GNU General Public License
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
-from PyQt4.QtGui import QWidget, QTreeWidgetItem, QPushButton, QIcon, QMessageBox, QDialog, QSpinBox
+from PyQt4.QtGui import QWidget, QTreeWidgetItem, QPushButton, QIcon, QMessageBox, QDialog, QSpinBox, QDoubleSpinBox
 from PyQt4.QtCore import QSize, QMetaObject
 
 from mainwindowtabs import Tabmanager
@@ -373,7 +375,7 @@ class ItemTreeWidget(GenericTreeWidget):
         self.setInputMethod(tabcreator=ItemCreatorDialog, autoAdd=True, function=SqlHandler.searchItem)
         
         
-        self.countSpinBox = QSpinBox(parent=self)
+        self.countSpinBox = QDoubleSpinBox(parent=self)
         self.countSpinBox.setRange(1, 99999999)
         self.countSpinBox.setValue(1)
         
@@ -383,7 +385,7 @@ class ItemTreeWidget(GenericTreeWidget):
             self.ui.bottomLayout.incertWidget(self.ui.bottomLayout.count(), self.countSpinBox)
         
         self.setUpTreewidget()
-        self.countSpinBox.valueChanged['int'].connect(self.updateItemCount)
+        self.countSpinBox.valueChanged['double'].connect(self.updateItemCount)
            
         self.ui.treeWidget.currentItemChanged.connect(self.handleChange)
     
@@ -415,7 +417,7 @@ class ItemTreeWidget(GenericTreeWidget):
     '''
     def addItemToTree(self, item):
         if item != None:
-            if item.getType() == self.creator.getType():
+            if self.creator and item.getType() == self.creator.getType():
                 #Now we are loading data from Surgery or Surgery base object
                 #So we make new tree objects and add counts to them
                 treeItem = self.makeTreeItem(item)
@@ -457,7 +459,7 @@ class ItemTreeWidget(GenericTreeWidget):
                 if item in self.session:
                     self.session.delete(item)
 
-    def openItem(self):#TODO:check what happpens with empty list
+    def openItem(self):
         tree_item = self.ui.treeWidget.currentItem()
         if tree_item != None:
             creator = self.tabcreator(parent=self, item=tree_item.data(0,0).item)
@@ -465,9 +467,10 @@ class ItemTreeWidget(GenericTreeWidget):
                 
     '''
         item is Item(any of them) or SurgeryItem/SurgeryBaseItem
+        if creator is None it means that we should add item as it is
     '''
     def makeTreeItem(self,item):
-        if item.getType() != self.creator.getType():
+        if self.creator and item.getType() != self.creator.getType():
             item = self.creator(item) #make new item
             
         textString = item.stringList() #has all info
@@ -477,7 +480,7 @@ class ItemTreeWidget(GenericTreeWidget):
         return treeItem
  
     def itemInList(self, item):
-        if item.getType() == self.creator.getType(): #get item from SurgeryBaseItem/SurgeryItem
+        if self.creator and item.getType() == self.creator.getType(): #get item from SurgeryBaseItem/SurgeryItem
             item = item.item
         
         for i in range(0, self.ui.treeWidget.topLevelItemCount()):

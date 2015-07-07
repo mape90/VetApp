@@ -152,7 +152,7 @@ class SQLHandler(object):
         return ALV(alv, alv_class)
     
     def getALV(self, alv_class):
-        print("DEBUG: sqlHandler trys to get alv of class: ", alv_class)
+        #print("DEBUG: sqlHandler trys to get alv of class: ", alv_class)
         return self.session.query(ALV).filter(ALV.alv_class==alv_class).one().alv
     
     def setALV(self, alv_class, alv):
@@ -376,10 +376,15 @@ class SQLHandler(object):
     #summary functions
     
     def SummaryText(self, name, text):
-        return SummaryText(name, text)
+        #print(self.session.query(SummaryText).filter(SummaryText.name==name).all())
+        if not self.session.query(SummaryText).filter(SummaryText.name==name).all():
+            return SummaryText(name, text)
+        else:
+            print("ERROR: SummaryText, set to None")
+            return None
     
     def searchSummary(self, session, question):
-        return session.query(SummaryText).filter(SummaryText.name.like('%'+ question +'%'))
+        return session.query(SummaryText).filter(SummaryText.name.like('%'+ question +'%')).all()
     
     #---------------------------------#
     #

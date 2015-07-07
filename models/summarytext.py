@@ -24,16 +24,19 @@ from models import Base
 class SummaryText(Base):
     __tablename__ = 'summarytexts'
     id = Column(Integer, Sequence('summarytexts_id_seq'), primary_key=True)
-    name = Column(Integer, unique=True)
+    name = Column(String, unique=True)
     text = Column(String(5000))
     
     def __init__(self,name, text):
         self.name = name
         self.text = text
-        
+
+    def stringList(self):
+        return ['?',self.name]
+
     def update(self, data):
         for key in data.keys:
             try:
                 setattr(self, key, data[key])
             except:
-                logError("SummaryText, update, unknown key, " key)
+                logError("SummaryText, update, unknown key, " + key)

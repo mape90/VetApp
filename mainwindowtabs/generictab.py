@@ -108,7 +108,7 @@ class GenericTab(QWidget):
     def errorMessage(self, message):
         box = QMessageBox()
         box.setText(message)
-        box.exec()
+        box.show()
     
     def saveAndCloseTab(self):
         logDEBUG(self,'GenericTab FUNCTIO: saveAndCloseTab')
