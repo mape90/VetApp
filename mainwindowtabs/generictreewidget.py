@@ -278,7 +278,7 @@ class VisitAnimalTreeWidget(GenericTreeWidget):
     def __init__(self, session, parent):
         GenericTreeWidget.__init__(self, session, parent)
         self.setTitle('Eläimet')
-        self.setHeader(headertexts=['id', 'Nimi', 'Virallinen nimi', 'Laji', 'Rotu'], iconplace=1, hidecolumns=[0])
+        self.setHeader(headertexts=['Nimi', 'Virallinen nimi', 'Laji', 'Rotu'], iconplace=0, hidecolumns=[0])
         self.setButtons([ButtonType.remove,ButtonType.open])
         from mainwindowtabs.animaltab import AnimalTab
         self.setInputMethod(tabcreator=AnimalTab, autoAdd=True, function=SqlHandler.searchAnimal)

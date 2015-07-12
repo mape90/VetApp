@@ -64,7 +64,7 @@ class VisitAnimal(Base):
         self.items = []
     
     def stringList(self):
-        return [str(self.id), self.animal.name, self.animal.official_name, 
+        return [self.animal.name, self.animal.official_name, 
                 self.animal.specie.name if self.animal.specie != None else '', 
                 self.animal.race.name if self.animal.race != None else '']
 

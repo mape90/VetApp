@@ -104,6 +104,8 @@ class PrintFileCreator(object):
         
         self.html = self.html.replace("animal_info_area", self.genAnimalInfos(bill.visit.visitanimals))
         
+        self.html = self.html.replace('visitanimal_summarys',self.summaryToHTML(bill.visit.visitanimals))
+        
         operation_rows = ""
         operation_row_count = 0
         
@@ -185,7 +187,17 @@ class PrintFileCreator(object):
     
     def floatEqual(self, a,b, dif=0.01):
         return abs(a-b) < dif
-        
+    
+    
+    def summaryToHTML(self, visitanimals):
+        tmp = '</br></br></br></br></br>'
+        tmp += '<h1>Yhteenveto ja hoitoohjeet</h1>'
+        for visitanimal in visitanimals:
+            tmp += '</br><p>'
+            if len(visitanimals) > 1:
+                tmp += '<b>' + visitanimal.animal.name + '</b> </br>'
+            tmp += visitanimal.treatment + '</p>'
+        return tmp
         
     def genEmptyTableRow(self):
         return '''<tr>
