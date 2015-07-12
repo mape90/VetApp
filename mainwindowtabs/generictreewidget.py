@@ -376,7 +376,7 @@ class ItemTreeWidget(GenericTreeWidget):
         
         
         self.countSpinBox = QDoubleSpinBox(parent=self)
-        self.countSpinBox.setRange(1, 99999999)
+        self.countSpinBox.setRange(0.01, 99999999)
         self.countSpinBox.setValue(1)
         
         if self.ui.topLayout.count() > 0 or self.ui.bottomLayout.count() == 0:
@@ -398,7 +398,7 @@ class ItemTreeWidget(GenericTreeWidget):
         current = self.ui.treeWidget.currentItem()
         if current.data(0,0).count != count:
             current.data(0,0).count = count
-            current.setText(3, str(current.data(0,0).item.price*count))
+            current.setText(3, '%.2f' % (current.data(0,0).item.price*count))
             current.setText(4, str(count))
         
     

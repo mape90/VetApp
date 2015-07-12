@@ -37,7 +37,7 @@ class PrintFileCreator(object):
         box.setText(message)
         box.exec()
     
-    def genAnimalInfo(visitanimal):
+    def genAnimalInfo(self, visitanimal):
         tmp = '<div class="animalinfo"><p style="font-size:70%;"> <b style="font-size:110%;">'
         tmp +=  visitanimal.animal.name + '</b>'
         if len(visitanimal.animal.official_name) > 0:
@@ -47,10 +47,10 @@ class PrintFileCreator(object):
         tmp += 'Sukupuoli: ' +visitanimal.animal.sex.name +' </p></div>'
         return tmp
 
-    def genAnimalInfos(visitanimals): #TODO: will work only for 1-3 animals FIX this
+    def genAnimalInfos(self, visitanimals): #TODO: will work only for 1-3 animals FIX this
         tmp = ''
         for visitanimal in visitanimals:
-            tmp += genAnimalInfo(visitanimal)
+            tmp += self.genAnimalInfo(visitanimal)
         return tmp
 
     def makePrintfile(self, bill, language='Finnish'):#TODO:add bill needed info
@@ -101,7 +101,8 @@ class PrintFileCreator(object):
         self.change("swif_bic", bill.visit.vet.SWIF)
         self.change("payment_method", bill.payment_method)
         
-        self.change("animal_info_area", genAnimalInfos(bill.visit.visitanimals))
+        
+        self.html = self.html.replace("animal_info_area", self.genAnimalInfos(bill.visit.visitanimals))
         
         operation_rows = ""
         operation_row_count = 0
@@ -136,25 +137,32 @@ class PrintFileCreator(object):
 
 
         price_dict = bill.calcPricesFromVisit()
-        if(not price_dict["operation_price"] == bill.operations_payment):
+        
+                
+        if(not self.floatEqual(price_dict["operation_price"], bill.operations_payment)):
             print("DEBUG: PrintFileCreator: ", price_dict["operation_price"] ," ", bill.operations_payment)
             operation_rows += self.genTableRowPrue("Operaatioiden hintamuutos", 1, "", -price_dict["operation_price"] + bill.operations_payment,  SqlHandler.getALV(1))
             operation_row_count +=1
-        if(not price_dict["accesories_price"] == bill.accessories_payment):
+            
+        if(not self.floatEqual(price_dict["accesories_price"], bill.accessories_payment)):
             operation_rows += self.genTableRowPrue("Tarvikkeiden hintamuutos", 1, "", -price_dict["accesories_price"] + bill.accessories_payment,  SqlHandler.getALV(1))
             operation_row_count +=1
-        if(not price_dict["lab_price"] == bill.lab_payment):
+        
+        if(not self.floatEqual(price_dict["lab_price"], bill.lab_payment)):
             operation_rows += self.genTableRowPrue("Laboratorio hintamuutos", 1, "", -price_dict["lab_price"] + bill.lab_payment,  SqlHandler.getALV(1))
             operation_row_count +=1
-        if(not price_dict["medicine_price"] == bill.medicines_payment):
+
+        if(not self.floatEqual(price_dict["medicine_price"], bill.medicines_payment)):
             print("DEBUG: PrintFileCreator: ", price_dict["medicine_price"] ," ", bill.medicines_payment)
             operation_rows += self.genTableRowPrue("Lääkkeiden hintamuutos", 1, "", -price_dict["medicine_price"] + bill.medicines_payment,  SqlHandler.getALV(2))
             operation_row_count +=1
-        if(not price_dict["diet_price"] == bill.diet_payment):
+            
+        if(not self.floatEqual(price_dict["diet_price"], bill.diet_payment)):
             operation_rows += self.genTableRowPrue("Rehujen hintamuutos", 1, "", -price_dict["diet_price"] + bill.diet_payment,  SqlHandler.getALV(3))
             operation_row_count +=1
             
-        if(not 0 == bill.extra_percent):
+            
+        if(not self.floatEqual(0,bill.extra_percent) ):
             operation_rows += self.genTableRowPrue("Muu korotus (" + str(bill.extra_percent) + "%)", 1, "", bill.getExtraPartFromPrice(),  SqlHandler.getALV(1))
             operation_row_count +=1
         
@@ -174,6 +182,10 @@ class PrintFileCreator(object):
         self.change("other_info", bill.other_info)
         
         return self.html
+    
+    def floatEqual(self, a,b, dif=0.01):
+        return abs(a-b) < dif
+        
         
     def genEmptyTableRow(self):
         return '''<tr>
@@ -219,11 +231,11 @@ class PrintFileCreator(object):
         return ('%.2f' % val)
     
     def genItemTableRow(self,item):
-        return self.genTableRowPrue(name = item.item.name,
+        return (self.genTableRowPrue(name = item.item.name,
                                count = item.count,
                                type_ = item.item.count_type,
                                price = item.item.price,
-                               alv  = item.item.getALV())
+                               alv  = item.item.getALV()) ,1)
 
 
     def genTableRow(self, operation):
