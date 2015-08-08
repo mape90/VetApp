@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
-from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, DateTime, Table, Float
+from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, DateTime, Table, Float, Boolean
 from sqlalchemy.orm import relationship
 
 from models.translationtables import g_medicines_list
@@ -43,7 +43,7 @@ class VisitAnimal(Base):
     id = Column(Integer, Sequence('visitanimals_id_seq'), primary_key=True)
     animal_id = Column(Integer, ForeignKey('animals.id'), nullable=False)
     animal = relationship("Animal")
-    
+
     anamnesis = Column(String(1000))
     status = Column(String(1000))
     diagnosis = Column(String(1000))
@@ -117,8 +117,12 @@ class Visit(Base):
     owner_id = Column(Integer, ForeignKey('owners.id'), nullable=False)
     owner = relationship("Owner")
     
+    visit_reason = Column(String(255), default="")
+
     visitanimals = relationship("VisitAnimal", secondary = visit_animals_table)
-  
+
+    archive = Column(Boolean, default=False)
+
     def __init__(self, start_time, owner, vet, end_time=None, visitanimals = []):
         self.start_time = start_time
         self.owner = owner
@@ -165,6 +169,6 @@ class Visit(Base):
 
         
     def stringList(self):
-        return [str(self.id), self.owner.name, str(self.start_time)]
+        return [str(self.id), self.visit_reason, str(self.start_time)]
         
         

@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
-from sqlalchemy import Column, Integer, String, Sequence, ForeignKey
+from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 
 from models import Base
@@ -76,6 +76,8 @@ class Vet(Base):
     
     IBAN = Column(String(100))
     SWIF = Column(String(10))
+
+    archive = Column(Boolean, default=False)
     
     
     customertexts = relationship("CustomerText")

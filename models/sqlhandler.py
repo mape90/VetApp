@@ -293,6 +293,21 @@ class SQLHandler(object):
             return None 
     
     '''-------------------------------------------'''
+
+    def getAnimalVisits(self, session, animal):
+        print("getAnimalVisits")
+        if animal != None:
+            visits = session.query(Visit).join(Visit.visitanimals).filter(VisitAnimal.animal_id == animal.id)
+
+            print("visits: ", visits)
+
+            return visits
+        else:
+            print("return empty")
+            return []
+
+    '''-------------------------------------------'''
+
     def searchOwner(self, session, question, start = 0, end = 20):
         return session.query(Owner).filter(Owner.name.like('%' + question+'%')).order_by(Owner.name)[start:end]
     

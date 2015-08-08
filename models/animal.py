@@ -17,7 +17,7 @@
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from sqlalchemy import Column, Integer, String, Date, Sequence, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, Sequence, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 
 import datetime
@@ -76,6 +76,8 @@ class Animal(Base):
     other_info = Column(String(500))
     death_day = Column(Date)
     flags = Column(Integer)
+
+    archive = Column(Boolean, default=False)
     
     #Setup Many to one links
     

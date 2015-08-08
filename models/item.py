@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
-from sqlalchemy import Column, Integer, String, Sequence, Interval, ForeignKey, Table, Float, DateTime
+from sqlalchemy import Column, Integer, String, Sequence, Interval, ForeignKey, Table, Float, DateTime, Boolean
 from sqlalchemy.orm import relationship, backref
 
 from models import Base
@@ -60,6 +60,8 @@ class Item(Base):
     item_type = Column(String(50))
 
     count_type = Column(String(10))
+
+    archive = Column(Boolean, default=False)
 
     customer_descriptions = relationship("ItemDescription", backref='item', cascade="all, delete, delete-orphan")
     __mapper_args__ = {'polymorphic_identity':'item','polymorphic_on':item_type}

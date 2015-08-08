@@ -72,7 +72,7 @@ class AnimalTab(GenericTab):
         self.configure()
         self.createConnections()
         self.setBasicInfo()
-        
+
 
     def configure(self):
         self.labTreeWidget = GenericTreeWidget(parent=self, session=self.session, updateFunctio=None)
@@ -86,7 +86,7 @@ class AnimalTab(GenericTab):
         self.medicineTreeWidget.setHeader(headertexts=['id', 'Nimi', 'Annettu', 'Päättyy'], hidecolumns=[0])
         self.ui.medicineLayout.addWidget(self.medicineTreeWidget)        
         
-        self.visitTreeWidget = GenericTreeWidget(parent=self, session=self.session, updateFunctio=None)
+        self.visitTreeWidget = GenericTreeWidget(parent=self, session=self.session, updateFunctio=SqlHandler.getAnimalVisits)
         self.visitTreeWidget.setTitle('Viimeisimmät käynnit')
         self.visitTreeWidget.setHeader(headertexts=['id','Aika'], hidecolumns=[0])
         self.visitTreeWidget.setButtons([ButtonType.open])
@@ -121,6 +121,7 @@ class AnimalTab(GenericTab):
         self.ui.phoneLayout.addWidget(self.phonerecipieTreeWidget)
    
     def initializeParameters(self):
+        print("animaltab->initializeParameters")
         if self.item != None:
             self.labTreeWidget.setParameters([self.item])
             self.medicineTreeWidget.setParameters([self.item])
@@ -138,13 +139,17 @@ class AnimalTab(GenericTab):
             print('ERROR: AnimalTab: initializeParameters: self.item was not set')
    
     def updateListItems(self):
+        print("animaltab->updateListItems")
         if self.item != None:
             self.weightcontrolTreeWidget.update()
+            self.phonerecipieTreeWidget.update()
+
             self.visitTreeWidget.update()
+
             self.examinationTreeWidget.update()
             self.medicineTreeWidget.update()
             self.labTreeWidget.update()
-            self.phonerecipieTreeWidget.update()
+
             self.vaccineTreeWidget.update()
             self.pictureTreeWidget.update()
         

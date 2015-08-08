@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
-from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, Table, Boolean
 from sqlalchemy.orm import relationship
 
 from models import Base
@@ -59,6 +59,8 @@ class Owner(Base):
     email = Column(String(100))
     other_info = Column(String(500))
     flags = Column(Integer)
+
+    archive = Column(Boolean, default=False)
     
     __table_args__ = {'extend_existing': True}
     def __init__(self, name, address, post_office_id, postnumber_id, email, phonenumber, other_info, flags=0, animals=[]):

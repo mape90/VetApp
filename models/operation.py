@@ -45,6 +45,9 @@ class OperationBase(Base):
     price = Column(Integer, nullable=False)
     type = Column(String(50))
     description = Column(String(1000))
+
+    archive = Column(Boolean, default=False)
+
     __mapper_args__ = {'polymorphic_identity':'operationbases','polymorphic_on':type}
 
     def __init__(self, name, price, description):
@@ -271,6 +274,9 @@ class Operation(Base):
     count = Column(Integer)
     description = Column(String(500))
     type = Column(String(50))
+
+    archive = Column(Boolean, default=False)
+
     __mapper_args__ = {'polymorphic_identity':'operations','polymorphic_on':type}
     def __init__(self, price, description, base=None, count=1):
         self.price = price
