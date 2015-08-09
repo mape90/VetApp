@@ -30,6 +30,8 @@ from models import SqlHandler
 from uipy.ui_listwidget import Ui_GenericTreeWidget
 from datetime import datetime
 
+from models.translationtables import g_operationbase_translation_dict
+
 class ButtonType():
     from models.translationtables import g_treewidget_button_texts as texts
     add = texts['add']
@@ -273,7 +275,81 @@ class GenericTreeWidget(QWidget):
     
     def clearTreeWidget(self):
         self.ui.treeWidget.clear()              
-                    
+
+
+
+
+class LastOperationTreeWidget(GenericTreeWidget):
+    def __init__(self, session, parent, updateFunctio):
+        GenericTreeWidget.__init__(self, session, parent,updateFunctio)
+        self.setTitle('Viimeisimmät toimenpiteet')
+        self.setHeader(headertexts=['id', 'Nimi','Tyyppi','Määrä', 'Aika'], hidecolumns=[0])
+        self.setButtons([ButtonType.open])
+        
+        from mainwindowtabs.visittab import VisitTab
+        self.tabcreator = VisitTab
+        
+        
+    def openItem(self):
+        print("LastOperationTreeWidget openItem")
+        tree_item = self.ui.treeWidget.currentItem()
+        if tree_item != None:
+            visit = tree_item.data(0,0)
+            Tabmanager.openTab(tabCreator=self.tabcreator, newItem=visit)
+    
+    def makeTreeItem(self,visit, str_list):
+        print("LastOperationTreeWidget.makeTreeItem: ",str_list)
+        treeItem = QTreeWidgetItem(self.ui.treeWidget,str_list)
+        treeItem.setData(0,0,visit)
+        return treeItem
+    
+    def addItemToTree(self, dict_operations):
+        if dict_operations == None:
+            return
+        if isinstance(dict_operations, dict):
+            if "visit" in dict_operations and "operations" in dict_operations:
+                for operation in dict_operations["operations"]:
+                    str_list = [str(operation.id), operation.base.name, g_operationbase_translation_dict[operation.base.getType()], str(operation.count), dict_operations["visit"].start_time.strftime("%d.%m.%Y")]
+                    treeItem = self.makeTreeItem(dict_operations["visit"], str_list)
+                    self.ui.treeWidget.addTopLevelItem(treeItem)
+            else:
+                print("ERROR: MedicineTreeWidget->addItemToTree: dict has wrong keys: ", dict_operations.keys())
+        else:
+            print("ERROR: MedicineTreeWidget->addItemToTree items isnt dict at it should!")
+
+class MedicineTreeWidget(GenericTreeWidget):
+    def __init__(self, session, parent, updateFunctio):
+        GenericTreeWidget.__init__(self, session, parent,updateFunctio)
+        self.setTitle('Viimeisimmät lääkkeet')
+        self.setHeader(headertexts=['id', 'Nimi', 'Määrä', 'Annettu'], hidecolumns=[0])
+
+    # item should be in format of {"time":<datetime>, "items":[Medicine, ...]}
+    def makeTreeItem(self,item, str_list):
+        print("MedicineTreeWidget.makeTreeItem: ",str_list)
+        treeItem = QTreeWidgetItem(self.ui.treeWidget,str_list)
+        treeItem.setData(0,0,item)
+        return treeItem
+    
+    def addItemToTree(self, dict_medicines):
+        if dict_medicines == None:
+            return
+        if isinstance(dict_medicines, dict):
+            if "time" in dict_medicines and "items" in dict_medicines:
+                #i is now {"item":<Medicine>, "count":<float>}
+                for tmp_dict in dict_medicines["items"]:
+                    i = tmp_dict["item"]
+                    time_str = dict_medicines["time"].strftime("%d.%m.%Y")
+                    str_list = [str(i.id), str(i.name), ("%.2f" % tmp_dict["count"]), time_str]
+                    treeItem = self.makeTreeItem(i, str_list)
+                    self.ui.treeWidget.addTopLevelItem(treeItem)
+                    #self.ui.treeWidget.setCurrentItem(treeItem)
+            else:
+                print("ERROR: MedicineTreeWidget->addItemToTree: dict has wrong keys: ", dict_medicines.keys())
+        else:
+            print("ERROR: MedicineTreeWidget->addItemToTree items isnt dict at it should!")
+
+
+         
 class VisitAnimalTreeWidget(GenericTreeWidget):
     def __init__(self, session, parent):
         GenericTreeWidget.__init__(self, session, parent)

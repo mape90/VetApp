@@ -72,11 +72,28 @@ class VisitAnimal(Base):
     def getAllItems(self):
         l =[]
         for i in self.items: #list has VisitItems
-            l.extend(i.item)
-        for oper in operations:
+            l.append(i.item)
+        for oper in self.operations:
             l.extend(oper.getItems())
         return l
-
+    
+    def getAllMedicines(self):
+        l =[]
+        from models.item import Medicine
+        for i in self.items: #list has VisitItems
+            if(isinstance(i.item, Medicine)):
+                l.append({"item":i.item, "count":i.count})
+        for oper in self.operations:
+            tmp_list = oper.getItems()
+            for item in tmp_list:
+                if(isinstance(item, Medicine)):
+                    l.append({"item":item, "count":oper.count})
+        return l
+    
+    
+    def getOperations(self):
+        return self.operations
+    
     #return all medicine texts in format {name1 : text1, name2:text2,...}
     def getMedicineDict(self):
         tmp = {}
@@ -117,19 +134,34 @@ class Visit(Base):
     owner_id = Column(Integer, ForeignKey('owners.id'), nullable=False)
     owner = relationship("Owner")
     
-    visit_reason = Column(String(255), default="")
+    visit_reason = Column(String(255))
 
     visitanimals = relationship("VisitAnimal", secondary = visit_animals_table)
 
     archive = Column(Boolean, default=False)
 
-    def __init__(self, start_time, owner, vet, end_time=None, visitanimals = []):
+    def __init__(self, start_time, owner, vet, reason, end_time=None, visitanimals = []):
         self.start_time = start_time
         self.owner = owner
         self.vet = vet
         self.end_time = end_time
         self.visitanimals = visitanimals
+        self.visit_reason = reason
    
+    #returns list of dicts {"item"<Medicine>, "count":<float>}
+    def getAnimalMedicines(self, animal):
+        for anim in self.visitanimals:
+            if(anim.animal.id == animal.id):
+                return anim.getAllMedicines()
+        print("ERROR:Visit.getAnimalMedicines: did not found animal from visit")
+        return []
+
+    def getAnimalOperations(self, animal):
+        for anim in self.visitanimals:
+            if(anim.animal.id == animal.id):
+                return anim.getOperations()
+        print("ERROR:Visit.getAnimalOperations: did not found animal from visit")
+        return []
 
     def getPriceDict(self):
         price_dict = {}
@@ -167,8 +199,9 @@ class Visit(Base):
             except:
                 print("DEBUG ERROR Visit->update(): wrong variable name: " + str(key))
 
-        
+    
     def stringList(self):
-        return [str(self.id), self.visit_reason, str(self.start_time)]
+        return [str(self.id), self.visit_reason, self.start_time.strftime("%H:%M %d.%m.%Y")
+, str(self.owner.name)]
         
         
