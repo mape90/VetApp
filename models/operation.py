@@ -340,11 +340,11 @@ class Operation(Base):
         tmp = []
         if hasattr(self.base, 'item'):
             logDEBUG(self.base, "has item")
-            tmp.extend(self.base.item)
+            tmp.append(self.base.item)
         if hasattr(self, 'items'):
             logDEBUG(self, "has items")
             for i in self.items: #list has surgery items
-                tmp.extend(i.item)
+                tmp.append(i.item)
         return tmp
 
     def update(self, data):

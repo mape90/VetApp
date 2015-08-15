@@ -97,6 +97,8 @@ class VisitTab(GenericTab):
         self.disableAnimalTree(True)
         if self.item != None:
             self.ownerserachline.setCurrentItem(self.item.owner)
+            self.ui.reasonTextEdit.setPlainText(self.item.visit_reason)
+            
             if self.item.start_time != None:
                 self.ui.startTimeEdit.setDateTime(self.item.start_time)
             if self.item.end_time:
@@ -402,7 +404,7 @@ class VisitTab(GenericTab):
     def makeItem(self):
         data = self.getData()
         from models.visit import Visit
-        return Visit(data["start_time"], data["owner"], data["vet"],
+        return Visit(data["start_time"], data["owner"], data["vet"],data["visit_reason"],
                           data["end_time"], data["visitanimals"])
 
     def saveAble(self): 

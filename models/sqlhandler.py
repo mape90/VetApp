@@ -113,8 +113,8 @@ class SQLHandler(object):
     def PostNumber(self, post_office_id, number):
         return PostNumber(post_office_id, number)
     
-    def Visit(self, start_time, owner, vet, end_time=None):
-        return Visit(start_time, owner, vet, end_time)
+    def Visit(self, start_time, owner, vet, reason, end_time=None):
+        return Visit(start_time, owner, vet, reason, end_time)
     
     def VisitAnimal(self, animal, anamnesis='', status='', diagnosis='', treatment=''):
         return VisitAnimal(animal, anamnesis, status, diagnosis, treatment)
@@ -305,9 +305,7 @@ class SQLHandler(object):
     def getAnimalVisits(self, session, animal):
         print("getAnimalVisits")
         if animal != None:
-            visits = session.query(Visit).join(Visit.visitanimals).filter(VisitAnimal.animal_id == animal.id)
-
-            print("visits: ", visits)
+            visits = session.query(Visit).join(Visit.visitanimals).filter(VisitAnimal.animal_id == animal.id).order_by(Visit.start_time).all()
 
             return visits
         else:

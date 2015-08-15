@@ -53,7 +53,7 @@
 '''
 
 from mainwindowtabs.generictab import GenericTab
-from mainwindowtabs.generictreewidget import GenericTreeWidget, ButtonType, PhoneRecipieTreeWidget, PhoneRecipieDialog
+from mainwindowtabs.generictreewidget import GenericTreeWidget, ButtonType, PhoneRecipieTreeWidget, PhoneRecipieDialog, MedicineTreeWidget, LastOperationTreeWidget
 
 from uipy.ui_animaltab import Ui_Animal
 from mainwindowtabs.addNewDialog import AddNewWeight, AddNewRace, AddNewSex, AddNewSpecie, AddNewColor
@@ -73,7 +73,25 @@ class AnimalTab(GenericTab):
         self.createConnections()
         self.setBasicInfo()
 
-
+    def getMedicines(self, session, animal):
+        visits = SqlHandler.getAnimalVisits(self.session, animal)
+        medicines = []
+        for visit in reversed(visits):
+            medicines.append({'time':visit.start_time ,'items':visit.getAnimalMedicines(animal)})
+        return medicines
+    
+    def getOperations(self, session, animal):
+        visits = SqlHandler.getAnimalVisits(self.session, animal)
+        items_list = []
+        for visit in reversed(visits):
+            items_list.append({'visit':visit, 'operations':visit.getAnimalOperations(animal)})
+        return items_list
+    
+    def getVisits(self, session, animal):
+        return reversed(SqlHandler.getAnimalVisits(session, animal))
+    
+    
+    
     def configure(self):
         self.labTreeWidget = GenericTreeWidget(parent=self, session=self.session, updateFunctio=None)
         self.labTreeWidget.setTitle('Laboratorio tulokset')
@@ -81,21 +99,16 @@ class AnimalTab(GenericTab):
         self.labTreeWidget.setButtons([ButtonType.open])
         self.ui.labLayout.addWidget(self.labTreeWidget)
 
-        self.medicineTreeWidget = GenericTreeWidget(parent=self, session=self.session, updateFunctio=None)
-        self.medicineTreeWidget.setTitle('Viimeisimmät lääkkeet')
-        self.medicineTreeWidget.setHeader(headertexts=['id', 'Nimi', 'Annettu', 'Päättyy'], hidecolumns=[0])
+        self.medicineTreeWidget = MedicineTreeWidget(parent=self, session=self.session, updateFunctio=self.getMedicines)
         self.ui.medicineLayout.addWidget(self.medicineTreeWidget)        
         
-        self.visitTreeWidget = GenericTreeWidget(parent=self, session=self.session, updateFunctio=SqlHandler.getAnimalVisits)
+        self.visitTreeWidget = GenericTreeWidget(parent=self, session=self.session, updateFunctio=self.getVisits)
         self.visitTreeWidget.setTitle('Viimeisimmät käynnit')
-        self.visitTreeWidget.setHeader(headertexts=['id','Aika'], hidecolumns=[0])
+        self.visitTreeWidget.setHeader(headertexts=['id','Käynnin syy','Aika', 'Omistaja'], hidecolumns=[0])
         self.visitTreeWidget.setButtons([ButtonType.open])
         self.ui.gridLayout.addWidget(self.visitTreeWidget,0,0)
         
-        self.examinationTreeWidget = GenericTreeWidget(parent=self, session=self.session, updateFunctio=None)
-        self.examinationTreeWidget.setTitle('Viimeisimmät toimenpiteet')
-        self.examinationTreeWidget.setHeader(headertexts=['id', 'Nimi', 'Tehty', 'Tyyppi'], hidecolumns=[0])
-        self.examinationTreeWidget.setButtons([ButtonType.open])
+        self.examinationTreeWidget = LastOperationTreeWidget(parent=self, session=self.session, updateFunctio=self.getOperations)
         self.ui.gridLayout.addWidget(self.examinationTreeWidget,0,1)
         
         self.vaccineTreeWidget = GenericTreeWidget(parent=self, session=self.session, updateFunctio=None)
@@ -145,11 +158,10 @@ class AnimalTab(GenericTab):
             self.phonerecipieTreeWidget.update()
 
             self.visitTreeWidget.update()
+            self.medicineTreeWidget.update()
 
             self.examinationTreeWidget.update()
-            self.medicineTreeWidget.update()
             self.labTreeWidget.update()
-
             self.vaccineTreeWidget.update()
             self.pictureTreeWidget.update()
         
