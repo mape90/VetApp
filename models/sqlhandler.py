@@ -68,10 +68,14 @@ class SQLHandler(object):
     def __init__(self, Session, Base, dbname='sqlite:///:memory:', debug=False):
         self.dbname = dbname
         #self.debug = debug
-        self.engine = create_engine(dbname, echo=debug, poolclass=SingletonThreadPool)  
+        #self.engine = create_engine(dbname, echo=debug, poolclass=SingletonThreadPool)
         #self.engine = create_engine(dbname, echo=debug, 
                                     #poolclass=SingletonThreadPool,
                                     #isolation_level='SERIALIZABLE')  
+
+        print(dbname)
+        self.engine = create_engine(dbname, pool_size=20, max_overflow=0, echo=debug)
+
         self.Session = Session
         self.Base = Base
         self.session = Session()
@@ -82,11 +86,15 @@ class SQLHandler(object):
     def initialize(self):
         self.Session.configure(bind=self.engine)
         self.Base.metadata.bind = self.engine
+
+        self.Base.metadata.create_all(self.engine)
         from sqlalchemy.exc import OperationalError
         try:
-            self.Base.metadata.create_all(self.engine)
+            print("Make objects")
+
             return True
         except OperationalError:
+            print("error while creating objets")
             return False
 
     '''-------------OBJECT CREATORS---------------'''    

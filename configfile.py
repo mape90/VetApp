@@ -14,11 +14,13 @@ def popErrorMessage(text):
     msgBox.setText(text);
     msgBox.exec();
 
-_databasename = 'data.db'
-_username = 'VetApp'
-_pass = 'MDdlMjNiZWVjZmVhMjI5Y2JkMmIzNWFh' #change this to unique + TODO: crypt password
-_ip = 'localhost'
-_port = '5432'
+#'postgres:salakala://localhost:5433/vetapp'
+
+_databasename = 'vetapp'
+_username = 'vetapp_user'
+_pass = 'salakala' #change this to unique + TODO: crypt password
+_ip = '127.0.0.1'
+_port = '5433'
 _bill_directory = '~/bill/'
 
 _debug_val = True

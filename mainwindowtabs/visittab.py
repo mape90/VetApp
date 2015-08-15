@@ -385,7 +385,7 @@ class VisitTab(GenericTab):
         data["start_time"] = self.qdateToPy(self.ui.startTimeEdit.dateTime())
         data["owner"] = self.ownerserachline.getCurrentItem()
         data["vet"] = self.ui.vetComboBox.itemData(self.ui.vetComboBox.currentIndex())
-        data["visit_reason"] = self.ui.reasonTextEdit.text()
+        data["visit_reason"] = self.ui.reasonTextEdit.toPlainText()
 
         endTime = None
         if self.isEndTimeChanged():

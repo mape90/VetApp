@@ -136,7 +136,7 @@ def main():
     #you can change databasename at models.__init__
     #status = False
     #if SqlHandler.usesLite():
-    status = os.path.exists(getDBName())
+    status = False #os.path.exists(getDBName())
     
     app = QtGui.QApplication(sys.argv)
 
