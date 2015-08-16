@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
-from sqlalchemy import Column, Integer, String, Sequence, Interval, ForeignKey, Table, Float, DateTime, Boolean
+from sqlalchemy import Column, Integer, String, Sequence, Interval, ForeignKey, Table, Float, DateTime, Boolean, Text
 from sqlalchemy.orm import relationship, backref
 
 from models import Base
@@ -29,7 +29,7 @@ from models.translationtables import g_item_name_dict
 class ALV(Base):
     __tablename__ = 'alvs'
     id = Column(Integer, Sequence('alvs_id_seq'), primary_key=True)
-    alv = Column(Integer)
+    alv = Column(Float)
     alv_class = Column(Integer, unique=True)
     
     def __init__(self,alv, alv_class):
@@ -52,11 +52,11 @@ class ItemStrings():
 class Item(Base):
     __tablename__ = 'items'
     id = Column(Integer, Sequence('items_id_seq'), primary_key=True)
-    name = Column(String(50))
-    description = Column(String(1000))
-    stock_price = Column(Integer)
-    price = Column(Integer)
-    barcode = Column(String(100))
+    name = Column(String(255))
+    description = Column(Text)
+    stock_price = Column(Float)
+    price = Column(Float)
+    barcode = Column(String(255))
     item_type = Column(String(50))
 
     count_type = Column(String(10))
@@ -227,7 +227,7 @@ class ItemDescription(Base):
     item_id = Column(Integer, ForeignKey('items.id'))
     specie_id = Column(Integer, ForeignKey('species.id'))
     specie = relationship("Specie")
-    text = Column(String(1000))
+    text = Column(Text)
     def __init__(self, specie, text):
         self.specie = specie
         self.text = text

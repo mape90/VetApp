@@ -27,7 +27,7 @@ class GlobalVar(Base):
     __tablename__='globalvars'
     id = Column(Integer, Sequence('globalvars_id_seq'), primary_key=True)
     key = Column(String(255), unique=True)
-    value = Column(String(1000))
+    value = Column(Text)
 
     def __init__(self, key, value):
         print("DEBUG initing GlobalVar")

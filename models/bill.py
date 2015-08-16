@@ -22,7 +22,7 @@ Created on Apr 21, 2013
 @author: mp
 '''
 
-from sqlalchemy import Column, Integer, String, Date, Sequence, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, Sequence, ForeignKey, Float, Text
 from sqlalchemy.orm import relationship
 
 import datetime
@@ -39,29 +39,29 @@ class Bill(Base):
     visit = relationship('Visit')
     
     #ALV1
-    clinic_payment = Column(Integer) 
-    operations_payment = Column(Integer)
-    lab_payment = Column(Integer)
-    accessories_payment = Column(Integer)    
-    extra_percent = Column(Integer)
+    clinic_payment = Column(Float) 
+    operations_payment = Column(Float)
+    lab_payment = Column(Float)
+    accessories_payment = Column(Float)    
+    extra_percent = Column(Float)
     
     #ALV2
-    medicines_payment = Column(Integer)
+    medicines_payment = Column(Float)
     
     #ALV3
-    diet_payment = Column(Integer)
+    diet_payment = Column(Float)
     
-    km = Column(Integer)
-    km_payment = Column(Integer)
+    km = Column(Float)
+    km_payment = Column(Float)
     
     payment_method = Column(String)
     due_date = Column(Date)
     paid_time  = Column(Date)
-    paid_value = Column(Integer)
+    paid_value = Column(Float)
    
     index_number = Column(Integer)
    
-    other_info = Column(String(1000))
+    other_info = Column(Text)
     status = Column(Integer)
     
     def __init__(self, data):

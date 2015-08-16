@@ -263,8 +263,8 @@ class SQLHandler(object):
                  color_id, birthday, micro_num, rec_num, tattoo, 
                  insurance, passport, other_info)
     
-    def Specie(self,name, picture_path=''):
-        return Specie(name, picture_path)
+    def Specie(self,name):
+        return Specie(name)
     
     def Color(self, name, specie_id):
         return Color(name, specie_id)

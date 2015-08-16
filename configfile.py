@@ -19,8 +19,8 @@ def popErrorMessage(text):
 _databasename = 'vetapp'
 _username = 'vetapp_user'
 _pass = 'salakala' #change this to unique + TODO: crypt password
-_ip = '127.0.0.1'
-_port = '5433'
+_ip = '192.168.1.68'
+_port = '5432'
 _bill_directory = '~/bill/'
 
 _debug_val = True

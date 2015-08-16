@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
-from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, Boolean, Text
 from sqlalchemy.orm import relationship
 
 from models import Base
@@ -58,9 +58,9 @@ from models.postoffice import PostOffice
 class Vet(Base):
     __tablename__ = 'vets'
     id = Column(Integer, Sequence('vets_id_seq'), primary_key=True)
-    name = Column(String(50))
+    name = Column(String(255))
     
-    address = Column(String(100))
+    address = Column(String(255))
     post_office_id = Column(Integer, ForeignKey('postoffices.id'))
     post_office = relationship("PostOffice")
     postnumber_id = Column(Integer, ForeignKey('postnumbers.id'))
@@ -72,10 +72,10 @@ class Vet(Base):
     vet_number = Column(String(50))
     alv_number = Column(String(50))
     
-    bank_name = Column(String(100))
+    bank_name = Column(String(255))
     
-    IBAN = Column(String(100))
-    SWIF = Column(String(10))
+    IBAN = Column(String(30))
+    SWIF = Column(String(25))
 
     archive = Column(Boolean, default=False)
     
@@ -134,7 +134,7 @@ class CustomerText(Base):
     id = Column(Integer, Sequence('customertexts_id_seq'), primary_key=True)
     vet_id = Column(Integer, ForeignKey('vets.id'), nullable=False)
     language = Column(String(50), nullable=False)
-    text = Column(String(500))
+    text = Column(Text)
     def __init__(self, language, text):
         self.language = language
         self.text = text
@@ -146,8 +146,8 @@ class CustomerText(Base):
 class ContactInfo(Base):
     __tablename__='contactinfos'
     id = Column(Integer, Sequence('contactinfos_id_seq'), primary_key=True)
-    name = Column(String(50))
-    text = Column(String(100), nullable=False)
+    name = Column(String(255))
+    text = Column(Text, nullable=False)
     vet_id = Column(Integer, ForeignKey('vets.id'), nullable=False) 
     type = Column(String(50))
     __mapper_args__ = {'polymorphic_identity':'contactinfo','polymorphic_on':type}

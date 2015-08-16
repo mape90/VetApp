@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
-from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, Date
+from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, Date, Text
 from sqlalchemy.orm import relationship
 
 from models import Base
@@ -35,7 +35,7 @@ class Note(Base):
 
     made = Column(Date, nullable=False)
     title = Column(String(255),nullable=False)
-    text = Column(String(1000),nullable=False)
+    text = Column(Text,nullable=False)
         
     def __init__(self, vet_id, title, text):
         self.vet_id = vet_id

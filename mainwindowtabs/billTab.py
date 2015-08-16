@@ -265,6 +265,10 @@ class BillTab(GenericTab):
         rounded = ceil(total/precision) * precision
         previous_value = self.ui.operationSpinBox.value()
         self.ui.operationSpinBox.setValue(previous_value + rounded - total)
+        
+        print("value after round should be: ", previous_value + rounded - total)
+        print("it is: ", self.ui.operationSpinBox.value())
+        
           
     def updateEndPrice(self):
         price_ALV1 = self.getALV1Price() * (100+SqlHandler.getALV(1))/100.
@@ -312,7 +316,6 @@ class BillTab(GenericTab):
 
         printer = QPrinter()
         
-        
         printer.setOutputFileName(getBillPath() + str(datetime.datetime.now())[0:-7] + '_' + str(self.item.id) + '.pdf')
         
         printpreview = QPrintDialog(printer, self)
@@ -321,6 +324,7 @@ class BillTab(GenericTab):
         document.print(printer)
      
     def getData(self):
+        print("DEBUG: getData")
         data = {}
         data['visit'] = self.visit
         if self.ui.clinic_radio_button.isChecked():
@@ -345,6 +349,8 @@ class BillTab(GenericTab):
         data['index_number'] = self.ui.indexNumberLabel.text()
         data['other_info'] = self.ui.otherInfoTextEdit.toPlainText()
         data['satus'] = 0 #status TODO: implement if needed
+        
+        print('operations_payment ',data['operations_payment'])
         
         return data
     

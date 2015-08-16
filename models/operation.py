@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
-from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, Interval, Boolean, Table, Date, Float
+from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, Interval, Boolean, Table, Date, Float, Text
 from sqlalchemy.orm import relationship
 
 #from sqlalchemy.ext.declarative import declarative_base
@@ -42,7 +42,7 @@ class OperationBase(Base):
     __tablename__='operationbases'
     id = Column(Integer, Sequence('operationbases_id_seq'), primary_key=True)
     name = Column(String(100), nullable=False)
-    price = Column(Integer, nullable=False)
+    price = Column(Float, nullable=False)
     type = Column(String(50))
     description = Column(String(1000))
 
@@ -133,7 +133,7 @@ class SurgeryBaseItem(Base):
     item_id = Column(Integer, ForeignKey('items.id'))
     surgerybase_id = Column(Integer, ForeignKey('surgerybases.id'))
     item = relationship("Item")
-    count = Column(Integer)
+    count = Column(Float)
     def __init__(self,item,count=1):
         self.item = item
         self.count = count
@@ -270,9 +270,9 @@ class Operation(Base):
     __tablename__='operations'
     id = Column(Integer, Sequence('operations_id_seq'), primary_key=True)
     visitanimal_id = Column(Integer, ForeignKey('visitanimals.id'))
-    price = Column(Integer)
-    count = Column(Integer)
-    description = Column(String(500))
+    price = Column(Float)
+    count = Column(Float)
+    description = Column(Text)
     type = Column(String(50))
 
     archive = Column(Boolean, default=False)
@@ -444,7 +444,7 @@ class SurgeryItem(Base):
     item_id = Column(Integer, ForeignKey('items.id'))
     surgery_id = Column(Integer, ForeignKey('surgerys.id'))
     item = relationship("Item")
-    count = Column(Integer)
+    count = Column(Float)
     def __init__(self,item,count=1):
         self.item = item
         self.count = count
@@ -500,7 +500,7 @@ class Lab(Operation):
     id = Column(Integer, ForeignKey('operations.id'), primary_key=True)
     base_id  = Column(Integer, ForeignKey('operationbases.id'))
     base = relationship("LabBase")
-    path = Column(String(255))
+    path = Column(String(1000))
     __mapper_args__ = {'polymorphic_identity':'lab',}
     def __init__(self,price, description, base, path=''):
         super().__init__(price, description)
@@ -600,7 +600,7 @@ class RecipieMedicine(Base):
     id = Column(Integer, Sequence('recipiemedicines_id_seq'), primary_key=True)
     medicine_id = Column(Integer, ForeignKey('items.id'))
     medicine = relationship("Item")
-    count = Column(Integer)
+    count = Column(Float)
 
     def __init__(self, medicine, count=1):
         self.medicine = medicine

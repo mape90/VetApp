@@ -37,11 +37,10 @@ from models import Base
 '''
 
 class PostOffice(Base):
-    #Asetetaan taulukon nimi
     __tablename__ = 'postoffices' 
     #maaritellaan taulukon olioiden asetukset
     id = Column(Integer, Sequence('postoffices_id_seq'), primary_key=True)
-    name = Column(String(50), nullable=False) 
+    name = Column(String(100), nullable=False) 
     
     __table_args__ = {'extend_existing': True}
     

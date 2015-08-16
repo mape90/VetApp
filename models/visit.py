@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
-from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, DateTime, Table, Float, Boolean
+from sqlalchemy import Column, Integer, String, Sequence, ForeignKey, DateTime, Table, Float, Boolean, Text
 from sqlalchemy.orm import relationship
 
 from models.translationtables import g_medicines_list
@@ -44,10 +44,10 @@ class VisitAnimal(Base):
     animal_id = Column(Integer, ForeignKey('animals.id'), nullable=False)
     animal = relationship("Animal")
 
-    anamnesis = Column(String(1000))
-    status = Column(String(1000))
-    diagnosis = Column(String(1000))
-    treatment = Column(String(1000))
+    anamnesis = Column(Text)
+    status = Column(Text)
+    diagnosis = Column(Text)
+    treatment = Column(Text)
     
     operations = relationship("Operation", backref='visitanimals', cascade="all, delete-orphan")
 
@@ -121,7 +121,6 @@ visit_animals_table = Table('visit_animals_table', Base.metadata,
 
 
 class Visit(Base):
-    #Asetetaan taulukon nimi
     __tablename__ = 'visits'
     #maaritellaan taulukon olioiden asetukset
     id = Column(Integer, Sequence('visits_id_seq'), primary_key=True)
@@ -134,7 +133,7 @@ class Visit(Base):
     owner_id = Column(Integer, ForeignKey('owners.id'), nullable=False)
     owner = relationship("Owner")
     
-    visit_reason = Column(String(255))
+    visit_reason = Column(Text, default="")
 
     visitanimals = relationship("VisitAnimal", secondary = visit_animals_table)
 
@@ -201,7 +200,6 @@ class Visit(Base):
 
     
     def stringList(self):
-        return [str(self.id), self.visit_reason, self.start_time.strftime("%H:%M %d.%m.%Y")
-, str(self.owner.name)]
+        return [str(self.id), self.visit_reason, self.start_time.strftime("%H:%M %d.%m.%Y"), str(self.owner.name)]
         
         

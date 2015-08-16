@@ -25,9 +25,7 @@ from models import Base
 class Specie(Base):
     __tablename__ = "species"  
     id = Column(Integer, Sequence('specie_id_seq'), primary_key=True)
-    name = Column(String(50), nullable=False)
-    picture_path = Column(String(500))
+    name = Column(String(100), nullable=False)
     __table_args__ = {'extend_existing': True}
-    def __init__(self, name, picture_path=''):
+    def __init__(self, name):
         self.name = name
-        self.picture_path = picture_path

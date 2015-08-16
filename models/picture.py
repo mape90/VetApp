@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
-from sqlalchemy import Column, Integer, String, Sequence#, ForeignKey
+from sqlalchemy import Column, Integer, String, Sequence, Text
 #from sqlalchemy.orm import relationship, backref
 
 #from models.specie import Specie
@@ -26,7 +26,7 @@ from models import Base
 class Picture(Base):
     __tablename__='pictures'
     id = Column(Integer, Sequence('pictures_id_seq'), primary_key=True)
-    description = Column(String(500))
+    description = Column(Text)
     path = Column(String(255))
     '''visit_id, animal_id,'''
     def __init__(self, description, path):

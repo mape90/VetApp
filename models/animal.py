@@ -17,7 +17,7 @@
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from sqlalchemy import Column, Integer, String, Date, Sequence, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, Date, Sequence, ForeignKey, Boolean, Float, Text
 from sqlalchemy.orm import relationship
 
 import datetime
@@ -61,19 +61,18 @@ classes:
     -flags = Column(Integer)
 '''
 class Animal(Base):
-    #Asetetaan taulukon nimi
     __tablename__ = 'animals'
     #maaritellaan taulukon olioiden asetukset
     id = Column(Integer, Sequence('animals_id_seq'), primary_key=True)
-    name = Column(String(50), nullable=False)
-    official_name = Column(String(50))
+    name = Column(String(255), nullable=False)
+    official_name = Column(String(255))
     birthday = Column(Date)
     micro_num = Column(String(50))
     rec_num = Column(String(50))
     tattoo = Column(String(50))
-    insurance = Column(String(200))
-    passport = Column(String(100))
-    other_info = Column(String(500))
+    insurance = Column(Text)
+    passport = Column(String(255))
+    other_info = Column(Text)
     death_day = Column(Date)
     flags = Column(Integer)
 
@@ -158,7 +157,7 @@ class Color(Base):
     id = Column(Integer, Sequence('colors_id_seq'), primary_key=True)
     specie_id = Column(Integer, ForeignKey('species.id'), nullable=False)
     specie = relationship("Specie")
-    name = Column(String(50), nullable=False)
+    name = Column(String(100), nullable=False)
     __table_args__ = {'extend_existing': True}
     def __init__(self, name, specie_id):
         self.name = name
@@ -195,7 +194,7 @@ class WeightControl(Base):
     animal_id = Column(Integer, ForeignKey('animals.id'), nullable=False)
     animal = relationship("Animal")
     date = Column(Date)
-    weight = Column(Integer)
+    weight = Column(Float)
     __table_args__ = {'extend_existing': True}
     def __init__(self, animal_id, weight):
         self.animal_id = animal_id

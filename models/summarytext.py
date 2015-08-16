@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with VetApp.  If not, see <http://www.gnu.org/licenses/>.
 '''
-from sqlalchemy import Column, Integer, String, Sequence
+from sqlalchemy import Column, Integer, String, Sequence, Text
 from sqlalchemy.orm import relationship, backref
 
 from models import Base
@@ -24,15 +24,15 @@ from models import Base
 class SummaryText(Base):
     __tablename__ = 'summarytexts'
     id = Column(Integer, Sequence('summarytexts_id_seq'), primary_key=True)
-    name = Column(String, unique=True)
-    text = Column(String(5000))
+    name = Column(String(255), unique=True)
+    text = Column(Text)
     
     def __init__(self,name, text):
         self.name = name
         self.text = text
 
     def stringList(self):
-        return ['?',self.name]
+        return ['',self.name]
 
     def update(self, data):
         for key in data.keys:
