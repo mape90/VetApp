@@ -21,6 +21,7 @@ from PyQt4.QtGui import QMainWindow, qApp
 from mainwindowtabs import Tabmanager
 from mainwindowtabs.mainmenutab import MainMenuTab
 from uipy.ui_mainwindow import Ui_MainWindow
+from configfile import getVersion
 
 
 class MainWindow(QMainWindow):
@@ -37,15 +38,18 @@ class MainWindow(QMainWindow):
 
 
     def configureMainWindow(self):
-        self.setWindowTitle('VetApp 0.11 (Alfa)')
+        self.setWindowTitle('VetApp %.4f (Alfa)' % getVersion())
         
+    
+    def close(self):
+        qApp.quit()
     
     '''
         This function makes all neened connection to handle
     '''
     def createConnections(self):
         self.ui.actionMainMenu.triggered.connect(self.openMainMenu)
-        self.ui.actionClose.triggered.connect(qApp.quit)
+        self.ui.actionClose.triggered.connect(self.close)
         
     def openMainMenu(self):
         Tabmanager.openTab(tabCreator=MainMenuTab)

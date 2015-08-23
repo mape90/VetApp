@@ -49,7 +49,7 @@ from mainwindowtabs.printFileCreator import PrintFileCreator
 
 from mainwindowtabs.operationSelectorDialog import OperationSelectorDialog
 
-from PyQt4.QtGui import QProgressDialog
+from PyQt4.QtGui import QProgressDialog, QMessageBox
 
 from configfile import genDBString, getDBName
 
@@ -140,28 +140,19 @@ def main():
     
     app = QtGui.QApplication(sys.argv)
 
-    box = QProgressDialog()
-    box.setMinimum(0);
-    box.setMaximum(0);
-    box.setLabelText('Ladataan...')
-    box.show()
-    
-    
-    if not SqlHandler.initialize():
-        print(g_error_msg_dict['database_init'])
-        return
-    
-    init(status)
-    
-    vet_app = MainWindow()
-    Tabmanager.openTab(tabCreator=MainMenuTab)
-    
-    box.reset()
-    vet_app.showMaximized()
-    
+    try:
+        if not SqlHandler.initialize():
+            print(g_error_msg_dict['database_init'])
+            return
+        init(status)
+        vet_app = MainWindow()
+        Tabmanager.openTab(tabCreator=MainMenuTab)
+        vet_app.showMaximized()
+    except:
+        box = QMessageBox()
+        box.setText('Error: can not connect to server! ')
+        box.show()
     
     sys.exit(app.exec_())
-    
-    
-    
+
 main()

@@ -25,6 +25,9 @@ _bill_directory = '~/bill/'
 
 _debug_val = True
 
+def getVersion():
+    return 0.1200
+
 def logDEBUG(_from, _msg):
     if _debug_val :
         print("DEBUG: from: " + str(_from) + ': msg:' + str(_msg))
