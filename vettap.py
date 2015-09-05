@@ -144,10 +144,12 @@ def main():
         if not SqlHandler.initialize():
             print(g_error_msg_dict['database_init'])
             return
-        init(status)
-        vet_app = MainWindow()
-        Tabmanager.openTab(tabCreator=MainMenuTab)
-        vet_app.showMaximized()
+        #init(status)
+        dialog = LoginDialog()
+        dialog.show()
+        #vet_app = MainWindow()
+        #Tabmanager.openTab(tabCreator=MainMenuTab)
+        #vet_app.showMaximized()
     except:
         box = QMessageBox()
         box.setText('Error: can not connect to server! ')

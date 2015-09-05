@@ -177,21 +177,21 @@ class VetTab(GenericTab):
 
     
     def getData(self):
-        data = []
-        data.append(self.ui.nameEdit.text())
-        data.append(self.ui.addressEdit.text())
-        data.append(self.ui.postOfficeComboBox.itemData(self.ui.postOfficeComboBox.currentIndex()))
-        data.append(self.ui.postNumberComboBox.itemData(self.ui.postNumberComboBox.currentIndex()))
-        data.append(self.ui.y_numberEdit.text())
-        data.append(self.ui.vetNumberEdit.text())
-        data.append(self.ui.bankEdit.text())
-        data.append(self.ui.IbanEdit.text())
-        data.append(self.ui.swifbiclineEdit.text())
-        data.append([self.ui.finnishPextEdit.toPlainText(),
-                     self.ui.englishTextEdit_3.toPlainText(),
-                     self.ui.swedenTextEdit.toPlainText()])#DO NOT CHANGE THESE ORDER
-        data.append([])#TODO: add here contact info
-        print("VetTab getData, data len" + str(len(data)))
+        data = {}
+        data["name"] = self.ui.nameEdit.text()
+        data["address"] = self.ui.addressEdit.text()
+        data["post_office"] = self.ui.postOfficeComboBox.itemData(self.ui.postOfficeComboBox.currentIndex())
+        data["postnumber"] = self.ui.postNumberComboBox.itemData(self.ui.postNumberComboBox.currentIndex())
+        data["y_number"] = self.ui.y_numberEdit.text()
+        data["vet_number"] = self.ui.vetNumberEdit.text()
+        data["bank_name"] = self.ui.bankEdit.text()
+        data["IBAN"] = self.ui.IbanEdit.text()
+        data["SWIF"] = self.ui.swifbiclineEdit.text()
+        data["FIN"] = self.ui.finnishPextEdit.toPlainText()
+        data["EN"] = self.ui.englishTextEdit_3.toPlainText()
+        data["SWE"] = self.ui.swedenTextEdit.toPlainText()
+        #data["password"] = self.ui.passwordLineEdit.text()
+       
         return data
     
     def addAskedItem(self, item):#Overload
@@ -199,8 +199,7 @@ class VetTab(GenericTab):
     
     def makeItem(self): #Overload
         data = self.getData()
-        return Vet(data[0], data[1], data[2], data[3], data[4], 
-                        data[5], data[6], data[7], data[8], data[9])
+        return Vet(data)
     
     def saveAble(self): #Overload
         if len(self.ui.nameEdit.text()) > 0:

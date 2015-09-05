@@ -22,6 +22,8 @@ from sqlalchemy.orm import relationship
 from models import Base
 from models.postoffice import PostOffice
 
+import hashlib
+
 '''
     Vet
     -id
@@ -66,7 +68,7 @@ class Vet(Base):
     postnumber_id = Column(Integer, ForeignKey('postnumbers.id'))
     postnumber = relationship("PostNumber")
     
-    password_hash = Column(String(32))
+    password_hash = Column(String(128))
     
     y_number = Column(String(50))
     vet_number = Column(String(50))
@@ -82,8 +84,9 @@ class Vet(Base):
     
     customertexts = relationship("CustomerText")
     contactinfos = relationship("ContactInfo")
-    def __init__(self, name, address, post_office, postnumber, y_number, 
-                 vet_number, bank_name, IBAN, SWIF, customertexts, contactinfos=[]):
+    def __init__(self, data):
+        self.update(data)
+        
         self.name = name
         self.address = address
         self.post_office = post_office
@@ -98,42 +101,58 @@ class Vet(Base):
         self.bank_name = bank_name
         self.IBAN = IBAN
         self.SWIF = SWIF
-        finnish_text = CustomerText(language='Finnish', text=customertexts[0])
-        englsih_text = CustomerText(language='English', text=customertexts[1])
-        swedish_text = CustomerText(language='Swedish', text=customertexts[2])
+        finnish_text = CustomerText(language='FIN', text=customertexts[0])
+        english_text = CustomerText(language='EN', text=customertexts[1])
+        swedish_text = CustomerText(language='SWE', text=customertexts[2])
         
-        self.customertexts = [finnish_text,englsih_text,swedish_text]
+        self.customertexts = [finnish_text,english_text,swedish_text]
         
         for info in contactinfos:
             self.contactinfos.append(info)
 
+    def hashPassword(self, password, name):
+        return hashlib.sha512(password.encode("utf-8") + name.encode("utf-8")).hexdigest()
+    
+    def checkPassword(self, password):
+        if self.password_hash != None:
+            return self.password_hash == self.hashPassword(password, self.name)
+        else:
+            print("ERROR: Unset password! DEBUG continue with True")
+            return True
+    
     def getType(self=None):
         return 'Vet'
     
+    def updateCustomerText(self, key, text):
+        for customertext in self.customertexts:
+            if(customertext.language == key):
+                customertext.text = text
+                return
+        #add key if it wanst found
+        customertext.append(CustomerText(language=key, text=text))
+    
     def update(self, data):
-        self.name = data[0]
-        self.address = data[1]
-        self.post_office = data[2]
-        self.postnumber = data[3]
-        self.y_number= data[4]
-        self.vet_number = data[5]
-        self.bank_name = data[6]
-        self.IBAN = data[7]
-        self.SWIF = data[8] #TODO:implement
-        if len(self.customertexts) >= 3:
-            self.customertexts[0].update(newText=data[9][0])
-            self.customertexts[1].update(newText=data[9][1])
-            self.customertexts[2].update(newText=data[9][2])
-        
-        #TODO: implement
-        #for info in data[9]:
-        #    self.contactinfos.append(info)
+        for key, item in data.items():
+            if hasattr(self, key):
+                setattr(self, key, item)
+            elif key in ["FIN", "EN", "SWE"]:
+                self.updateCustomerText(key, item)
+            elif key is "password":
+                if "name" in data:
+                    setattr(self, key, self.hashPassword(item, data["name"]))
+                elif self.name != None:
+                    setattr(self, key, self.hashPassword(item, self.name))
+                else:
+                    print("ERROR vet do not have name. Can not salt password!")
+            else:
+                print("DEBUG ERROR Vet->update(): wrong variable name: " + str(key))
+
 
 class CustomerText(Base):
     __tablename__='customertexts'
     id = Column(Integer, Sequence('customertexts_id_seq'), primary_key=True)
     vet_id = Column(Integer, ForeignKey('vets.id'), nullable=False)
-    language = Column(String(50), nullable=False)
+    language = Column(String(3), nullable=False)
     text = Column(Text)
     def __init__(self, language, text):
         self.language = language
