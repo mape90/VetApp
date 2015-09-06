@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui_vettab.ui'
+# Form implementation generated from reading ui file 'uipy/ui_vettab.ui'
 #
-# Created: Sat Jun 27 19:19:48 2015
+# Created: Sun Sep  6 11:27:52 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_VetTab(object):
     def setupUi(self, VetTab):
         VetTab.setObjectName(_fromUtf8("VetTab"))
-        VetTab.resize(786, 511)
+        VetTab.resize(788, 542)
         font = QtGui.QFont()
         font.setUnderline(False)
         VetTab.setFont(font)
@@ -165,6 +165,17 @@ class Ui_VetTab(object):
         self.swifbiclineEdit.setObjectName(_fromUtf8("swifbiclineEdit"))
         self.horizontalLayout_10.addWidget(self.swifbiclineEdit)
         self.basicInfoLayout.addLayout(self.horizontalLayout_10)
+        self.horizontalLayout_13 = QtGui.QHBoxLayout()
+        self.horizontalLayout_13.setObjectName(_fromUtf8("horizontalLayout_13"))
+        self.label_16 = QtGui.QLabel(VetTab)
+        self.label_16.setMinimumSize(QtCore.QSize(93, 0))
+        self.label_16.setObjectName(_fromUtf8("label_16"))
+        self.horizontalLayout_13.addWidget(self.label_16)
+        self.passwordLineEdit = QtGui.QLineEdit(VetTab)
+        self.passwordLineEdit.setEchoMode(QtGui.QLineEdit.Password)
+        self.passwordLineEdit.setObjectName(_fromUtf8("passwordLineEdit"))
+        self.horizontalLayout_13.addWidget(self.passwordLineEdit)
+        self.basicInfoLayout.addLayout(self.horizontalLayout_13)
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.basicInfoLayout.addItem(spacerItem)
         self.horizontalLayout_12.addLayout(self.basicInfoLayout)
@@ -232,6 +243,7 @@ class Ui_VetTab(object):
         self.label_8.setText(_translate("VetTab", "Pankki", None))
         self.label_7.setText(_translate("VetTab", "IBAN", None))
         self.label_15.setText(_translate("VetTab", "SWIF/BIC", None))
+        self.label_16.setText(_translate("VetTab", "Salasana", None))
         self.label_14.setText(_translate("VetTab", "Asiakas tekstit laskuun", None))
         self.label_13.setText(_translate("VetTab", "Suomi", None))
         self.label_12.setText(_translate("VetTab", "Ruotsi", None))

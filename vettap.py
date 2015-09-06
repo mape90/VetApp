@@ -45,6 +45,8 @@ from mainwindowtabs.operationbasecreator import OperationBaseCreator
 from mainwindowtabs.itemcreatordialog import ItemCreatorDialog
 from mainWindow import MainWindow
 
+from login_dialog import LoginDialog
+
 from mainwindowtabs.printFileCreator import PrintFileCreator
 
 from mainwindowtabs.operationSelectorDialog import OperationSelectorDialog
@@ -140,21 +142,19 @@ def main():
     
     app = QtGui.QApplication(sys.argv)
 
-    try:
-        if not SqlHandler.initialize():
-            print(g_error_msg_dict['database_init'])
-            return
-        #init(status)
-        dialog = LoginDialog()
-        dialog.show()
-        #vet_app = MainWindow()
-        #Tabmanager.openTab(tabCreator=MainMenuTab)
-        #vet_app.showMaximized()
-    except:
-        box = QMessageBox()
-        box.setText('Error: can not connect to server! ')
-        box.show()
-    
-    sys.exit(app.exec_())
+    #try:
+    if not SqlHandler.initialize():
+        print(g_error_msg_dict['database_init'])
+        return
+    if LoginDialog().exec_() == QtGui.QDialog.Accepted:
+        vet_app = MainWindow()
+        Tabmanager.openTab(tabCreator=MainMenuTab)
+        vet_app.showMaximized()
+        sys.exit(app.exec_())
+    #except:
+        #box = QMessageBox()
+        #box.setText('Error: can not connect to server! ')
+        #box.exec_()
+
 
 main()

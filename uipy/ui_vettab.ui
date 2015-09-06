@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>786</width>
-    <height>511</height>
+    <width>788</width>
+    <height>542</height>
    </rect>
   </property>
   <property name="font">
@@ -305,6 +305,30 @@
          </item>
          <item>
           <widget class="QLineEdit" name="swifbiclineEdit"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_13">
+         <item>
+          <widget class="QLabel" name="label_16">
+           <property name="minimumSize">
+            <size>
+             <width>93</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Salasana</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="passwordLineEdit">
+           <property name="echoMode">
+            <enum>QLineEdit::Password</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>

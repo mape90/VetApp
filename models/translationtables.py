@@ -72,7 +72,6 @@ g_payment_time_dict = dict([('Heti',datetime.timedelta(days=0)),('1 vk',datetime
 g_preset_durations = [('kuukausi',30), ('1/2 vuosi',180), ('1 vuosi',365),
                        ('2 vuotta',730), ('3 vuotta',1095), ('5 vuotta',1825)]
 
-
-
+g_login_error_messages = {"wrong_password":"Salasana ei ole oikea", "other_error":"Valitse eläinlääkäri."}
 
 

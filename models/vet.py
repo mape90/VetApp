@@ -85,28 +85,10 @@ class Vet(Base):
     customertexts = relationship("CustomerText")
     contactinfos = relationship("ContactInfo")
     def __init__(self, data):
+        customertexts = []
+        contactinfos = []
         self.update(data)
-        
-        self.name = name
-        self.address = address
-        self.post_office = post_office
-        if post_office != None:
-            self.post_office_id = post_office.id
-        self.postnumber = postnumber
-        if postnumber != None:
-            self.postnumber_id = postnumber.id
-        self.y_number= y_number
-        self.vet_number = vet_number
-        #self.alv_number = alv_number
-        self.bank_name = bank_name
-        self.IBAN = IBAN
-        self.SWIF = SWIF
-        finnish_text = CustomerText(language='FIN', text=customertexts[0])
-        english_text = CustomerText(language='EN', text=customertexts[1])
-        swedish_text = CustomerText(language='SWE', text=customertexts[2])
-        
-        self.customertexts = [finnish_text,english_text,swedish_text]
-        
+                
         for info in contactinfos:
             self.contactinfos.append(info)
 
@@ -129,7 +111,7 @@ class Vet(Base):
                 customertext.text = text
                 return
         #add key if it wanst found
-        customertext.append(CustomerText(language=key, text=text))
+        self.customertexts.append(CustomerText(language=key, text=text))
     
     def update(self, data):
         for key, item in data.items():

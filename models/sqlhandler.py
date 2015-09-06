@@ -120,8 +120,8 @@ class SQLHandler(object):
         return VisitAnimal(animal, anamnesis, status, diagnosis, treatment)
     #--------VET RELATED-----#
     
-    def Vet(self, name, address, post_office, postnumber, y_number, vet_number,bank_name, IBAN, SWIF, customertext, contactinfos):
-        return Vet(name, address, post_office, postnumber, y_number, vet_number,bank_name, IBAN, SWIF, customertext, contactinfos)
+    def Vet(self, data):
+        return Vet(data)
     
     def CustomerText(self,language, text):
         return CustomerText(language, text)

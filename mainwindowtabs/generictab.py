@@ -124,7 +124,7 @@ class GenericTab(QWidget):
                     SqlHandler.commitSession(self.session)
                 else:
                     pass #logDEBUG(self,'No')
-            Tabmanager.closeTab(tab=self)
+            self.closeTab()
         else:
             from models.translationtables import g_save_error_message
             self.errorMessage(g_save_error_message)       
